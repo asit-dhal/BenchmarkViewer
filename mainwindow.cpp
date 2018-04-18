@@ -24,6 +24,7 @@
 
 #include "mainwindow.h"
 #include <QAction>
+#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   createMenus();
   createWidgets();
   connectSignalsToSlots();
+  showMaximized();
 }
 
 MainWindow::~MainWindow() {}
@@ -116,6 +118,8 @@ void MainWindow::createWidgets() {
   QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_selectedFilesWidget);
   mainLayout->addWidget(m_benchmarkView);
+  mainLayout->setStretchFactor(m_selectedFilesWidget, 1);
+  mainLayout->setStretchFactor(m_benchmarkView, 4);
   QWidget* centralWidget = new QWidget(this);
   centralWidget->setLayout(mainLayout);
   setCentralWidget(centralWidget);
@@ -129,11 +133,15 @@ void MainWindow::onNewFileSelected(QString file) {
 
 void MainWindow::onSelectedFileDeleted(QString file) {
   m_files.removeOne(file);
+  m_benchmarkModel->removeBenchmark(file);
+  m_benchmarkView->resizeColumnsToContents();
 }
 
 void MainWindow::connectSignalsToSlots() {
   connect(this, SIGNAL(newFileSelected(QString)), this,
           SLOT(onNewFileSelected(QString)));
+  connect(this, SIGNAL(selectedFileDeleted(QString)), this,
+          SLOT(onSelectedFileDeleted(QString)));
   connect(m_parser, SIGNAL(parsingFinished(QString, Benchmark)), this,
           SLOT(onNewBenchmarks(QString, Benchmark)));
 }
@@ -154,4 +162,5 @@ void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
 
 void MainWindow::onNewBenchmarks(QString filename, Benchmark benchmark) {
   m_benchmarkModel->addBenchmark(filename, benchmark);
+  m_benchmarkView->resizeColumnsToContents();
 }

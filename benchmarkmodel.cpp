@@ -25,6 +25,8 @@
 #include "benchmarkmodel.h"
 #include <QAbstractItemModel>
 
+#include <QDebug>
+
 BenchmarkModel::BenchmarkModel(QObject* parent) : QAbstractTableModel(parent) {}
 
 void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
@@ -36,8 +38,8 @@ void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
     m_benchmarks.append(unit);
   }
 
-  emit QAbstractItemModel::dataChanged(createIndex(0, 0),
-                                       createIndex(m_benchmarks.size(), 8));
+  emit layoutChanged();
+  emit dataChanged(createIndex(0, 0), createIndex(m_benchmarks.size(), 7));
 }
 
 void BenchmarkModel::removeBenchmark(QString filename) {
@@ -50,8 +52,9 @@ void BenchmarkModel::removeBenchmark(QString filename) {
     }
   }
 
+  emit layoutChanged();
   emit QAbstractItemModel::dataChanged(createIndex(0, 0),
-                                       createIndex(m_benchmarks.size(), 8));
+                                       createIndex(m_benchmarks.size(), 7));
 }
 
 QVariant BenchmarkModel::headerData(int section,
@@ -94,7 +97,7 @@ int BenchmarkModel::rowCount(const QModelIndex& parent) const {
 
 int BenchmarkModel::columnCount(const QModelIndex& parent) const {
   Q_UNUSED(parent);
-  return 8;
+  return 7;
 }
 
 QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
