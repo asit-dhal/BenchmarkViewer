@@ -34,6 +34,7 @@
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+  m_parser = new Parser(this);
   createActions();
   createMenus();
   createWidgets();
@@ -115,6 +116,7 @@ void MainWindow::createWidgets() {
 void MainWindow::onNewFileSelected(QString file) {
   m_files.push(file);
   m_selectedFilesWidget->addItem(file);
+  m_parser->parse(file);
 }
 
 void MainWindow::onSelectedFileDeleted(QString file) {
@@ -124,6 +126,8 @@ void MainWindow::onSelectedFileDeleted(QString file) {
 void MainWindow::connectSignalsToSlots() {
   connect(this, SIGNAL(newFileSelected(QString)), this,
           SLOT(onNewFileSelected(QString)));
+  connect(m_parser, SIGNAL(parsingFinished(QString, Benchmarks)), this,
+          SLOT(onNewBenchmarks(QString, Benchmarks)));
 }
 
 void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
@@ -138,4 +142,8 @@ void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
     }
   });
   contextMenu.exec(globalPos);
+}
+
+void MainWindow::onNewBenchmarks(QString filename, Benchmarks benchmarks) {
+  m_benchmarks[filename] = benchmarks;
 }

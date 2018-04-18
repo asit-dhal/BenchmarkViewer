@@ -26,8 +26,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMap>
 #include <QPoint>
 #include <QStack>
+#include "benchmarks.h"
+#include "parser.h"
 
 class QMenu;
 class QAction;
@@ -50,6 +53,9 @@ class MainWindow : public QMainWindow {
   void createMenus();
   void createWidgets();
   void connectSignalsToSlots();
+
+ public slots:
+  void onNewBenchmarks(QString filename, Benchmarks benchmarks);
 
  private slots:
   void onOpenFile();
@@ -75,6 +81,8 @@ class MainWindow : public QMainWindow {
 
   QStack<QString> m_files;
   QListWidget* m_selectedFilesWidget;
+  QMap<QString, Benchmarks> m_benchmarks;
+  Parser* m_parser;
 };
 
 #endif  // MAINWINDOW_H
