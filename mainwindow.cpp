@@ -26,12 +26,14 @@
 #include <QAction>
 #include <QDir>
 #include <QFileDialog>
+#include <QHBoxLayout>
 #include <QKeySequence>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QMenuBar>
-#include <QVBoxLayout>
+#include <QTableView>
+#include "benchmarkmodel.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   m_parser = new Parser(this);
@@ -106,8 +108,14 @@ void MainWindow::createWidgets() {
   m_selectedFilesWidget->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(m_selectedFilesWidget, SIGNAL(customContextMenuRequested(QPoint)),
           this, SLOT(onSelectedFilesWidgetContextMenu(QPoint)));
-  QVBoxLayout* mainLayout = new QVBoxLayout;
+
+  m_benchmarkModel = new BenchmarkModel(this);
+  m_benchmarkView = new QTableView(this);
+  m_benchmarkView->setModel(m_benchmarkModel);
+
+  QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_selectedFilesWidget);
+  mainLayout->addWidget(m_benchmarkView);
   QWidget* centralWidget = new QWidget(this);
   centralWidget->setLayout(mainLayout);
   setCentralWidget(centralWidget);
@@ -126,8 +134,8 @@ void MainWindow::onSelectedFileDeleted(QString file) {
 void MainWindow::connectSignalsToSlots() {
   connect(this, SIGNAL(newFileSelected(QString)), this,
           SLOT(onNewFileSelected(QString)));
-  connect(m_parser, SIGNAL(parsingFinished(QString, Benchmarks)), this,
-          SLOT(onNewBenchmarks(QString, Benchmarks)));
+  connect(m_parser, SIGNAL(parsingFinished(QString, Benchmark)), this,
+          SLOT(onNewBenchmarks(QString, Benchmark)));
 }
 
 void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
@@ -145,5 +153,5 @@ void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
 }
 
 void MainWindow::onNewBenchmarks(QString filename, Benchmark benchmark) {
-  m_benchmarks[filename] = benchmark;
+  m_benchmarkModel->addBenchmark(filename, benchmark);
 }

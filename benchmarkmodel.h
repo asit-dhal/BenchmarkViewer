@@ -22,14 +22,37 @@
 
 ========================================================================*/
 
-#include <QApplication>
-#include "mainwindow.h"
+#ifndef BENCHMARKMODEL_H
+#define BENCHMARKMODEL_H
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
-  MainWindow w;
+#include <QAbstractTableModel>
+#include <QList>
+#include "benchmark.h"
+#include "measurement.h"
 
-  w.show();
+struct BenchmarkViewUnit {
+  Measurement measurement;
+  QString filename;
+};
 
-  return a.exec();
-}
+class BenchmarkModel : public QAbstractTableModel {
+  Q_OBJECT
+ public:
+  explicit BenchmarkModel(QObject* parent = nullptr);
+  void addBenchmark(QString filename, Benchmark benchmarks);
+  void removeBenchmark(QString filename);
+  QVariant headerData(int section,
+                      Qt::Orientation orientation,
+                      int role = Qt::DisplayRole) const override;
+
+  int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+  int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+
+  QVariant data(const QModelIndex& index,
+                int role = Qt::DisplayRole) const override;
+
+ private:
+  QList<BenchmarkViewUnit> m_benchmarks;
+};
+
+#endif  // BENCHMARKMODEL_H

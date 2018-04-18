@@ -35,7 +35,8 @@
 class QMenu;
 class QAction;
 class QListWidget;
-class QFileSystemModel;
+class BenchmarkModel;
+class QTableView;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -81,7 +82,8 @@ class MainWindow : public QMainWindow {
 
   QStack<QString> m_files;
   QListWidget* m_selectedFilesWidget;
-  QMap<QString, Benchmark> m_benchmarks;
+  BenchmarkModel* m_benchmarkModel;
+  QTableView* m_benchmarkView;
   Parser* m_parser;
 };
 
