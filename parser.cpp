@@ -17,13 +17,13 @@ void Parser::parse(QString filename) {
   QString fileContent = file.readAll();
   file.close();
 
-  Benchmarks benchmarks;
+  Benchmark benchmark;
 
   QJsonDocument jsonDocument = QJsonDocument::fromJson(fileContent.toUtf8());
   QJsonObject jsonObj = jsonDocument.object();
-  benchmarks.setContext(parseContext(jsonObj));
-  benchmarks.setBenchmarks(parseBenchmarks(jsonObj));
-  emit parsingFinished(filename, benchmarks);
+  benchmark.setContext(parseContext(jsonObj));
+  benchmark.setMeasurements(parseBenchmarks(jsonObj));
+  emit parsingFinished(filename, benchmark);
   emit parsingStatus(QString("Parsing finished: ") + filename);
 }
 
@@ -58,39 +58,39 @@ Context Parser::parseContext(const QJsonObject& json) {
   return ctx;
 }
 
-QVector<Benchmark> Parser::parseBenchmarks(const QJsonObject& json) {
-  QVector<Benchmark> benchmarks;
+QVector<Measurement> Parser::parseBenchmarks(const QJsonObject& json) {
+  QVector<Measurement> mmts;
   if (json.contains("benchmarks") && json["benchmarks"].isArray()) {
     QJsonArray jsonArrayObject = json["benchmarks"].toArray();
     foreach (const QJsonValue& value, jsonArrayObject) {
       QJsonObject jsonObj = value.toObject();
-      Benchmark benchmark;
+      Measurement mmt;
 
       if (jsonObj.contains("name") && jsonObj["name"].isString()) {
-        benchmark.setName(jsonObj["name"].toString());
+        mmt.setName(jsonObj["name"].toString());
       }
 
       if (jsonObj.contains("iterations") && jsonObj["iterations"].isDouble()) {
-        benchmark.setIterations(jsonObj["iterations"].toVariant().toLongLong());
+        mmt.setIterations(jsonObj["iterations"].toVariant().toLongLong());
       }
 
       if (jsonObj.contains("real_time") && jsonObj["real_time"].isDouble()) {
-        benchmark.setRealTime(jsonObj["real_time"].toVariant().toLongLong());
+        mmt.setRealTime(jsonObj["real_time"].toVariant().toLongLong());
       }
 
       if (jsonObj.contains("cpu_time") && jsonObj["cpu_time"].isDouble()) {
-        benchmark.setCpuTime(jsonObj["cpu_time"].toVariant().toLongLong());
+        mmt.setCpuTime(jsonObj["cpu_time"].toVariant().toLongLong());
       }
 
       if (jsonObj.contains("time_unit") && jsonObj["time_unit"].isString()) {
-        benchmark.setTimeUnit(jsonObj["time_unit"].toString());
+        mmt.setTimeUnit(jsonObj["time_unit"].toString());
       }
 
-      benchmarks.push_back(benchmark);
+      mmts.push_back(mmt);
     }
   } else {
     qDebug() << "No benchmark exists";
   }
 
-  return benchmarks;
+  return mmts;
 }

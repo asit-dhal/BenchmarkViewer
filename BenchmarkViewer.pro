@@ -26,14 +26,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    benchmark.cpp \
-    benchmarks.cpp \
     context.cpp \
-    parser.cpp
+    parser.cpp \
+    #benchmarkmodel.cpp \
+    measurement.cpp \
+    helper.cpp \
+    benchmark.cpp
 
 HEADERS += \
         mainwindow.h \
-    benchmark.h \
-    benchmarks.h \
     context.h \
-    parser.h
+    parser.h \
+    #benchmarkmodel.h \
+    measurement.h \
+    helper.h \
+    benchmark.h

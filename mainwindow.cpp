@@ -144,6 +144,6 @@ void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
   contextMenu.exec(globalPos);
 }
 
-void MainWindow::onNewBenchmarks(QString filename, Benchmarks benchmarks) {
-  m_benchmarks[filename] = benchmarks;
+void MainWindow::onNewBenchmarks(QString filename, Benchmark benchmark) {
+  m_benchmarks[filename] = benchmark;
 }

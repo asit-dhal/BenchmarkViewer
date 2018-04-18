@@ -1,61 +1,29 @@
 #include "benchmark.h"
 
-QString Benchmark::getName() const
-{
-    return name;
+Benchmark::Benchmark() {}
+
+Context Benchmark::getContext() const {
+  return m_context;
 }
 
-void Benchmark::setName(const QString &value)
-{
-    name = value;
+void Benchmark::setContext(const Context& value) {
+  m_context = value;
 }
 
-quint64 Benchmark::getIterations() const
-{
-    return iterations;
+QVector<Measurement> Benchmark::getMeasurements() const {
+  return m_measurements;
 }
 
-void Benchmark::setIterations(quint64 value)
-{
-    iterations = value;
+void Benchmark::addMeasurement(const Measurement& _mmt) {
+  m_measurements.append(_mmt);
 }
 
-quint64 Benchmark::getRealTime() const
-{
-    return realTime;
+void Benchmark::setMeasurements(const QVector<Measurement>& value) {
+  m_measurements = value;
 }
 
-void Benchmark::setRealTime(quint64 value)
-{
-    realTime = value;
-}
-
-quint64 Benchmark::getCpuTime() const
-{
-    return cpuTime;
-}
-
-void Benchmark::setCpuTime(quint64 value)
-{
-    cpuTime = value;
-}
-
-QString Benchmark::getTimeUnit() const
-{
-    return timeUnit;
-}
-
-void Benchmark::setTimeUnit(const QString &value)
-{
-    timeUnit = value;
-}
-
-QDebug operator<< (QDebug d, const Benchmark &bmk)
-{
-    d << "name: " << bmk.getName()
-      << " iterations: " << bmk.getIterations()
-      << " real_time: " << bmk.getRealTime()
-      << " cpu_time: " << bmk.getCpuTime()
-      << " time_unit: " << bmk.getTimeUnit();
-    return d;
+QDebug operator<<(QDebug d, const Benchmark& bmk) {
+  d << "context: {" << bmk.getContext() << "}"
+    << " benchmarks: [" << bmk.getMeasurements() << "]";
+  return d;
 }

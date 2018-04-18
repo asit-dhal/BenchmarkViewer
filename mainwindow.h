@@ -29,7 +29,7 @@
 #include <QMap>
 #include <QPoint>
 #include <QStack>
-#include "benchmarks.h"
+#include "benchmark.h"
 #include "parser.h"
 
 class QMenu;
@@ -55,7 +55,7 @@ class MainWindow : public QMainWindow {
   void connectSignalsToSlots();
 
  public slots:
-  void onNewBenchmarks(QString filename, Benchmarks benchmarks);
+  void onNewBenchmarks(QString filename, Benchmark benchmark);
 
  private slots:
   void onOpenFile();
@@ -81,7 +81,7 @@ class MainWindow : public QMainWindow {
 
   QStack<QString> m_files;
   QListWidget* m_selectedFilesWidget;
-  QMap<QString, Benchmarks> m_benchmarks;
+  QMap<QString, Benchmark> m_benchmarks;
   Parser* m_parser;
 };
 

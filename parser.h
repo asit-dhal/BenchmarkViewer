@@ -4,7 +4,7 @@
 #include <QJsonObject>
 #include <QObject>
 #include <QVector>
-#include "benchmarks.h"
+#include "benchmark.h"
 
 class Parser : public QObject {
   Q_OBJECT
@@ -13,11 +13,11 @@ class Parser : public QObject {
   void parse(QString filename);
  signals:
   void parsingStatus(QString statusMsg);
-  void parsingFinished(QString fileName, Benchmarks Benchmark);
+  void parsingFinished(QString fileName, Benchmark benchmark);
 
  private:
   Context parseContext(const QJsonObject& json);
-  QVector<Benchmark> parseBenchmarks(const QJsonObject& json);
+  QVector<Measurement> parseBenchmarks(const QJsonObject& json);
 };
 
 #endif  // PARSER_H

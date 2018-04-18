@@ -1,36 +1,26 @@
-#ifndef ITEM_H
-#define ITEM_H
+#ifndef BENCHMARKS_H
+#define BENCHMARKS_H
 
-#include <QString>
-#include <QDebug>
+#include <QVector>
+#include "context.h"
+#include "measurement.h"
 
-class Benchmark
-{
-public:
-    Benchmark() = default;
-    QString getName() const;
-    void setName(const QString &value);
+class Benchmark {
+ public:
+  Benchmark();
 
-    quint64 getIterations() const;
-    void setIterations(quint64 value);
+  Context getContext() const;
+  void setContext(const Context& value);
 
-    quint64 getRealTime() const;
-    void setRealTime(quint64 value);
+  QVector<Measurement> getMeasurements() const;
+  void addMeasurement(const Measurement& _mmt);
+  void setMeasurements(const QVector<Measurement>& value);
 
-    quint64 getCpuTime() const;
-    void setCpuTime(quint64 value);
-
-    QString getTimeUnit() const;
-    void setTimeUnit(const QString &value);
-
-private:
-    QString name;
-    quint64 iterations;
-    quint64 realTime;
-    quint64 cpuTime;
-    QString timeUnit;
+ private:
+  Context m_context;
+  QVector<Measurement> m_measurements;
 };
 
-QDebug operator<< (QDebug d, const Benchmark &bmk);
+QDebug operator<<(QDebug d, const Benchmark& bmk);
 
-#endif // ITEM_H
+#endif  // BENCHMARKS_H
