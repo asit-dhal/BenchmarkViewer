@@ -29,14 +29,21 @@
 #include <QMap>
 #include <QPoint>
 #include <QStack>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QVXYModelMapper>
 #include "benchmark.h"
 #include "parser.h"
+
+QT_CHARTS_USE_NAMESPACE
 
 class QMenu;
 class QAction;
 class QListWidget;
 class BenchmarkModel;
 class QTableView;
+class BenchmarkView;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -67,6 +74,7 @@ class MainWindow : public QMainWindow {
   void onNewFileSelected(QString file);
   void onSelectedFilesWidgetContextMenu(const QPoint& pos);
   void onSelectedFileDeleted(QString file);
+  void onToogleSelectedFileWidget();
 
  private:
   QMenu* m_fileMenu;
@@ -80,11 +88,15 @@ class MainWindow : public QMainWindow {
   QAction* m_closeAllFilesExceptSelectedAction;
   QAction* m_exitAction;
 
+  QAction* m_toogleSelectedFileWidget;
+
   QStack<QString> m_files;
   QListWidget* m_selectedFilesWidget;
   BenchmarkModel* m_benchmarkModel;
-  QTableView* m_benchmarkView;
+  BenchmarkView* m_benchmarkView;
   Parser* m_parser;
+  QChart* m_chart;
+  QChartView* m_chartView;
 };
 
 #endif  // MAINWINDOW_H

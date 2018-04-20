@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,7 +15,10 @@ SOURCES += \
     benchmarkmodel.cpp \
     measurement.cpp \
     helper.cpp \
-    benchmark.cpp
+    benchmark.cpp \
+    benchmarkview.cpp \
+    benchmarkdelegate.cpp \
+    filterlineedit.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -24,4 +27,7 @@ HEADERS += \
     benchmarkmodel.h \
     measurement.h \
     helper.h \
-    benchmark.h
+    benchmark.h \
+    benchmarkview.h \
+    benchmarkdelegate.h \
+    filterlineedit.h

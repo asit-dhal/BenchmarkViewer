@@ -6,7 +6,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
-Parser::Parser(QObject* parent) {}
+Parser::Parser(QObject* parent) : QObject(parent) {}
 
 void Parser::parse(QString filename) {
   emit parsingStatus(QString("Parsing started: ") + filename);

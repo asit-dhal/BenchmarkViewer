@@ -35,6 +35,7 @@
 #include <QMenuBar>
 #include <QTableView>
 #include "benchmarkmodel.h"
+#include "benchmarkview.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   m_parser = new Parser(this);
@@ -78,6 +79,13 @@ void MainWindow::createActions() {
   m_exitAction = new QAction(tr("E&xit"), this);
   m_exitAction->setStatusTip(tr("Exit"));
   connect(m_exitAction, &QAction::triggered, this, &MainWindow::onExit);
+
+  m_toogleSelectedFileWidget =
+      new QAction(tr("Toggle selected file widget"), this);
+  m_toogleSelectedFileWidget->setStatusTip(tr("Toggle selected file widget"));
+  m_toogleSelectedFileWidget->setCheckable(true);
+  connect(m_toogleSelectedFileWidget, &QAction::triggered, this,
+          &MainWindow::onToogleSelectedFileWidget);
 }
 
 void MainWindow::createMenus() {
@@ -87,6 +95,9 @@ void MainWindow::createMenus() {
   m_fileMenu->addAction(m_closeAllFilesAction);
   m_fileMenu->addAction(m_closeAllFilesExceptSelectedAction);
   m_fileMenu->addAction(m_exitAction);
+
+  m_viewMenu = menuBar()->addMenu(tr("&View"));
+  m_viewMenu->addAction(m_toogleSelectedFileWidget);
 }
 
 void MainWindow::onOpenFile() {
@@ -112,14 +123,22 @@ void MainWindow::createWidgets() {
           this, SLOT(onSelectedFilesWidgetContextMenu(QPoint)));
 
   m_benchmarkModel = new BenchmarkModel(this);
-  m_benchmarkView = new QTableView(this);
+  m_benchmarkView = new BenchmarkView(this);
   m_benchmarkView->setModel(m_benchmarkModel);
+
+  m_chart = new QChart;
+  m_chart->setAnimationOptions(QChart::AllAnimations);
+  m_chartView = new QChartView(m_chart);
+  m_chartView->setRenderHint(QPainter::Antialiasing);
+  m_chartView->setMinimumSize(640, 480);
 
   QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_selectedFilesWidget);
   mainLayout->addWidget(m_benchmarkView);
+  mainLayout->addWidget(m_chartView);
   mainLayout->setStretchFactor(m_selectedFilesWidget, 1);
-  mainLayout->setStretchFactor(m_benchmarkView, 4);
+  mainLayout->setStretchFactor(m_benchmarkView, 2);
+  mainLayout->setStretchFactor(m_chartView, 3);
   QWidget* centralWidget = new QWidget(this);
   centralWidget->setLayout(mainLayout);
   setCentralWidget(centralWidget);
@@ -163,4 +182,12 @@ void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
 void MainWindow::onNewBenchmarks(QString filename, Benchmark benchmark) {
   m_benchmarkModel->addBenchmark(filename, benchmark);
   m_benchmarkView->resizeColumnsToContents();
+}
+
+void MainWindow::onToogleSelectedFileWidget() {
+  if (m_selectedFilesWidget->isVisible()) {
+    m_selectedFilesWidget->hide();
+  } else {
+    m_selectedFilesWidget->show();
+  }
 }
