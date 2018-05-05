@@ -22,19 +22,35 @@
 
 ========================================================================*/
 
-#include <QApplication>
-#include <QLoggingCategory>
-#include "mainwindow.h"
+#include "chartviewwidget.h"
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
-  MainWindow w;
+#include <QHBoxLayout>
 
-  QLoggingCategory::setFilterRules(
-      "*.debug=true\n"
-      "qt.*.debug=false\n");
+ChartViewWidget::ChartViewWidget(BenchmarkModel* model, QWidget* parent)
+    : QWidget(parent),
+      m_model(model),
+      m_chart(new QChart),
+      m_modelMapper(new QVXYModelMapper),
+      m_chartView(new QChartView),
+      m_series(new QLineSeries) {
+  m_chart->setAnimationOptions(QChart::AllAnimations);
+  m_series->setName("Bar 1");
+  m_modelMapper->setXColumn(1);
+  m_modelMapper->setYColumn(4);
+  m_modelMapper->setSeries(m_series);
+  m_modelMapper->setModel(m_model);
+  m_chart->addSeries(m_series);
+  m_chartView->setRenderHint(QPainter::Antialiasing);
 
-  w.show();
+  QHBoxLayout* mainLayout = new QHBoxLayout;
+  mainLayout->addWidget(m_chartView);
+  setLayout(mainLayout);
+}
 
-  return a.exec();
+void ChartViewWidget::refresh(int colX, int colY) {
+  m_modelMapper->setXColumn(colX);
+  m_modelMapper->setYColumn(colY);
+  m_modelMapper->setSeries(m_series);
+  m_modelMapper->setModel(m_model);
+  m_chart->addSeries(m_series);
 }

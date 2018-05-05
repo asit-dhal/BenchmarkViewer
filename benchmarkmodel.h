@@ -27,12 +27,16 @@
 
 #include <QAbstractTableModel>
 #include <QList>
+#include <QLoggingCategory>
 #include "benchmark.h"
 #include "measurement.h"
+
+Q_DECLARE_LOGGING_CATEGORY(benchmarkModel);
 
 struct BenchmarkViewUnit {
   Measurement measurement;
   QString filename;
+  bool isSelected{false};
 };
 
 class BenchmarkModel : public QAbstractTableModel {
@@ -50,6 +54,10 @@ class BenchmarkModel : public QAbstractTableModel {
 
   QVariant data(const QModelIndex& index,
                 int role = Qt::DisplayRole) const override;
+  Qt::ItemFlags flags(const QModelIndex& index) const override;
+  bool setData(const QModelIndex& index,
+               const QVariant& value,
+               int role = Qt::EditRole) override;
 
  private:
   QList<BenchmarkViewUnit> m_benchmarks;

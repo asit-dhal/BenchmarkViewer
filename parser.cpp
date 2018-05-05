@@ -6,11 +6,13 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
+Q_LOGGING_CATEGORY(parser, "parser")
+
 Parser::Parser(QObject* parent) : QObject(parent) {}
 
 void Parser::parse(QString filename) {
   emit parsingStatus(QString("Parsing started: ") + filename);
-  qDebug() << "Parsing started: " << filename;
+  qCDebug(parser) << "Parsing started: " << filename;
   QFile file;
   file.setFileName(filename);
   file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -25,6 +27,7 @@ void Parser::parse(QString filename) {
   benchmark.setMeasurements(parseBenchmarks(jsonObj));
   emit parsingFinished(filename, benchmark);
   emit parsingStatus(QString("Parsing finished: ") + filename);
+  qCDebug(parser) << "Parsing finished: " << filename;
 }
 
 Context Parser::parseContext(const QJsonObject& json) {
@@ -53,8 +56,9 @@ Context Parser::parseContext(const QJsonObject& json) {
       ctx.setLibraryBuildType(ctxJObject["library_build_type"].toString());
     }
   } else {
-    qDebug() << "No context exists";
+    qCCritical(parser) << "No context exists";
   }
+  qCDebug(parser) << "Context: " << ctx;
   return ctx;
 }
 
@@ -89,8 +93,10 @@ QVector<Measurement> Parser::parseBenchmarks(const QJsonObject& json) {
       mmts.push_back(mmt);
     }
   } else {
-    qDebug() << "No benchmark exists";
+    qCCritical(parser) << "No benchmark exists";
   }
+
+  qCDebug(parser) << "No. of measurements: " << mmts.size();
 
   return mmts;
 }

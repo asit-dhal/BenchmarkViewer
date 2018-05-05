@@ -27,13 +27,18 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QKeySequence>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QMenuBar>
+#include <QPushButton>
+#include <QSplitter>
 #include <QTableView>
+#include "benchmarkdelegate.h"
 #include "benchmarkmodel.h"
 #include "benchmarkview.h"
 
@@ -122,26 +127,35 @@ void MainWindow::createWidgets() {
   connect(m_selectedFilesWidget, SIGNAL(customContextMenuRequested(QPoint)),
           this, SLOT(onSelectedFilesWidgetContextMenu(QPoint)));
 
+  QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
+  m_benchmarkNameFilter = new QLineEdit(this);
+  m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
+  m_benchmarkSelector = new QPushButton(tr("Select All"), this);
   m_benchmarkModel = new BenchmarkModel(this);
   m_benchmarkView = new BenchmarkView(this);
+  m_benchmarkDelegate = new BenchmarkDelegate(this);
+
   m_benchmarkView->setModel(m_benchmarkModel);
+  m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
+  m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
+  QHBoxLayout* benchmarkFilterLayout = new QHBoxLayout;
+  benchmarkFilterLayout->addWidget(m_benchmarkSelector);
+  benchmarkFilterLayout->addWidget(m_benchmarkNameFilter);
+  QVBoxLayout* benchmarkLayout = new QVBoxLayout;
+  benchmarkLayout->addLayout(benchmarkFilterLayout);
+  benchmarkLayout->addWidget(m_benchmarkView);
+  benckmarkSelectorGB->setLayout(benchmarkLayout);
 
-  m_chart = new QChart;
-  m_chart->setAnimationOptions(QChart::AllAnimations);
-  m_chartView = new QChartView(m_chart);
-  m_chartView->setRenderHint(QPainter::Antialiasing);
-  m_chartView->setMinimumSize(640, 480);
+  m_chartView = new ChartViewWidget(m_benchmarkModel, this);
 
-  QHBoxLayout* mainLayout = new QHBoxLayout;
-  mainLayout->addWidget(m_selectedFilesWidget);
-  mainLayout->addWidget(m_benchmarkView);
-  mainLayout->addWidget(m_chartView);
-  mainLayout->setStretchFactor(m_selectedFilesWidget, 1);
-  mainLayout->setStretchFactor(m_benchmarkView, 2);
-  mainLayout->setStretchFactor(m_chartView, 3);
-  QWidget* centralWidget = new QWidget(this);
-  centralWidget->setLayout(mainLayout);
-  setCentralWidget(centralWidget);
+  QSplitter* splitter = new QSplitter(this);
+  splitter->addWidget(m_selectedFilesWidget);
+  splitter->addWidget(benckmarkSelectorGB);
+  splitter->addWidget(m_chartView);
+  splitter->setStretchFactor(0, 1);
+  splitter->setStretchFactor(1, 2);
+  splitter->setStretchFactor(2, 3);
+  setCentralWidget(splitter);
 }
 
 void MainWindow::onNewFileSelected(QString file) {
@@ -163,6 +177,11 @@ void MainWindow::connectSignalsToSlots() {
           SLOT(onSelectedFileDeleted(QString)));
   connect(m_parser, SIGNAL(parsingFinished(QString, Benchmark)), this,
           SLOT(onNewBenchmarks(QString, Benchmark)));
+
+  connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this,
+          SLOT(onBenchmarkFilter(QString)));
+  connect(m_benchmarkSelector, SIGNAL(clicked()), this,
+          SLOT(onBenchmarkSelector()));
 }
 
 void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
@@ -191,3 +210,7 @@ void MainWindow::onToogleSelectedFileWidget() {
     m_selectedFilesWidget->show();
   }
 }
+
+void MainWindow::onBenchmarkFilter(QString filterText) {}
+
+void MainWindow::onBenchmarkSelector() {}

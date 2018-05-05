@@ -2,9 +2,12 @@
 #define PARSER_H
 
 #include <QJsonObject>
+#include <QLoggingCategory>
 #include <QObject>
 #include <QVector>
 #include "benchmark.h"
+
+Q_DECLARE_LOGGING_CATEGORY(parser);
 
 class Parser : public QObject {
   Q_OBJECT

@@ -24,13 +24,15 @@
 
 #include "benchmarkmodel.h"
 #include <QAbstractItemModel>
+#include <QColor>
 
-#include <QDebug>
+Q_LOGGING_CATEGORY(benchmarkModel, "benchmarkModel")
 
 BenchmarkModel::BenchmarkModel(QObject* parent) : QAbstractTableModel(parent) {}
 
 void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
   auto mmt = benchmark.getMeasurements();
+  qCDebug(benchmarkModel) << "Adding benchmark file: " << filename;
   for (auto itr = mmt.begin(); itr != mmt.end(); itr++) {
     BenchmarkViewUnit unit;
     unit.filename = filename;
@@ -44,6 +46,7 @@ void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
 
 void BenchmarkModel::removeBenchmark(QString filename) {
   QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
+  qCDebug(benchmarkModel) << "Removing benchmark file: " << filename;
   while (itr != m_benchmarks.end()) {
     if (filename.compare(itr->filename, Qt::CaseInsensitive)) {
       itr = m_benchmarks.erase(itr);
@@ -111,23 +114,82 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
     BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
     switch (index.column()) {
       case 0:
-        return "";
+        qCDebug(benchmarkModel)
+            << "Get Cell Data: [" << index.row() << "," << index.column()
+            << ", DisplayRole] = " << viewunit.isSelected;
+        return viewunit.isSelected;
       case 1:
+        qCDebug(benchmarkModel)
+            << "Get Cell Data: [" << index.row() << "," << index.column()
+            << ", DisplayRole] = " << viewunit.measurement.getName();
         return viewunit.measurement.getName();
       case 2:
+        qCDebug(benchmarkModel)
+            << "Get Cell Data: [" << index.row() << "," << index.column()
+            << ", DisplayRole] = " << viewunit.measurement.getIterations();
         return viewunit.measurement.getIterations();
       case 3:
+        qCDebug(benchmarkModel)
+            << "Get Cell Data: [" << index.row() << "," << index.column()
+            << ", DisplayRole] = " << viewunit.measurement.getRealTime();
         return viewunit.measurement.getRealTime();
       case 4:
+        qCDebug(benchmarkModel)
+            << "Get Cell Data: [" << index.row() << "," << index.column()
+            << ", DisplayRole] = " << viewunit.measurement.getCpuTime();
         return viewunit.measurement.getCpuTime();
       case 5:
+        qCDebug(benchmarkModel)
+            << "Get Cell Data: [" << index.row() << "," << index.column()
+            << ", DisplayRole] = " << viewunit.measurement.getTimeUnit();
         return viewunit.measurement.getTimeUnit();
       case 6:
+        qCDebug(benchmarkModel)
+            << "Get Cell Data: [" << index.row() << "," << index.column()
+            << ", DisplayRole] = " << viewunit.filename;
         return viewunit.filename;
       default:
         return QVariant();
     }
   }
 
+  if (role == Qt::BackgroundColorRole) {
+    BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+    if (viewunit.isSelected) {
+      qCDebug(benchmarkModel)
+          << "Get Cell Data: [" << index.row() << "," << index.column()
+          << ", BackgroundColorRole] = Selected";
+      return QColor(Qt::blue);
+    } else {
+      qCDebug(benchmarkModel)
+          << "Get Cell Data: [" << index.row() << "," << index.column()
+          << ", BackgroundColorRole] = NotSelected";
+      return QColor(Qt::white);
+    }
+  }
+
   return QVariant();
+}
+
+Qt::ItemFlags BenchmarkModel::flags(const QModelIndex& index) const {
+  if (!index.isValid())
+    return Qt::ItemIsEnabled;
+
+  return QAbstractItemModel::flags(index);
+}
+
+bool BenchmarkModel::setData(const QModelIndex& index,
+                             const QVariant& value,
+                             int role) {
+  if (index.isValid() && role == Qt::EditRole) {
+    auto row = index.row();
+    if (index.column() == 0) {
+      m_benchmarks[row].isSelected = value.toBool();
+      qCDebug(benchmarkModel) << "Editing Cell: [" << index.row() << ","
+                              << index.column() << "] = " << value.toBool();
+      emit dataChanged(index, index);
+      return true;
+    }
+  }
+  return false;
 }

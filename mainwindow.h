@@ -34,6 +34,7 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QVXYModelMapper>
 #include "benchmark.h"
+#include "chartviewwidget.h"
 #include "parser.h"
 
 QT_CHARTS_USE_NAMESPACE
@@ -44,6 +45,9 @@ class QListWidget;
 class BenchmarkModel;
 class QTableView;
 class BenchmarkView;
+class QLineEdit;
+class QPushButton;
+class BenchmarkDelegate;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -75,6 +79,8 @@ class MainWindow : public QMainWindow {
   void onSelectedFilesWidgetContextMenu(const QPoint& pos);
   void onSelectedFileDeleted(QString file);
   void onToogleSelectedFileWidget();
+  void onBenchmarkFilter(QString filter);
+  void onBenchmarkSelector();
 
  private:
   QMenu* m_fileMenu;
@@ -94,9 +100,13 @@ class MainWindow : public QMainWindow {
   QListWidget* m_selectedFilesWidget;
   BenchmarkModel* m_benchmarkModel;
   BenchmarkView* m_benchmarkView;
+  BenchmarkDelegate* m_benchmarkDelegate;
   Parser* m_parser;
   QChart* m_chart;
-  QChartView* m_chartView;
+  ChartViewWidget* m_chartView;
+
+  QLineEdit* m_benchmarkNameFilter;
+  QPushButton* m_benchmarkSelector;
 };
 
 #endif  // MAINWINDOW_H

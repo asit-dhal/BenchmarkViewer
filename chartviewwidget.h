@@ -22,19 +22,32 @@
 
 ========================================================================*/
 
-#include <QApplication>
-#include <QLoggingCategory>
-#include "mainwindow.h"
+#ifndef CHARTVIEWWIDGET_H
+#define CHARTVIEWWIDGET_H
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
-  MainWindow w;
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QVXYModelMapper>
+#include <QtWidgets>
+#include "benchmarkmodel.h"
 
-  QLoggingCategory::setFilterRules(
-      "*.debug=true\n"
-      "qt.*.debug=false\n");
+QT_CHARTS_USE_NAMESPACE
 
-  w.show();
+class ChartViewWidget : public QWidget {
+ public:
+  ChartViewWidget(BenchmarkModel* model, QWidget* parent = nullptr);
 
-  return a.exec();
-}
+  void refresh(int colX, int colY);
+
+ public slots:
+
+ private:
+  BenchmarkModel* m_model;
+  QChart* m_chart;
+  QVXYModelMapper* m_modelMapper;
+  QChartView* m_chartView;
+  QLineSeries* m_series;
+};
+
+#endif  // CHARTVIEWWIDGET_H

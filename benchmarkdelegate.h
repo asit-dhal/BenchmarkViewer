@@ -22,19 +22,23 @@
 
 ========================================================================*/
 
-#include <QApplication>
-#include <QLoggingCategory>
-#include "mainwindow.h"
+#ifndef BENCHMARKDELEGATE_H
+#define BENCHMARKDELEGATE_H
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
-  MainWindow w;
+#include <QStyledItemDelegate>
 
-  QLoggingCategory::setFilterRules(
-      "*.debug=true\n"
-      "qt.*.debug=false\n");
+class BenchmarkDelegate : public QStyledItemDelegate {
+  Q_OBJECT
+ public:
+  BenchmarkDelegate(QObject* parent = nullptr);
+  void paint(QPainter* painter,
+             const QStyleOptionViewItem& option,
+             const QModelIndex& index) const override;
 
-  w.show();
+  bool editorEvent(QEvent* event,
+                   QAbstractItemModel* model,
+                   const QStyleOptionViewItem& option,
+                   const QModelIndex& index) override;
+};
 
-  return a.exec();
-}
+#endif  // BENCHMARKDELEGATE_H

@@ -18,7 +18,7 @@ SOURCES += \
     benchmark.cpp \
     benchmarkview.cpp \
     benchmarkdelegate.cpp \
-    filterlineedit.cpp
+    chartviewwidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -30,4 +30,4 @@ HEADERS += \
     benchmark.h \
     benchmarkview.h \
     benchmarkdelegate.h \
-    filterlineedit.h
+    chartviewwidget.h
