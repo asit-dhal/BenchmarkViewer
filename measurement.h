@@ -33,6 +33,8 @@ class Measurement {
   int m_id;
 };
 
+Q_DECLARE_METATYPE(Measurement);
+
 QDebug operator<<(QDebug d, const Measurement& mmt);
 
 #endif  // ITEM_H

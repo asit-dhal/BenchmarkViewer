@@ -25,13 +25,18 @@
 #ifndef CHARTVIEWWIDGET_H
 #define CHARTVIEWWIDGET_H
 
+#include <QBarCategoryAxis>
+#include <QBarSet>
 #include <QLoggingCategory>
+#include <QMap>
 #include <QtCharts/QBarSeries>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QVXYModelMapper>
 #include <QtWidgets>
+#include <vector>
 #include "benchmarkproxymodel.h"
+#include "measurement.h"
 
 Q_DECLARE_LOGGING_CATEGORY(chartView);
 
@@ -43,12 +48,19 @@ class ChartViewWidget : public QWidget {
 
  public slots:
   void update();
+  void onAddMeasurement(Measurement mmt);
+  void onRemoveMeasurement(Measurement mmt);
 
  private:
+  void init();
+  double calculateMaxY();
+  double m_maxY = 0;
+  QBarCategoryAxis* m_axis;
   BenchmarkProxyModel* m_model;
   QChart* m_chart;
   QChartView* m_chartView;
   QBarSeries* m_series;
+  QMap<int, QBarSet*> m_barSet;
 };
 
 #endif  // CHARTVIEWWIDGET_H

@@ -203,6 +203,11 @@ void MainWindow::connectSignalsToSlots() {
           SLOT(onBenchmarkFilter(QString)));
   connect(m_benchmarkSelector, SIGNAL(clicked()), this,
           SLOT(onBenchmarkSelector()));
+
+  connect(m_benchmarkModel, &BenchmarkModel::measurementActive, m_chartView,
+          &ChartViewWidget::onAddMeasurement);
+  connect(m_benchmarkModel, &BenchmarkModel::measurementInactive, m_chartView,
+          &ChartViewWidget::onRemoveMeasurement);
 }
 
 void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
