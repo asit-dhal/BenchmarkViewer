@@ -24,7 +24,10 @@
 
 #include <QApplication>
 #include <QLoggingCategory>
+#include <QSettings>
 #include "mainwindow.h"
+
+void loadAppSettings() {}
 
 int main(int argc, char* argv[]) {
   QApplication a(argc, argv);

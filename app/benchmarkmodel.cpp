@@ -28,6 +28,25 @@
 
 Q_LOGGING_CATEGORY(benchmarkModel, "benchmarkModel")
 
+QString columnName(Columns cols) {
+  switch (cols) {
+    case Columns::STATUS:
+      return QString(QObject::tr("Status"));
+    case Columns::NAME:
+      return QString(QObject::tr("Name"));
+    case Columns::ITERATIONS:
+      return QString(QObject::tr("Iterations"));
+    case Columns::REAL_TIME:
+      return QString(QObject::tr("Realtime"));
+    case Columns::CPU_TIME:
+      return QString(QObject::tr("Cpu Time"));
+    case Columns::TIME_UNIT:
+      return QString(QObject::tr("Timeunit"));
+    case Columns::FILENAME:
+      return QString(QObject::tr("Filename"));
+  }
+}
+
 BenchmarkModel::BenchmarkModel(QObject* parent) : QAbstractTableModel(parent) {}
 
 void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
@@ -41,7 +60,8 @@ void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
   }
 
   emit layoutChanged();
-  emit dataChanged(createIndex(0, 0), createIndex(m_benchmarks.size(), 7));
+  emit dataChanged(createIndex(0, 0),
+                   createIndex(m_benchmarks.size(), COLUMN_COUNT - 1));
 }
 
 void BenchmarkModel::removeBenchmark(QString filename) {
@@ -73,21 +93,21 @@ QVariant BenchmarkModel::headerData(int section,
   }
 
   if (orientation == Qt::Horizontal) {
-    switch (section) {
-      case 0:
-        return QString(tr("Status"));
-      case 1:
-        return QString(tr("Benchmark Name"));
-      case 2:
-        return QString(tr("Iterations"));
-      case 3:
-        return QString(tr("Realtime"));
-      case 4:
-        return QString(tr("Cpu Time"));
-      case 5:
-        return QString(tr("Timeunit"));
-      case 6:
-        return QString(tr("Filename"));
+    switch (static_cast<Columns>(section)) {
+      case Columns::STATUS:
+        return QString(QObject::tr("Status"));
+      case Columns::NAME:
+        return QString(QObject::tr("Name"));
+      case Columns::ITERATIONS:
+        return QString(QObject::tr("Iterations"));
+      case Columns::REAL_TIME:
+        return QString(QObject::tr("Realtime"));
+      case Columns::CPU_TIME:
+        return QString(QObject::tr("Cpu Time"));
+      case Columns::TIME_UNIT:
+        return QString(QObject::tr("Timeunit"));
+      case Columns::FILENAME:
+        return QString(QObject::tr("Filename"));
       default:
         return QVariant();
     }
@@ -105,7 +125,7 @@ int BenchmarkModel::rowCount(const QModelIndex& parent) const {
 
 int BenchmarkModel::columnCount(const QModelIndex& parent) const {
   Q_UNUSED(parent);
-  return 7;
+  return COLUMN_COUNT;
 }
 
 QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
@@ -117,20 +137,20 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
 
   if (role == Qt::DisplayRole) {
     BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-    switch (index.column()) {
-      case 0:
+    switch (static_cast<Columns>(index.column())) {
+      case Columns::STATUS:
         return viewunit.isSelected;
-      case 1:
+      case Columns::NAME:
         return viewunit.measurement.getName();
-      case 2:
+      case Columns::ITERATIONS:
         return viewunit.measurement.getIterations();
-      case 3:
+      case Columns::REAL_TIME:
         return viewunit.measurement.getRealTime();
-      case 4:
+      case Columns::CPU_TIME:
         return viewunit.measurement.getCpuTime();
-      case 5:
+      case Columns::TIME_UNIT:
         return viewunit.measurement.getTimeUnit();
-      case 6:
+      case Columns::FILENAME:
         return viewunit.filename;
       default:
         return QVariant();
@@ -161,10 +181,10 @@ bool BenchmarkModel::setData(const QModelIndex& index,
                              int role) {
   if (index.isValid() && role == Qt::EditRole) {
     auto row = index.row();
-    if (index.column() == 0) {
+    if (static_cast<Columns>(index.column()) == Columns::STATUS) {
       m_benchmarks[row].isSelected = value.toBool();
       emit dataChanged(createIndex(index.row(), 0),
-                       createIndex(index.row(), 6));
+                       createIndex(index.row(), COLUMN_COUNT - 1));
       if (m_benchmarks[row].isSelected) {
         emit measurementActive(m_benchmarks[row].measurement);
       } else {

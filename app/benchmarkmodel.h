@@ -39,6 +39,20 @@ struct BenchmarkViewUnit {
   bool isSelected{false};
 };
 
+enum class Columns {
+  STATUS,
+  NAME,
+  ITERATIONS,
+  REAL_TIME,
+  CPU_TIME,
+  TIME_UNIT,
+  FILENAME
+};
+
+static const int COLUMN_COUNT = 7;
+
+QString columnName(Columns cols);
+
 class BenchmarkModel : public QAbstractTableModel {
   Q_OBJECT
  public:

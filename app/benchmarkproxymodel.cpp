@@ -23,6 +23,7 @@
 ========================================================================*/
 
 #include "benchmarkproxymodel.h"
+#include "benchmarkmodel.h"
 
 Q_LOGGING_CATEGORY(proxyModel, "proxyModel")
 
@@ -34,34 +35,38 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
   QVariant leftData = sourceModel()->data(left);
   QVariant rightData = sourceModel()->data(right);
 
-  auto col = left.column();
+  auto col = static_cast<Columns>(left.column());
 
-  if (col == 0) {
-    return leftData.toBool();
-  } else if (col == 1 || col == 6) {
-    return QString::localeAwareCompare(leftData.toString(),
-                                       rightData.toString()) < 0;
-  } else if (col == 2 || col == 3 || col == 4) {
-    return leftData.toDouble() < rightData.toDouble();
+  switch (col) {
+    case Columns::STATUS:
+      return leftData.toBool();
+    case Columns::ITERATIONS:
+    case Columns::REAL_TIME:
+    case Columns::CPU_TIME:
+      return leftData.toDouble() < rightData.toDouble();
+    case Columns::NAME:
+    case Columns::FILENAME:
+    default:
+      return QString::localeAwareCompare(leftData.toString(),
+                                         rightData.toString()) < 0;
   }
-
-  return QString::localeAwareCompare(leftData.toString(),
-                                     rightData.toString()) < 0;
 }
 
 bool BenchmarkProxyModel::filterAcceptsRow(
     int sourceRow,
     const QModelIndex& sourceParent) const {
-  QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
-  QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
+  QModelIndex statusIndex = sourceModel()->index(
+      sourceRow, static_cast<int>(Columns::STATUS), sourceParent);
+  QModelIndex nameIndex = sourceModel()->index(
+      sourceRow, static_cast<int>(Columns::FILENAME), sourceParent);
 
   if (m_onlySelected) {
-    if (!sourceModel()->data(index0).toBool()) {
+    if (!sourceModel()->data(statusIndex).toBool()) {
       return false;
     }
   }
 
-  if (sourceModel()->data(index1).toString().toLower().trimmed().contains(
+  if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(
           filterRegExp())) {
     return true;
   } else {
