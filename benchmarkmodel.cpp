@@ -51,6 +51,9 @@ void BenchmarkModel::removeBenchmark(QString filename) {
   while (itr != m_benchmarks.end()) {
     qCDebug(benchmarkModel) << "benchmark file in table: " << itr->filename;
     if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) {
+      if (itr->isSelected) {
+        emit measurementInactive(itr->measurement);
+      }
       itr = m_benchmarks.erase(itr);
     } else {
       ++itr;

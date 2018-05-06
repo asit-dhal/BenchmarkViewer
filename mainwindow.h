@@ -85,6 +85,7 @@ class MainWindow : public QMainWindow {
   void onToogleSelectedFileWidget();
   void onBenchmarkFilter(QString filter);
   void onBenchmarkSelector();
+  void onAboutApp();
 
  private:
   QMenu* m_fileMenu;
@@ -99,6 +100,7 @@ class MainWindow : public QMainWindow {
   QAction* m_exitAction;
 
   QAction* m_toogleSelectedFileWidget;
+  QAction* m_aboutApp;
 
   QStack<QString> m_files;
   QListWidget* m_selectedFilesWidget;

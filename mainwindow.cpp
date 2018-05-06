@@ -95,6 +95,10 @@ void MainWindow::createActions() {
   m_toogleSelectedFileWidget->setCheckable(true);
   connect(m_toogleSelectedFileWidget, &QAction::triggered, this,
           &MainWindow::onToogleSelectedFileWidget);
+
+  m_aboutApp = new QAction(tr("About BenchmarkViewer"), this);
+  m_aboutApp->setStatusTip(tr("About BenchmarkViewer"));
+  connect(m_aboutApp, &QAction::triggered, this, &MainWindow::onAboutApp);
 }
 
 void MainWindow::createMenus() {
@@ -107,6 +111,9 @@ void MainWindow::createMenus() {
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toogleSelectedFileWidget);
+
+  m_helpMenu = menuBar()->addMenu(tr("&Help"));
+  m_helpMenu->addAction(m_aboutApp);
 }
 
 void MainWindow::onOpenFile() {
@@ -172,11 +179,15 @@ void MainWindow::createWidgets() {
   splitter->addWidget(benckmarkSelectorGB);
   splitter->addWidget(m_chartView);
   splitter->setStretchFactor(0, 1);
-  splitter->setStretchFactor(1, 1);
-  splitter->setStretchFactor(2, 3);
+  splitter->setStretchFactor(1, 2);
+  splitter->setStretchFactor(2, 4);
   setCentralWidget(splitter);
 
+  m_selectedFilesWidget->hide();
   m_toogleSelectedFileWidget->setChecked(m_selectedFilesWidget->isVisible());
+  m_benchmarkView->hideColumn(2);
+  m_benchmarkView->hideColumn(5);
+  m_benchmarkView->hideColumn(6);
 }
 
 void MainWindow::onNewFileSelected(QString file) {
@@ -251,4 +262,12 @@ void MainWindow::onBenchmarkSelector() {
     m_benchmarkSelector->setText(tr("Show Only Selected"));
     m_proxyModel->setOnlySelected(true);
   }
+}
+
+void MainWindow::onAboutApp() {
+  QString text = QString::fromUtf8(
+      "Benchmark Viewer to plot google microbenchmark data \n\u00A9 2018"
+      " Asit Dhal");
+
+  QMessageBox::about(this, tr("About BenchmarkViewer"), text);
 }
