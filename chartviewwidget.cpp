@@ -26,13 +26,11 @@
 
 #include <QBarSet>
 #include <QHBoxLayout>
-#include <iterator>
 
 Q_LOGGING_CATEGORY(chartView, "chartView");
 
-ChartViewWidget::ChartViewWidget(BenchmarkProxyModel* model, QWidget* parent)
-    : QWidget(parent), m_model(model), m_chartView(new QChartView) {
-  m_chartView->setRenderHint(QPainter::Antialiasing);
+ChartViewWidget::ChartViewWidget(QWidget* parent)
+    : QWidget(parent), m_chartView(new QChartView) {
   init();
   QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_chartView);
@@ -89,35 +87,4 @@ void ChartViewWidget::onRemoveMeasurement(Measurement mmt) {
   m_series->remove(set);
   m_barSet.remove(mmt.getId());
   m_chart->axisY()->setMax(calculateMaxY());
-}
-
-void ChartViewWidget::update() {
-  // m_chart = new QChart;
-  // m_series = new QBarSeries;
-  auto entryCount = m_model->rowCount();
-  qCDebug(chartView) << "Entry count: " << entryCount;
-  for (auto i = 0; i < entryCount; i++) {
-    QModelIndex nameIndex = m_model->index(i, 1, QModelIndex());
-    QModelIndex cpuTimeIndex = m_model->index(i, 4, QModelIndex());
-    QModelIndex realTimeIndex = m_model->index(i, 3, QModelIndex());
-    QString name = m_model->data(nameIndex).toString();
-    double cpuTime = m_model->data(cpuTimeIndex).toDouble();
-    double realTime = m_model->data(realTimeIndex).toDouble();
-    QBarSet* set = new QBarSet(name);
-    *set << cpuTime << realTime;
-    m_series->append(set);
-  }
-  m_chart->addSeries(m_series);
-  m_chart->legend()->setVisible(true);
-  m_chart->legend()->setAlignment(Qt::AlignRight);
-  QStringList categories;
-  categories << "CPU Time"
-             << "Real Time";
-  QBarCategoryAxis* axis = new QBarCategoryAxis();
-  axis->append(categories);
-  m_chart->createDefaultAxes();
-  m_chart->setAxisX(axis, m_series);
-  m_chart->setAnimationOptions(QChart::AllAnimations);
-  m_chartView->setChart(m_chart);
-  m_chartView->setRenderHint(QPainter::Antialiasing);
 }

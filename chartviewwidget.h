@@ -34,8 +34,6 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QVXYModelMapper>
 #include <QtWidgets>
-#include <vector>
-#include "benchmarkproxymodel.h"
 #include "measurement.h"
 
 Q_DECLARE_LOGGING_CATEGORY(chartView);
@@ -44,19 +42,18 @@ QT_CHARTS_USE_NAMESPACE
 
 class ChartViewWidget : public QWidget {
  public:
-  ChartViewWidget(BenchmarkProxyModel* model, QWidget* parent = nullptr);
+  ChartViewWidget(QWidget* parent = nullptr);
 
  public slots:
-  void update();
   void onAddMeasurement(Measurement mmt);
   void onRemoveMeasurement(Measurement mmt);
 
  private:
   void init();
   double calculateMaxY();
+
   double m_maxY = 0;
   QBarCategoryAxis* m_axis;
-  BenchmarkProxyModel* m_model;
   QChart* m_chart;
   QChartView* m_chartView;
   QBarSeries* m_series;
