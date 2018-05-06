@@ -27,7 +27,7 @@
 Q_LOGGING_CATEGORY(proxyModel, "proxyModel")
 
 BenchmarkProxyModel::BenchmarkProxyModel(QObject* parent)
-    : QSortFilterProxyModel(parent) {}
+    : QSortFilterProxyModel(parent), m_onlySelected(false) {}
 
 bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
                                    const QModelIndex& right) const {
@@ -52,9 +52,17 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
 bool BenchmarkProxyModel::filterAcceptsRow(
     int sourceRow,
     const QModelIndex& sourceParent) const {
-  qCDebug(proxyModel) << "Row filtered: true ";
-  QModelIndex index = sourceModel()->index(sourceRow, 1, sourceParent);
-  if (sourceModel()->data(index).toString().toLower().trimmed().contains(
+  qCDebug(proxyModel) << "Row " << sourceRow << " filtered: true ";
+  QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+  QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
+
+  if (m_onlySelected) {
+    if (!sourceModel()->data(index0).toBool()) {
+      return false;
+    }
+  }
+
+  if (sourceModel()->data(index1).toString().toLower().trimmed().contains(
           filterRegExp())) {
     qCDebug(proxyModel) << "Row filtered: true ";
     return true;
@@ -62,4 +70,13 @@ bool BenchmarkProxyModel::filterAcceptsRow(
     qCDebug(proxyModel) << "Row filtered: true ";
     return false;
   }
+}
+
+bool BenchmarkProxyModel::onlySelected() const {
+  return m_onlySelected;
+}
+
+void BenchmarkProxyModel::setOnlySelected(bool onlySelected) {
+  m_onlySelected = onlySelected;
+  invalidateFilter();
 }

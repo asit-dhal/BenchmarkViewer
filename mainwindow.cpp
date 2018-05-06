@@ -145,7 +145,7 @@ void MainWindow::createWidgets() {
   QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
   m_benchmarkNameFilter = new QLineEdit(this);
   m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
-  m_benchmarkSelector = new QPushButton(tr("Select All"), this);
+  m_benchmarkSelector = new QPushButton(tr("Only Selected"), this);
   m_benchmarkModel = new BenchmarkModel(this);
   m_proxyModel = new BenchmarkProxyModel(this);
   m_benchmarkView = new BenchmarkView(this);
@@ -237,4 +237,12 @@ void MainWindow::onBenchmarkFilter(QString filterText) {
   m_proxyModel->setFilterRegExp(regExp);
 }
 
-void MainWindow::onBenchmarkSelector() {}
+void MainWindow::onBenchmarkSelector() {
+  if (m_proxyModel->onlySelected()) {
+    m_benchmarkSelector->setText(tr("Show All"));
+    m_proxyModel->setOnlySelected(false);
+  } else {
+    m_benchmarkSelector->setText(tr("Show Only Selected"));
+    m_proxyModel->setOnlySelected(true);
+  }
+}
