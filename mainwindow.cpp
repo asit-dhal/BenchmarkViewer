@@ -42,6 +42,8 @@
 #include "benchmarkmodel.h"
 #include "benchmarkview.h"
 
+Q_LOGGING_CATEGORY(mainWindow, "mainWindow");
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   m_parser = new Parser(this);
   createActions();
@@ -106,20 +108,31 @@ void MainWindow::createMenus() {
 }
 
 void MainWindow::onOpenFile() {
-  QString file =
-      QFileDialog::getOpenFileName(this, tr("Open Directory"), "/home");
-  if (!file.isEmpty()) {
-    emit newFileSelected(file);
+  QStringList files =
+      QFileDialog::getOpenFileNames(this, tr("Open Directory"), "/home");
+  for (auto file : files) {
+    if (!file.isEmpty()) {
+      emit newFileSelected(file);
+    }
   }
 }
 
-void MainWindow::onCloseFile() {}
+void MainWindow::onCloseFile() {
+  qCDebug(mainWindow) << "closing file";
+}
 
-void MainWindow::onCloseAllFiles() {}
+void MainWindow::onCloseAllFiles() {
+  for (auto file : m_files) {
+    onSelectedFileDeleted(file);
+  }
+}
 
 void MainWindow::onCloseAllFilesExceptSelected() {}
 
-void MainWindow::onExit() {}
+void MainWindow::onExit() {
+  qCDebug(mainWindow) << "closing application";
+  QApplication::quit();
+}
 
 void MainWindow::createWidgets() {
   m_selectedFilesWidget = new QListWidget();
@@ -153,9 +166,11 @@ void MainWindow::createWidgets() {
   splitter->addWidget(benckmarkSelectorGB);
   splitter->addWidget(m_chartView);
   splitter->setStretchFactor(0, 1);
-  splitter->setStretchFactor(1, 2);
+  splitter->setStretchFactor(1, 1);
   splitter->setStretchFactor(2, 3);
   setCentralWidget(splitter);
+
+  m_toogleSelectedFileWidget->setChecked(m_selectedFilesWidget->isVisible());
 }
 
 void MainWindow::onNewFileSelected(QString file) {

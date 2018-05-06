@@ -47,8 +47,10 @@ void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
 void BenchmarkModel::removeBenchmark(QString filename) {
   QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
   qCDebug(benchmarkModel) << "Removing benchmark file: " << filename;
+
   while (itr != m_benchmarks.end()) {
-    if (filename.compare(itr->filename, Qt::CaseInsensitive)) {
+    qCDebug(benchmarkModel) << "benchmark file in table: " << itr->filename;
+    if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) {
       itr = m_benchmarks.erase(itr);
     } else {
       ++itr;
@@ -114,39 +116,18 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
     BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
     switch (index.column()) {
       case 0:
-        qCDebug(benchmarkModel)
-            << "Get Cell Data: [" << index.row() << "," << index.column()
-            << ", DisplayRole] = " << viewunit.isSelected;
         return viewunit.isSelected;
       case 1:
-        qCDebug(benchmarkModel)
-            << "Get Cell Data: [" << index.row() << "," << index.column()
-            << ", DisplayRole] = " << viewunit.measurement.getName();
         return viewunit.measurement.getName();
       case 2:
-        qCDebug(benchmarkModel)
-            << "Get Cell Data: [" << index.row() << "," << index.column()
-            << ", DisplayRole] = " << viewunit.measurement.getIterations();
         return viewunit.measurement.getIterations();
       case 3:
-        qCDebug(benchmarkModel)
-            << "Get Cell Data: [" << index.row() << "," << index.column()
-            << ", DisplayRole] = " << viewunit.measurement.getRealTime();
         return viewunit.measurement.getRealTime();
       case 4:
-        qCDebug(benchmarkModel)
-            << "Get Cell Data: [" << index.row() << "," << index.column()
-            << ", DisplayRole] = " << viewunit.measurement.getCpuTime();
         return viewunit.measurement.getCpuTime();
       case 5:
-        qCDebug(benchmarkModel)
-            << "Get Cell Data: [" << index.row() << "," << index.column()
-            << ", DisplayRole] = " << viewunit.measurement.getTimeUnit();
         return viewunit.measurement.getTimeUnit();
       case 6:
-        qCDebug(benchmarkModel)
-            << "Get Cell Data: [" << index.row() << "," << index.column()
-            << ", DisplayRole] = " << viewunit.filename;
         return viewunit.filename;
       default:
         return QVariant();
@@ -156,14 +137,8 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
   if (role == Qt::BackgroundColorRole) {
     BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
     if (viewunit.isSelected) {
-      qCDebug(benchmarkModel)
-          << "Get Cell Data: [" << index.row() << "," << index.column()
-          << ", BackgroundColorRole] = Selected";
-      return QColor(Qt::blue);
+      return QColor(Qt::lightGray);
     } else {
-      qCDebug(benchmarkModel)
-          << "Get Cell Data: [" << index.row() << "," << index.column()
-          << ", BackgroundColorRole] = NotSelected";
       return QColor(Qt::white);
     }
   }
@@ -185,8 +160,6 @@ bool BenchmarkModel::setData(const QModelIndex& index,
     auto row = index.row();
     if (index.column() == 0) {
       m_benchmarks[row].isSelected = value.toBool();
-      qCDebug(benchmarkModel) << "Editing Cell: [" << index.row() << ","
-                              << index.column() << "] = " << value.toBool();
       emit dataChanged(index, index);
       return true;
     }

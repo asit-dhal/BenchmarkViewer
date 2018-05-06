@@ -25,6 +25,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QLoggingCategory>
 #include <QMainWindow>
 #include <QMap>
 #include <QPoint>
@@ -36,6 +37,8 @@
 #include "benchmark.h"
 #include "chartviewwidget.h"
 #include "parser.h"
+
+Q_DECLARE_LOGGING_CATEGORY(mainWindow);
 
 QT_CHARTS_USE_NAMESPACE
 
