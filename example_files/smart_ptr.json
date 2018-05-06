@@ -1,0 +1,74 @@
+{
+  "context": {
+    "date": "2018-05-06 07:41:55",
+    "num_cpus": 2,
+    "mhz_per_cpu": 2400,
+    "cpu_scaling_enabled": true,
+    "library_build_type": "debug"
+  },
+  "benchmarks": [
+    {
+      "name": "RawPointer_Creation",
+      "iterations": 17818200,
+      "real_time": 3.9362968425543208e+01,
+      "cpu_time": 3.9352987843889949e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "UniquePtr_Creation",
+      "iterations": 18206519,
+      "real_time": 3.8532861828232946e+01,
+      "cpu_time": 3.8510875033277912e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "SharedPtr_Creation",
+      "iterations": 7664960,
+      "real_time": 9.1243453977576664e+01,
+      "cpu_time": 9.1243030883396671e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "RawPointer_Access",
+      "iterations": 643908,
+      "real_time": 1.0871965330167179e+03,
+      "cpu_time": 1.0879234673271478e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "UniquePtr_Access",
+      "iterations": 652992,
+      "real_time": 1.0660579177232553e+03,
+      "cpu_time": 1.0734384418193874e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "SharedPtr_Access",
+      "iterations": 644068,
+      "real_time": 1.0732783199931487e+03,
+      "cpu_time": 1.0840270080178309e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "RawPointer_Param",
+      "iterations": 650094,
+      "real_time": 1.0648214736604009e+03,
+      "cpu_time": 1.0669418222592938e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "UniquePtr_Param",
+      "iterations": 659623,
+      "real_time": 1.0541111830755553e+03,
+      "cpu_time": 1.0621727941555259e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "SharedPtr_Param",
+      "iterations": 626394,
+      "real_time": 1.1086830334037613e+03,
+      "cpu_time": 1.1135660399040746e+03,
+      "time_unit": "ns"
+    }
+  ]
+}

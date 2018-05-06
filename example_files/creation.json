@@ -1,0 +1,32 @@
+{
+  "context": {
+    "date": "2018-05-06 07:41:19",
+    "num_cpus": 2,
+    "mhz_per_cpu": 2400,
+    "cpu_scaling_enabled": true,
+    "library_build_type": "debug"
+  },
+  "benchmarks": [
+    {
+      "name": "String_Creation",
+      "iterations": 7220901,
+      "real_time": 9.7116062663081891e+01,
+      "cpu_time": 9.7101819565176143e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "StringStream_Creation",
+      "iterations": 880831,
+      "real_time": 7.9514907626999479e+02,
+      "cpu_time": 7.9514210785042758e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "OstringStream_Creation",
+      "iterations": 1186483,
+      "real_time": 6.2545052057210785e+02,
+      "cpu_time": 6.2545120494773221e+02,
+      "time_unit": "ns"
+    }
+  ]
+}
