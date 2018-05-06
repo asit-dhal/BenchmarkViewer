@@ -156,6 +156,7 @@ void MainWindow::createWidgets() {
   m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
   m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
   m_benchmarkView->setSortingEnabled(true);
+  m_benchmarkView->sortByColumn(1, Qt::DescendingOrder);
   QHBoxLayout* benchmarkFilterLayout = new QHBoxLayout;
   benchmarkFilterLayout->addWidget(m_benchmarkSelector);
   benchmarkFilterLayout->addWidget(m_benchmarkNameFilter);

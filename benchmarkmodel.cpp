@@ -160,7 +160,8 @@ bool BenchmarkModel::setData(const QModelIndex& index,
     auto row = index.row();
     if (index.column() == 0) {
       m_benchmarks[row].isSelected = value.toBool();
-      emit dataChanged(index, index);
+      emit dataChanged(createIndex(index.row(), 0),
+                       createIndex(index.row(), 6));
       return true;
     }
   }
