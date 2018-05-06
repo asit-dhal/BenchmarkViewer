@@ -52,7 +52,6 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
 bool BenchmarkProxyModel::filterAcceptsRow(
     int sourceRow,
     const QModelIndex& sourceParent) const {
-  qCDebug(proxyModel) << "Row " << sourceRow << " filtered: true ";
   QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
   QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
 
@@ -64,10 +63,8 @@ bool BenchmarkProxyModel::filterAcceptsRow(
 
   if (sourceModel()->data(index1).toString().toLower().trimmed().contains(
           filterRegExp())) {
-    qCDebug(proxyModel) << "Row filtered: true ";
     return true;
   } else {
-    qCDebug(proxyModel) << "Row filtered: true ";
     return false;
   }
 }

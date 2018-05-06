@@ -165,7 +165,7 @@ void MainWindow::createWidgets() {
   benchmarkLayout->addWidget(m_benchmarkView);
   benckmarkSelectorGB->setLayout(benchmarkLayout);
 
-  m_chartView = new ChartViewWidget(m_benchmarkModel, this);
+  m_chartView = new ChartViewWidget(m_proxyModel, this);
 
   QSplitter* splitter = new QSplitter(this);
   splitter->addWidget(m_selectedFilesWidget);
@@ -246,4 +246,6 @@ void MainWindow::onBenchmarkSelector() {
     m_benchmarkSelector->setText(tr("Show Only Selected"));
     m_proxyModel->setOnlySelected(true);
   }
+
+  m_chartView->update();
 }

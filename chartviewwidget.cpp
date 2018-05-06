@@ -24,22 +24,13 @@
 
 #include "chartviewwidget.h"
 
+#include <QBarSet>
 #include <QHBoxLayout>
 
-ChartViewWidget::ChartViewWidget(BenchmarkModel* model, QWidget* parent)
-    : QWidget(parent),
-      m_model(model),
-      m_chart(new QChart),
-      m_modelMapper(new QVXYModelMapper),
-      m_chartView(new QChartView),
-      m_series(new QLineSeries) {
-  m_chart->setAnimationOptions(QChart::AllAnimations);
-  m_series->setName("Bar 1");
-  m_modelMapper->setXColumn(1);
-  m_modelMapper->setYColumn(4);
-  m_modelMapper->setSeries(m_series);
-  m_modelMapper->setModel(m_model);
-  m_chart->addSeries(m_series);
+Q_LOGGING_CATEGORY(chartView, "chartView");
+
+ChartViewWidget::ChartViewWidget(BenchmarkProxyModel* model, QWidget* parent)
+    : QWidget(parent), m_model(model), m_chartView(new QChartView) {
   m_chartView->setRenderHint(QPainter::Antialiasing);
 
   QHBoxLayout* mainLayout = new QHBoxLayout;
@@ -47,10 +38,26 @@ ChartViewWidget::ChartViewWidget(BenchmarkModel* model, QWidget* parent)
   setLayout(mainLayout);
 }
 
-void ChartViewWidget::refresh(int colX, int colY) {
-  m_modelMapper->setXColumn(colX);
-  m_modelMapper->setYColumn(colY);
-  m_modelMapper->setSeries(m_series);
-  m_modelMapper->setModel(m_model);
+void ChartViewWidget::update() {
+  m_chart = new QChart;
+  m_series = new QBarSeries;
+  auto entryCount = m_model->rowCount();
+  qCDebug(chartView) << "Entry count: " << entryCount;
+  for (auto i = 0; i < entryCount; i++) {
+    QModelIndex nameIndex = m_model->index(i, 1, QModelIndex());
+    QModelIndex valueIndex = m_model->index(i, 4, QModelIndex());
+    QString name = m_model->data(nameIndex).toString();
+    double val = m_model->data(valueIndex).toDouble();
+    QBarSet* set = new QBarSet(name);
+    qCDebug(chartView) << "Entry [" << i << "]: " << name << " -> " << val;
+    *set << val;
+    m_series->append(set);
+  }
   m_chart->addSeries(m_series);
+  m_chart->legend()->setVisible(true);
+  m_chart->legend()->setAlignment(Qt::AlignRight);
+  m_chart->createDefaultAxes();
+  m_chart->setAnimationOptions(QChart::AllAnimations);
+  m_chartView->setChart(m_chart);
+  m_chartView->setRenderHint(QPainter::Antialiasing);
 }

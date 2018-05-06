@@ -25,29 +25,30 @@
 #ifndef CHARTVIEWWIDGET_H
 #define CHARTVIEWWIDGET_H
 
+#include <QLoggingCategory>
+#include <QtCharts/QBarSeries>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
 #include <QtCharts/QVXYModelMapper>
 #include <QtWidgets>
-#include "benchmarkmodel.h"
+#include "benchmarkproxymodel.h"
+
+Q_DECLARE_LOGGING_CATEGORY(chartView);
 
 QT_CHARTS_USE_NAMESPACE
 
 class ChartViewWidget : public QWidget {
  public:
-  ChartViewWidget(BenchmarkModel* model, QWidget* parent = nullptr);
-
-  void refresh(int colX, int colY);
+  ChartViewWidget(BenchmarkProxyModel* model, QWidget* parent = nullptr);
 
  public slots:
+  void update();
 
  private:
-  BenchmarkModel* m_model;
+  BenchmarkProxyModel* m_model;
   QChart* m_chart;
-  QVXYModelMapper* m_modelMapper;
   QChartView* m_chartView;
-  QLineSeries* m_series;
+  QBarSeries* m_series;
 };
 
 #endif  // CHARTVIEWWIDGET_H
