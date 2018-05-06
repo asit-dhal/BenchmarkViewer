@@ -69,17 +69,17 @@ class MainWindow : public QMainWindow {
   void createMenus();
   void createWidgets();
   void connectSignalsToSlots();
-
   void updateRecentFileActions();
+  void updateCloseFileActions();
 
  public slots:
   void onNewBenchmarks(QString filename, Benchmark benchmark);
 
  private slots:
   void onOpenFile();
-  void onCloseFile();
+  void onCloseFile(QString filename);
   void onCloseAllFiles();
-  void onCloseAllFilesExceptSelected();
+  void onExportChart();
   void onExit();
   void onNewFileSelected(QString file);
   void onSelectedFilesWidgetContextMenu(const QPoint& pos);
@@ -92,14 +92,15 @@ class MainWindow : public QMainWindow {
  private:
   QMenu* m_fileMenu;
   QMenu* m_recentFileMenu;
+  QMenu* m_closeFileMenu;
   QMenu* m_viewMenu;
   QMenu* m_helpMenu;
 
   QAction* m_openFileAction;
   QList<QAction*> m_openRecentFilesAction;
-  QList<QAction*> m_closeFileAction;
+  QList<QAction*> m_closeFileActions;
   QAction* m_closeAllFilesAction;
-  QAction* m_closeAllFilesExceptSelectedAction;
+  QAction* m_exportChart;
   QAction* m_exitAction;
 
   QAction* m_toogleSelectedFileWidget;

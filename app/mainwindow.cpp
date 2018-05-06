@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   createWidgets();
   connectSignalsToSlots();
   updateRecentFileActions();
+  updateCloseFileActions();
   showMaximized();
 }
 
@@ -69,12 +70,8 @@ void MainWindow::createActions() {
   connect(m_closeAllFilesAction, &QAction::triggered, this,
           &MainWindow::onCloseAllFiles);
 
-  m_closeAllFilesExceptSelectedAction =
-      new QAction(tr("Close all files except selected"), this);
-  m_closeAllFilesExceptSelectedAction->setStatusTip(
-      tr("Close All Files except selected"));
-  connect(m_closeAllFilesExceptSelectedAction, &QAction::triggered, this,
-          &MainWindow::onCloseAllFilesExceptSelected);
+  m_exportChart = new QAction(tr("Export Chart as png"), this);
+  connect(m_exportChart, &QAction::triggered, this, &MainWindow::onExportChart);
 
   m_exitAction = new QAction(tr("E&xit"), this);
   m_exitAction->setStatusTip(tr("Exit"));
@@ -122,14 +119,40 @@ void MainWindow::updateRecentFileActions() {
   }
 }
 
+void MainWindow::updateCloseFileActions() {
+  qDeleteAll(m_closeFileActions);
+  m_closeFileActions.clear();
+
+  int i = 1;
+  foreach (QString openedFile, m_files) {
+    if (openedFile.isEmpty())
+      continue;
+    QString text = tr("&%1 %2").arg(i).arg(QFileInfo(openedFile).fileName());
+    QAction* closeFileAction = new QAction(text, this);
+    closeFileAction->setData(openedFile);
+    closeFileAction->setVisible(true);
+    connect(closeFileAction, &QAction::triggered,
+            [ this, _closeFile = openedFile ]() {
+              emit selectedFileDeleted(_closeFile);
+            });
+    i++;
+    m_closeFileActions.append(closeFileAction);
+  }
+
+  foreach (QAction* closeFileAction, m_closeFileActions) {
+    m_closeFileMenu->addAction(closeFileAction);
+  }
+}
+
 void MainWindow::createMenus() {
   m_fileMenu = menuBar()->addMenu(tr("&File"));
   m_fileMenu->addAction(m_openFileAction);
   m_recentFileMenu = m_fileMenu->addMenu(tr("Recent Files"));
+  m_closeFileMenu = m_fileMenu->addMenu(tr("Close File(s)"));
 
   // m_fileMenu->addAction(m_closeFileAction);
   m_fileMenu->addAction(m_closeAllFilesAction);
-  m_fileMenu->addAction(m_closeAllFilesExceptSelectedAction);
+  m_fileMenu->addAction(m_exportChart);
   m_fileMenu->addAction(m_exitAction);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
@@ -151,7 +174,8 @@ void MainWindow::onOpenFile() {
   }
 }
 
-void MainWindow::onCloseFile() {
+void MainWindow::onCloseFile(QString filename) {
+  onSelectedFileDeleted(filename);
   qCDebug(mainWindow) << "closing file";
 }
 
@@ -161,7 +185,13 @@ void MainWindow::onCloseAllFiles() {
   }
 }
 
-void MainWindow::onCloseAllFilesExceptSelected() {}
+void MainWindow::onExportChart() {
+  QPixmap pixmap = m_chartView->grab();
+  QString fileName = QFileDialog::getSaveFileName(
+      this, tr("Save Chart as png"), "", tr("images (*.png);;All Files (*)"));
+  if (!fileName.isEmpty())
+    pixmap.save(fileName, "PNG");
+}
 
 void MainWindow::onExit() {
   qCDebug(mainWindow) << "closing application";
@@ -230,6 +260,9 @@ void MainWindow::onSelectedFileDeleted(QString file) {
 void MainWindow::connectSignalsToSlots() {
   connect(this, SIGNAL(newFileSelected(QString)), this,
           SLOT(onNewFileSelected(QString)));
+
+  connect(this, &MainWindow::newFileSelected, this,
+          [this](QString) { updateCloseFileActions(); });
   connect(this, SIGNAL(selectedFileDeleted(QString)), this,
           SLOT(onSelectedFileDeleted(QString)));
   connect(m_parser, SIGNAL(parsingFinished(QString, Benchmark)), this,
