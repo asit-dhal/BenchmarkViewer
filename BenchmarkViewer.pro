@@ -18,7 +18,8 @@ SOURCES += \
     benchmark.cpp \
     benchmarkview.cpp \
     benchmarkdelegate.cpp \
-    chartviewwidget.cpp
+    chartviewwidget.cpp \
+    benchmarkproxymodel.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -30,4 +31,5 @@ HEADERS += \
     benchmark.h \
     benchmarkview.h \
     benchmarkdelegate.h \
-    chartviewwidget.h
+    chartviewwidget.h \
+    benchmarkproxymodel.h

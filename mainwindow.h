@@ -51,6 +51,7 @@ class BenchmarkView;
 class QLineEdit;
 class QPushButton;
 class BenchmarkDelegate;
+class BenchmarkProxyModel;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -101,6 +102,7 @@ class MainWindow : public QMainWindow {
 
   QStack<QString> m_files;
   QListWidget* m_selectedFilesWidget;
+  BenchmarkProxyModel* m_proxyModel;
   BenchmarkModel* m_benchmarkModel;
   BenchmarkView* m_benchmarkView;
   BenchmarkDelegate* m_benchmarkDelegate;

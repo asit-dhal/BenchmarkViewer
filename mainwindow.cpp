@@ -40,6 +40,7 @@
 #include <QTableView>
 #include "benchmarkdelegate.h"
 #include "benchmarkmodel.h"
+#include "benchmarkproxymodel.h"
 #include "benchmarkview.h"
 
 Q_LOGGING_CATEGORY(mainWindow, "mainWindow");
@@ -145,12 +146,15 @@ void MainWindow::createWidgets() {
   m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
   m_benchmarkSelector = new QPushButton(tr("Select All"), this);
   m_benchmarkModel = new BenchmarkModel(this);
+  m_proxyModel = new BenchmarkProxyModel(this);
   m_benchmarkView = new BenchmarkView(this);
   m_benchmarkDelegate = new BenchmarkDelegate(this);
 
-  m_benchmarkView->setModel(m_benchmarkModel);
+  m_proxyModel->setSourceModel(m_benchmarkModel);
+  m_benchmarkView->setModel(m_proxyModel);
   m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
   m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
+  m_benchmarkView->setSortingEnabled(true);
   QHBoxLayout* benchmarkFilterLayout = new QHBoxLayout;
   benchmarkFilterLayout->addWidget(m_benchmarkSelector);
   benchmarkFilterLayout->addWidget(m_benchmarkNameFilter);
