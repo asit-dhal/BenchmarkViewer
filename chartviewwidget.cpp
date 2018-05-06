@@ -24,6 +24,7 @@
 
 #include "chartviewwidget.h"
 
+#include <QBarCategoryAxis>
 #include <QBarSet>
 #include <QHBoxLayout>
 
@@ -45,18 +46,25 @@ void ChartViewWidget::update() {
   qCDebug(chartView) << "Entry count: " << entryCount;
   for (auto i = 0; i < entryCount; i++) {
     QModelIndex nameIndex = m_model->index(i, 1, QModelIndex());
-    QModelIndex valueIndex = m_model->index(i, 4, QModelIndex());
+    QModelIndex cpuTimeIndex = m_model->index(i, 4, QModelIndex());
+    QModelIndex realTimeIndex = m_model->index(i, 3, QModelIndex());
     QString name = m_model->data(nameIndex).toString();
-    double val = m_model->data(valueIndex).toDouble();
+    double cpuTime = m_model->data(cpuTimeIndex).toDouble();
+    double realTime = m_model->data(realTimeIndex).toDouble();
     QBarSet* set = new QBarSet(name);
-    qCDebug(chartView) << "Entry [" << i << "]: " << name << " -> " << val;
-    *set << val;
+    *set << cpuTime << realTime;
     m_series->append(set);
   }
   m_chart->addSeries(m_series);
   m_chart->legend()->setVisible(true);
   m_chart->legend()->setAlignment(Qt::AlignRight);
+  QStringList categories;
+  categories << "CPU Time"
+             << "Real Time";
+  QBarCategoryAxis* axis = new QBarCategoryAxis();
+  axis->append(categories);
   m_chart->createDefaultAxes();
+  m_chart->setAxisX(axis, m_series);
   m_chart->setAnimationOptions(QChart::AllAnimations);
   m_chartView->setChart(m_chart);
   m_chartView->setRenderHint(QPainter::Antialiasing);
