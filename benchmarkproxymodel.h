@@ -27,6 +27,7 @@
 
 #include <QLoggingCategory>
 #include <QSortFilterProxyModel>
+#include <QString>
 
 Q_DECLARE_LOGGING_CATEGORY(proxyModel);
 
@@ -37,6 +38,8 @@ class BenchmarkProxyModel : public QSortFilterProxyModel {
  protected:
   bool lessThan(const QModelIndex& left,
                 const QModelIndex& right) const override;
+  bool filterAcceptsRow(int sourceRow,
+                        const QModelIndex& sourceParent) const override;
 };
 
 #endif  // BENCHMARKPROXYMODEL_H

@@ -34,9 +34,6 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
   QVariant leftData = sourceModel()->data(left);
   QVariant rightData = sourceModel()->data(right);
 
-  qCDebug(proxyModel) << "LeftData: " << leftData
-                      << " RightData: " << rightData;
-
   auto col = left.column();
 
   if (col == 0) {
@@ -50,4 +47,19 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
 
   return QString::localeAwareCompare(leftData.toString(),
                                      rightData.toString()) < 0;
+}
+
+bool BenchmarkProxyModel::filterAcceptsRow(
+    int sourceRow,
+    const QModelIndex& sourceParent) const {
+  qCDebug(proxyModel) << "Row filtered: true ";
+  QModelIndex index = sourceModel()->index(sourceRow, 1, sourceParent);
+  if (sourceModel()->data(index).toString().toLower().trimmed().contains(
+          filterRegExp())) {
+    qCDebug(proxyModel) << "Row filtered: true ";
+    return true;
+  } else {
+    qCDebug(proxyModel) << "Row filtered: true ";
+    return false;
+  }
 }
