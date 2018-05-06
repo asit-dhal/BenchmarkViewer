@@ -39,6 +39,7 @@
 #include <QRegExp>
 #include <QSplitter>
 #include <QTableView>
+#include "appconfig.h"
 #include "benchmarkdelegate.h"
 #include "benchmarkmodel.h"
 #include "benchmarkproxymodel.h"
@@ -52,26 +53,16 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   createMenus();
   createWidgets();
   connectSignalsToSlots();
+  updateRecentFileActions();
   showMaximized();
 }
 
 MainWindow::~MainWindow() {}
 
 void MainWindow::createActions() {
-  m_openFileAction = new QAction(tr("&Open"), this);
+  m_openFileAction = new QAction(tr("&Open File(s)"), this);
   m_openFileAction->setShortcuts(QKeySequence::Open);
-  m_openFileAction->setStatusTip(tr("Open a new file"));
   connect(m_openFileAction, &QAction::triggered, this, &MainWindow::onOpenFile);
-
-  QString recentFileName = "";
-  if (!m_files.empty()) {
-    recentFileName = " " + m_files.top();
-  }
-  m_closeFileAction = new QAction(tr("&Close") + recentFileName, this);
-  m_closeFileAction->setShortcuts(QKeySequence::Close);
-  m_closeFileAction->setStatusTip(tr("Close file") + recentFileName);
-  connect(m_closeFileAction, &QAction::triggered, this,
-          &MainWindow::onCloseFile);
 
   m_closeAllFilesAction = new QAction(tr("Close All files"), this);
   m_closeAllFilesAction->setStatusTip(tr("Close All Files "));
@@ -101,10 +92,42 @@ void MainWindow::createActions() {
   connect(m_aboutApp, &QAction::triggered, this, &MainWindow::onAboutApp);
 }
 
+void MainWindow::updateRecentFileActions() {
+  qDeleteAll(m_openRecentFilesAction);
+  m_openRecentFilesAction.clear();
+
+  QStringList recentFiles = readRecentFiles();
+  qCDebug(mainWindow) << "Recent Files: " << recentFiles.size() << "->"
+                      << recentFiles;
+  int i = 1;
+  foreach (QString recentFile, recentFiles) {
+    if (recentFile.isEmpty())
+      continue;
+    QString text = tr("&%1 %2").arg(i).arg(QFileInfo(recentFile).fileName());
+    QAction* recentFileAction = new QAction(text, this);
+    recentFileAction->setData(recentFile);
+    recentFileAction->setVisible(true);
+    connect(recentFileAction, &QAction::triggered,
+            [ this, _recentFile = recentFile ]() {
+              updateRecentFiles(_recentFile);
+              updateRecentFileActions();
+              emit newFileSelected(_recentFile);
+            });
+    i++;
+    m_openRecentFilesAction.append(recentFileAction);
+  }
+
+  foreach (QAction* recentFileAction, m_openRecentFilesAction) {
+    m_recentFileMenu->addAction(recentFileAction);
+  }
+}
+
 void MainWindow::createMenus() {
   m_fileMenu = menuBar()->addMenu(tr("&File"));
   m_fileMenu->addAction(m_openFileAction);
-  m_fileMenu->addAction(m_closeFileAction);
+  m_recentFileMenu = m_fileMenu->addMenu(tr("Recent Files"));
+
+  // m_fileMenu->addAction(m_closeFileAction);
   m_fileMenu->addAction(m_closeAllFilesAction);
   m_fileMenu->addAction(m_closeAllFilesExceptSelectedAction);
   m_fileMenu->addAction(m_exitAction);
@@ -121,6 +144,8 @@ void MainWindow::onOpenFile() {
       QFileDialog::getOpenFileNames(this, tr("Open Directory"), "/home");
   for (auto file : files) {
     if (!file.isEmpty()) {
+      updateRecentFiles(file);
+      updateRecentFileActions();
       emit newFileSelected(file);
     }
   }

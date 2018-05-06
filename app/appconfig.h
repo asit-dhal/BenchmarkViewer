@@ -22,23 +22,14 @@
 
 ========================================================================*/
 
-#include <QApplication>
-#include <QLoggingCategory>
-#include "appconfig.h"
-#include "mainwindow.h"
+#ifndef APPCONFIG_H
+#define APPCONFIG_H
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
+#include <QSettings>
+#include <QStringList>
 
-  loadAppSettings();
+void loadAppSettings();
+QStringList readRecentFiles();
+void updateRecentFiles(QString fileName);
 
-  MainWindow w;
-
-  QLoggingCategory::setFilterRules(
-      "*.debug=true\n"
-      "qt.*.debug=false\n");
-
-  w.show();
-
-  return a.exec();
-}
+#endif  // APPCONFIG_H

@@ -70,6 +70,8 @@ class MainWindow : public QMainWindow {
   void createWidgets();
   void connectSignalsToSlots();
 
+  void updateRecentFileActions();
+
  public slots:
   void onNewBenchmarks(QString filename, Benchmark benchmark);
 
@@ -89,12 +91,13 @@ class MainWindow : public QMainWindow {
 
  private:
   QMenu* m_fileMenu;
+  QMenu* m_recentFileMenu;
   QMenu* m_viewMenu;
   QMenu* m_helpMenu;
 
   QAction* m_openFileAction;
-  QAction* m_recentFilesAction;
-  QAction* m_closeFileAction;
+  QList<QAction*> m_openRecentFilesAction;
+  QList<QAction*> m_closeFileAction;
   QAction* m_closeAllFilesAction;
   QAction* m_closeAllFilesExceptSelectedAction;
   QAction* m_exitAction;

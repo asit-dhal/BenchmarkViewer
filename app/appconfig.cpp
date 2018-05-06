@@ -22,23 +22,36 @@
 
 ========================================================================*/
 
-#include <QApplication>
-#include <QLoggingCategory>
 #include "appconfig.h"
-#include "mainwindow.h"
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
+void loadAppSettings() {
+  QSettings::setDefaultFormat(QSettings::IniFormat);
+}
 
-  loadAppSettings();
+QStringList readRecentFiles() {
+  QSettings appSettings;
+  appSettings.beginGroup("recent-files");
+  QString temp = appSettings.value("files").toString();
+  QStringList recentFiles;
+  recentFiles << temp.split(" ");
+  appSettings.endGroup();
+  return recentFiles;
+}
 
-  MainWindow w;
+void updateRecentFiles(QString fileName) {
+  QSettings appSettings;
+  appSettings.beginGroup("recent-files");
+  QString temp = appSettings.value("files").toString();
+  QStringList recentFiles;
+  recentFiles << temp.split(" ");
+  if (recentFiles.contains(fileName)) {
+    recentFiles.removeOne(fileName);
+  }
+  recentFiles.push_front(fileName);
+  if (recentFiles.size() > 5)
+    recentFiles.pop_back();
+  appSettings.setValue("files", recentFiles.join(" "));
 
-  QLoggingCategory::setFilterRules(
-      "*.debug=true\n"
-      "qt.*.debug=false\n");
-
-  w.show();
-
-  return a.exec();
+  // appSettings.setValue("files", ""); // to reset recent file list
+  appSettings.endGroup();
 }
