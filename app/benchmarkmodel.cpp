@@ -68,8 +68,8 @@ void BenchmarkModel::removeBenchmark(QString filename) {
   QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
   qCDebug(benchmarkModel) << "Removing benchmark file: " << filename;
 
+  beginResetModel();
   while (itr != m_benchmarks.end()) {
-    qCDebug(benchmarkModel) << "benchmark file in table: " << itr->filename;
     if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) {
       if (itr->isSelected) {
         emit measurementInactive(itr->measurement);
@@ -79,10 +79,10 @@ void BenchmarkModel::removeBenchmark(QString filename) {
       ++itr;
     }
   }
+  endResetModel();
 
-  emit layoutChanged();
-  emit QAbstractItemModel::dataChanged(createIndex(0, 0),
-                                       createIndex(m_benchmarks.size(), 7));
+  qCDebug(benchmarkModel) << "All benchmarks removed from the file: "
+                          << filename;
 }
 
 QVariant BenchmarkModel::headerData(int section,
