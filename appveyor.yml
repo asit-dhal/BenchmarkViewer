@@ -3,6 +3,11 @@ version: '{build}'
 init:
 - git config --global core.autocrlf input
 
+branches:
+  only:
+    - appveyor
+
+
 environment:
   matrix:
   - QT5: C:\Qt\5.7\mingw53_32
@@ -37,5 +42,5 @@ build_script:
     cd .\example)
   else (
     qmake -v &&
-    qmake ..\BenchmarkViewer\BenchmarkViewer.pro CONFIG+=release DESTDIR=%cd% &&
-    mingw32-make &&
+    qmake ..\BenchmarkViewer.pro CONFIG+=release DESTDIR=%cd% &&
+    mingw32-make)
