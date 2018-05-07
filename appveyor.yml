@@ -44,3 +44,14 @@ build_script:
     qmake -v &&
     qmake ..\BenchmarkViewer.pro CONFIG+=release DESTDIR=%cd% &&
     mingw32-make)
+
+after_build:
+  - mkdir bin
+  - copy BenchmarkViewer.exe bin\
+  - windeployqt bin\BenchmarkViewer.exe
+  - 7z a BenchmarkViewer.7z bin\*
+  - dir
+
+artifacts:
+  - path: build\BenchmarkViewer.7z
+    name: BenchmarkViewer
