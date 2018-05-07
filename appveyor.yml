@@ -5,7 +5,7 @@ init:
 
 branches:
   only:
-    - appveyor
+    - master
 
 
 environment:
