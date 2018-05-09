@@ -86,7 +86,6 @@ class MainWindow : public QMainWindow {
   void onSelectedFileDeleted(QString file);
   void onToogleSelectedFileWidget();
   void onBenchmarkFilter(QString filter);
-  void onBenchmarkSelector();
   void onAboutApp();
 
  private:
@@ -117,7 +116,6 @@ class MainWindow : public QMainWindow {
   ChartViewWidget* m_chartView;
 
   QLineEdit* m_benchmarkNameFilter;
-  QPushButton* m_benchmarkSelector;
 };
 
 #endif  // MAINWINDOW_H

@@ -28,7 +28,7 @@
 Q_LOGGING_CATEGORY(proxyModel, "proxyModel")
 
 BenchmarkProxyModel::BenchmarkProxyModel(QObject* parent)
-    : QSortFilterProxyModel(parent), m_onlySelected(false) {}
+    : QSortFilterProxyModel(parent) {}
 
 bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
                                    const QModelIndex& right) const {
@@ -55,16 +55,8 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
 bool BenchmarkProxyModel::filterAcceptsRow(
     int sourceRow,
     const QModelIndex& sourceParent) const {
-  QModelIndex statusIndex = sourceModel()->index(
-      sourceRow, static_cast<int>(Columns::STATUS), sourceParent);
   QModelIndex nameIndex = sourceModel()->index(
       sourceRow, static_cast<int>(Columns::FILENAME), sourceParent);
-
-  if (m_onlySelected) {
-    if (!sourceModel()->data(statusIndex).toBool()) {
-      return false;
-    }
-  }
 
   if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(
           filterRegExp())) {
@@ -72,13 +64,4 @@ bool BenchmarkProxyModel::filterAcceptsRow(
   } else {
     return false;
   }
-}
-
-bool BenchmarkProxyModel::onlySelected() const {
-  return m_onlySelected;
-}
-
-void BenchmarkProxyModel::setOnlySelected(bool onlySelected) {
-  m_onlySelected = onlySelected;
-  invalidateFilter();
 }

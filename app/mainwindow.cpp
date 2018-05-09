@@ -207,7 +207,6 @@ void MainWindow::createWidgets() {
   QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
   m_benchmarkNameFilter = new QLineEdit(this);
   m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
-  m_benchmarkSelector = new QPushButton(tr("Only Selected"), this);
   m_benchmarkModel = new BenchmarkModel(this);
   m_proxyModel = new BenchmarkProxyModel(this);
   m_benchmarkView = new BenchmarkView(this);
@@ -220,7 +219,6 @@ void MainWindow::createWidgets() {
   m_benchmarkView->setSortingEnabled(true);
   m_benchmarkView->sortByColumn(1, Qt::DescendingOrder);
   QHBoxLayout* benchmarkFilterLayout = new QHBoxLayout;
-  benchmarkFilterLayout->addWidget(m_benchmarkSelector);
   benchmarkFilterLayout->addWidget(m_benchmarkNameFilter);
   QVBoxLayout* benchmarkLayout = new QVBoxLayout;
   benchmarkLayout->addLayout(benchmarkFilterLayout);
@@ -270,8 +268,6 @@ void MainWindow::connectSignalsToSlots() {
 
   connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this,
           SLOT(onBenchmarkFilter(QString)));
-  connect(m_benchmarkSelector, SIGNAL(clicked()), this,
-          SLOT(onBenchmarkSelector()));
 
   connect(m_benchmarkModel, &BenchmarkModel::measurementActive, m_chartView,
           &ChartViewWidget::onAddMeasurement);
@@ -310,16 +306,6 @@ void MainWindow::onBenchmarkFilter(QString filterText) {
   qCDebug(mainWindow) << "Benchmark filter: " << filterText;
   QRegExp regExp(filterText.toLower(), Qt::CaseSensitive, QRegExp::FixedString);
   m_proxyModel->setFilterRegExp(regExp);
-}
-
-void MainWindow::onBenchmarkSelector() {
-  if (m_proxyModel->onlySelected()) {
-    m_benchmarkSelector->setText(tr("Show All"));
-    m_proxyModel->setOnlySelected(false);
-  } else {
-    m_benchmarkSelector->setText(tr("Show Only Selected"));
-    m_proxyModel->setOnlySelected(true);
-  }
 }
 
 void MainWindow::onAboutApp() {

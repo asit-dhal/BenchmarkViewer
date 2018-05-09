@@ -35,17 +35,11 @@ class BenchmarkProxyModel : public QSortFilterProxyModel {
  public:
   BenchmarkProxyModel(QObject* parent = nullptr);
 
-  bool onlySelected() const;
-  void setOnlySelected(bool onlySelected);
-
  protected:
   bool lessThan(const QModelIndex& left,
                 const QModelIndex& right) const override;
   bool filterAcceptsRow(int sourceRow,
                         const QModelIndex& sourceParent) const override;
-
- private:
-  bool m_onlySelected;
 };
 
 #endif  // BENCHMARKPROXYMODEL_H
