@@ -1,3 +1,6 @@
+# Copyright(c) 2018 Asit Dhal.
+# Distributed under the MIT License (http://opensource.org/licenses/MIT)
+
 project(BenchmarkViewer)
 
 cmake_minimum_required(VERSION 3.2.2)

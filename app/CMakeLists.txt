@@ -1,3 +1,6 @@
+# Copyright(c) 2018 Asit Dhal.
+# Distributed under the MIT License (http://opensource.org/licenses/MIT)
+
 set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5Widgets 5.10 REQUIRED)

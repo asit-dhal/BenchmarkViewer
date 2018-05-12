@@ -1,3 +1,6 @@
+# Copyright(c) 2018 Asit Dhal.
+# Distributed under the MIT License (http://opensource.org/licenses/MIT)
+
 QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

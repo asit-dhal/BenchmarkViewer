@@ -1,3 +1,6 @@
+# Copyright(c) 2018 Asit Dhal.
+# Distributed under the MIT License (http://opensource.org/licenses/MIT)
+
 language: cpp
 dist: trusty
 
@@ -61,17 +64,15 @@ install:
     fi
 
 script:
-  - git submodule update --init --recursive
-
   - mkdir ./build && cd ./build
   - if [ "$USE_CMAKE" = "true" ]; then
       cmake --version;
-      cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF ..;
+      cmake -DCMAKE_BUILD_TYPE=Release ..;
       make -j2;
     else
       qmake -v;
       qmake ../BenchmarkViewer.pro CONFIG+=release;
-      make;
+      make -j2  ;
     fi
 
 
