@@ -1,10 +1,6 @@
 language: cpp
 dist: trusty
 
-os:
-- linux
-- osx
-
 matrix:
   include:
   - os: linux
