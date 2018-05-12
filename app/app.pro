@@ -37,4 +37,5 @@ HEADERS += \
     appconfig.h
 
 DISTFILES += \
-    appconfig.ini
+    appconfig.ini \
+    CMakeLists.txt
