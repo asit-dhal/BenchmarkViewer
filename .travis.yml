@@ -4,19 +4,6 @@ compiler:
 - clang
 - gcc
 
-env:
-- QT_BASE=57
-- QT_BASE=58
-- QT_BASE=59
-- QT_BASE=510
-
-
-matrix:
-  allow_failures:
-  - compiler: clang
-    env: QT_BASE=57
-  - compiler: clang
-    env: QT_BASE=58
 
 before_install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
@@ -26,11 +13,7 @@ before_install:
     sudo sh -c "echo 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise main' >> /etc/apt/sources.list"
     wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
   fi
-- if [ "$QT_BASE" = "57" ]; then sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y; fi
-- if [ "$QT_BASE" = "58" ]; then sudo add-apt-repository ppa:beineri/opt-qt58-trusty -y; fi
-- if [ "$QT_BASE" = "59" ]; then sudo add-apt-repository ppa:beineri/opt-qt593-trusty -y; fi
-- if [ "$QT_BASE" = "59" ]; then sudo add-apt-repository ppa:beineri/opt-qt-5.10.1-trusty -y; fi
-- sudo apt-get update -qq
+- sudo apt install qt5-default libqt5charts5 libqt5charts5-dev -y
 
 install:
 - sudo apt-get install -qq g++-5 gcc-5
@@ -41,7 +24,6 @@ install:
     export CXX="clang++" CC="clang"
   fi
 - $CXX --version
-- sudo apt-get install -qq qt${QT_BASE}base qt${QT_BASE}script; source /opt/qt${QT_BASE}/bin/qt${QT_BASE}-env.sh
 
 script:
 - qmake -r "QMAKE_CXX=$CXX" "QMAKE_CC=$CC"
