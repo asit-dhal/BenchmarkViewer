@@ -3,6 +3,7 @@ dist: trusty
 
 os:
 - linux
+- osx
 
 matrix:
   include:
@@ -15,11 +16,27 @@ matrix:
   - os: linux
     dist: trusty
     sudo: required
+    compiler: clang
+    env:
+     - QT_BASE=510
+  - os: linux
+    dist: trusty
+    sudo: required
     compiler: gcc
+    env:
+     - QT_BASE=510 USE_CMAKE=true
+  - os: linux
+    dist: trusty
+    sudo: required
+    compiler: clang
     env:
      - QT_BASE=510 USE_CMAKE=true
   - os: osx
     compiler: clang
+    env:
+     - QT_BASE=510
+  - os: osx
+    compiler: gcc
     env:
      - QT_BASE=510
 
