@@ -1,30 +1,30 @@
 language: cpp
+dist: trusty
 
-compiler:
-- clang
-- gcc
+os:
+- linux
+#- osx
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - freeglut3-dev
+    - gcc-5
+    - g++-5
+
+env:
+- BUILDDIR=build-release
 
 before_install:
-- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-- |
-  if [ "$CXX" = "clang" ]; then
-    sudo sh -c "echo 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise-4.0-binaries main' >> /etc/apt/sources.list"
-    sudo sh -c "echo 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise main' >> /etc/apt/sources.list"
-    wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-  fi
-- sudo apt install qt5-default libqt5charts5 libqt5charts5-dev -y
-
-install:
-- sudo apt-get install -qq g++-5 gcc-5
-- if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
-- |
-  if [ "$CXX" = "clang" ]; then
-    sudo apt-get install -qq llvm-4.0
-    export CXX="clang++" CC="clang"
-  fi
-- $CXX --version
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo script/before_install_linux.sh; export QTDIR=/opt/qt57; export QMAKECC=gcc-5; export QMAKECXX=g++-5; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/before_install_osx.sh; export QTDIR=/usr/local/Cellar/qt57; export QMAKECC=clang; export QMAKECXX=clang++; fi
 
 script:
-- qmake -r "QMAKE_CXX=$CXX" "QMAKE_CC=$CC"
-- make -j4
+- echo $QTDIR
+- mkdir $BUILDDIR
+- cd $BUILDDIR
+- source $QTDIR/bin/qt57-env.sh
+- $QTDIR/bin/qmake -spec linux-g++-64 QMAKE_CC=$QMAKECC QMAKE_CXX=$QMAKECXX -Wall ../BenchmarkViewer.pro
+- make
