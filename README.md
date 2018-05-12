@@ -2,6 +2,13 @@
 
 Qt application to view Google Microbenchmarking data https://github.com/google/benchmark. 
 
+### Build Status
+| Build  | Status |
+|------- | -------- |
+| AppVeyor | [![Build status](https://ci.appveyor.com/api/projects/status/2ryk3cvxmygfp22g?svg=true)](https://ci.appveyor.com/api/projects/status/2ryk3cvxmygfp22g?svg=true) |
+| Travis | [![Build Status](https://travis-ci.org/asit-dhal/BenchmarkViewer.svg?branch=master)](https://travis-ci.org/asit-dhal/BenchmarkViewer.svg?branch=master) |
+
+
 ### Supported Platforms
 
 The standalone binary packages support the following platforms:
