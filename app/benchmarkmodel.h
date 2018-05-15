@@ -49,6 +49,8 @@ enum class Columns {
   FILENAME
 };
 
+Q_DECLARE_METATYPE(Columns);
+
 static const int COLUMN_COUNT = 7;
 
 QString columnName(Columns cols);

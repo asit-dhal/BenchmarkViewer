@@ -29,6 +29,7 @@
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QItemSelectionModel>
 #include <QKeySequence>
 #include <QLineEdit>
 #include <QListWidget>
@@ -61,6 +62,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 MainWindow::~MainWindow() {}
 
 void MainWindow::createActions() {
+  qCDebug(mainWindow) << "Creating Actions";
   m_openFileAction = new QAction(tr("&Open File(s)"), this);
   m_openFileAction->setShortcuts(QKeySequence::Open);
   connect(m_openFileAction, &QAction::triggered, this, &MainWindow::onOpenFile);
@@ -83,6 +85,17 @@ void MainWindow::createActions() {
   m_toogleSelectedFileWidget->setCheckable(true);
   connect(m_toogleSelectedFileWidget, &QAction::triggered, this,
           &MainWindow::onToogleSelectedFileWidget);
+
+  for (auto i = static_cast<int>(Columns::NAME);
+       i <= static_cast<int>(Columns::FILENAME); i++) {
+    QAction* showColumn =
+        new QAction(columnName(static_cast<Columns>(i)), this);
+    showColumn->setCheckable(true);
+    // showColumn->setProperty("column", static_cast<Columns>(i));
+    connect(showColumn, &QAction::triggered, this,
+            &MainWindow::onToggleColumnAction);
+    m_showColumns.append(showColumn);
+  }
 
   m_aboutApp = new QAction(tr("About BenchmarkViewer"), this);
   m_aboutApp->setStatusTip(tr("About BenchmarkViewer"));
@@ -145,6 +158,7 @@ void MainWindow::updateCloseFileActions() {
 }
 
 void MainWindow::createMenus() {
+  qCDebug(mainWindow) << "Creating Menus";
   m_fileMenu = menuBar()->addMenu(tr("&File"));
   m_fileMenu->addAction(m_openFileAction);
   m_recentFileMenu = m_fileMenu->addMenu(tr("Recent Files"));
@@ -157,9 +171,19 @@ void MainWindow::createMenus() {
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toogleSelectedFileWidget);
+  m_showColumnsSubMenu = m_viewMenu->addMenu(tr("Columns"));
+  m_showColumnsSubMenu->addActions(m_showColumns);
 
   m_helpMenu = menuBar()->addMenu(tr("&Help"));
   m_helpMenu->addAction(m_aboutApp);
+}
+
+void MainWindow::onSelectionChanged(const QItemSelection& selected,
+                                    const QItemSelection& deselected) {
+  Q_UNUSED(selected);
+  Q_UNUSED(deselected);
+  //  qCDebug(mainWindow) << "new selected: " << selected;
+  //  qCDebug(mainWindow) << "deselected: " << deselected;
 }
 
 void MainWindow::onOpenFile() {
@@ -199,6 +223,7 @@ void MainWindow::onExit() {
 }
 
 void MainWindow::createWidgets() {
+  qCDebug(mainWindow) << "Creating Widgets";
   m_selectedFilesWidget = new QListWidget();
   m_selectedFilesWidget->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(m_selectedFilesWidget, SIGNAL(customContextMenuRequested(QPoint)),
@@ -241,6 +266,9 @@ void MainWindow::createWidgets() {
   m_benchmarkView->hideColumn(2);
   m_benchmarkView->hideColumn(5);
   m_benchmarkView->hideColumn(6);
+
+  m_selectionModel = new QItemSelectionModel(m_proxyModel);
+  m_benchmarkView->setSelectionModel(m_selectionModel);
 }
 
 void MainWindow::onNewFileSelected(QString file) {
@@ -256,6 +284,7 @@ void MainWindow::onSelectedFileDeleted(QString file) {
 }
 
 void MainWindow::connectSignalsToSlots() {
+  qCDebug(mainWindow) << "Connecting Signals to Slots";
   connect(this, SIGNAL(newFileSelected(QString)), this,
           SLOT(onNewFileSelected(QString)));
 
@@ -273,6 +302,9 @@ void MainWindow::connectSignalsToSlots() {
           &ChartViewWidget::onAddMeasurement);
   connect(m_benchmarkModel, &BenchmarkModel::measurementInactive, m_chartView,
           &ChartViewWidget::onRemoveMeasurement);
+
+  connect(m_selectionModel, &QItemSelectionModel::selectionChanged, this,
+          &MainWindow::onSelectionChanged);
 }
 
 void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
@@ -315,3 +347,5 @@ void MainWindow::onAboutApp() {
 
   QMessageBox::about(this, tr("About BenchmarkViewer"), text);
 }
+
+void MainWindow::onToggleColumnAction() {}

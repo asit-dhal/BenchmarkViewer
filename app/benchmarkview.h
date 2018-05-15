@@ -27,7 +27,6 @@ class BenchmarkView : public QTableView {
   QAction* m_hideAction;
   QAction* m_moveLastAction;
   QAction* m_moveFirstAction;
-
   QList<int> m_currentHiddenColumns;
 };
 

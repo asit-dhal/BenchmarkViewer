@@ -32,8 +32,8 @@ Q_LOGGING_CATEGORY(benchmarkView, "benchmarkView")
 BenchmarkView::BenchmarkView(QWidget* parent) : QTableView(parent) {
   m_header = horizontalHeader();
   m_header->setSectionsMovable(true);
-  m_header->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(m_header, SIGNAL(customContextMenuRequested(const QPoint&)), this,
+  setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this,
           SLOT(onShowHeaderMenu(const QPoint&)));
 
   m_hideAction = new QAction("Hide", this);
@@ -49,6 +49,7 @@ BenchmarkView::BenchmarkView(QWidget* parent) : QTableView(parent) {
 }
 
 void BenchmarkView::onShowHeaderMenu(QPoint p) {
+  qCDebug(benchmarkView) << "context menu requested";
   QMenu menu;
   QPoint p2 = mapToGlobal(p);
 

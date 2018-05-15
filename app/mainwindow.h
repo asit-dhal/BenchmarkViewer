@@ -52,6 +52,8 @@ class QLineEdit;
 class QPushButton;
 class BenchmarkDelegate;
 class BenchmarkProxyModel;
+class QItemSelectionModel;
+class QItemSelection;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -74,6 +76,7 @@ class MainWindow : public QMainWindow {
 
  public slots:
   void onNewBenchmarks(QString filename, Benchmark benchmark);
+  void onToggleColumnAction();
 
  private slots:
   void onOpenFile();
@@ -87,12 +90,15 @@ class MainWindow : public QMainWindow {
   void onToogleSelectedFileWidget();
   void onBenchmarkFilter(QString filter);
   void onAboutApp();
+  void onSelectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected);
 
  private:
   QMenu* m_fileMenu;
   QMenu* m_recentFileMenu;
   QMenu* m_closeFileMenu;
   QMenu* m_viewMenu;
+  QMenu* m_showColumnsSubMenu;
   QMenu* m_helpMenu;
 
   QAction* m_openFileAction;
@@ -103,12 +109,14 @@ class MainWindow : public QMainWindow {
   QAction* m_exitAction;
 
   QAction* m_toogleSelectedFileWidget;
+  QList<QAction*> m_showColumns;
   QAction* m_aboutApp;
 
   QStack<QString> m_files;
   QListWidget* m_selectedFilesWidget;
   BenchmarkProxyModel* m_proxyModel;
   BenchmarkModel* m_benchmarkModel;
+  QItemSelectionModel* m_selectionModel;
   BenchmarkView* m_benchmarkView;
   BenchmarkDelegate* m_benchmarkDelegate;
   Parser* m_parser;
