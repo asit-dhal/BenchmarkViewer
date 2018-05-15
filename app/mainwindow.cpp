@@ -45,11 +45,12 @@
 #include "benchmarkmodel.h"
 #include "benchmarkproxymodel.h"
 #include "benchmarkview.h"
-
-Q_LOGGING_CATEGORY(mainWindow, "mainWindow");
+#include "bmcolumns.h"
+#include "globals.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   m_parser = new Parser(this);
+  m_bmColumns = new BmColumns(this);
   createActions();
   createMenus();
   createWidgets();
@@ -62,7 +63,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 MainWindow::~MainWindow() {}
 
 void MainWindow::createActions() {
-  qCDebug(mainWindow) << "Creating Actions";
+  qCDebug(gui) << "Creating Actions";
   m_openFileAction = new QAction(tr("&Open File(s)"), this);
   m_openFileAction->setShortcuts(QKeySequence::Open);
   connect(m_openFileAction, &QAction::triggered, this, &MainWindow::onOpenFile);
@@ -86,14 +87,19 @@ void MainWindow::createActions() {
   connect(m_toogleSelectedFileWidget, &QAction::triggered, this,
           &MainWindow::onToogleSelectedFileWidget);
 
-  for (auto i = static_cast<int>(Columns::NAME);
-       i <= static_cast<int>(Columns::FILENAME); i++) {
+  for (auto i = 0; i < m_bmColumns->getColumnCount(); i++) {
+    auto col = m_bmColumns->indexToColumns(i);
     QAction* showColumn =
-        new QAction(columnName(static_cast<Columns>(i)), this);
+        new QAction(m_bmColumns->columnNameToString(col), this);
     showColumn->setCheckable(true);
-    // showColumn->setProperty("column", static_cast<Columns>(i));
-    connect(showColumn, &QAction::triggered, this,
-            &MainWindow::onToggleColumnAction);
+    showColumn->setChecked(!m_bmColumns->isColumnHidden(col));
+    connect(showColumn, &QAction::triggered, this, [=]() {
+      if (m_bmColumns->isColumnHidden(col)) {
+        emit m_bmColumns->showColumn(col);
+      } else {
+        emit m_bmColumns->hideColumn(col);
+      }
+    });
     m_showColumns.append(showColumn);
   }
 
@@ -107,8 +113,7 @@ void MainWindow::updateRecentFileActions() {
   m_openRecentFilesAction.clear();
 
   QStringList recentFiles = readRecentFiles();
-  qCDebug(mainWindow) << "Recent Files: " << recentFiles.size() << "->"
-                      << recentFiles;
+  qCDebug(gui) << "Recent Files: " << recentFiles.size() << "->" << recentFiles;
   int i = 1;
   foreach (QString recentFile, recentFiles) {
     if (recentFile.isEmpty())
@@ -158,13 +163,12 @@ void MainWindow::updateCloseFileActions() {
 }
 
 void MainWindow::createMenus() {
-  qCDebug(mainWindow) << "Creating Menus";
+  qCDebug(gui) << "Creating Menus";
   m_fileMenu = menuBar()->addMenu(tr("&File"));
   m_fileMenu->addAction(m_openFileAction);
   m_recentFileMenu = m_fileMenu->addMenu(tr("Recent Files"));
   m_closeFileMenu = m_fileMenu->addMenu(tr("Close File(s)"));
 
-  // m_fileMenu->addAction(m_closeFileAction);
   m_fileMenu->addAction(m_closeAllFilesAction);
   m_fileMenu->addAction(m_exportChart);
   m_fileMenu->addAction(m_exitAction);
@@ -200,7 +204,7 @@ void MainWindow::onOpenFile() {
 
 void MainWindow::onCloseFile(QString filename) {
   onSelectedFileDeleted(filename);
-  qCDebug(mainWindow) << "closing file";
+  qCDebug(gui) << "closing file";
 }
 
 void MainWindow::onCloseAllFiles() {
@@ -218,12 +222,12 @@ void MainWindow::onExportChart() {
 }
 
 void MainWindow::onExit() {
-  qCDebug(mainWindow) << "closing application";
+  qCDebug(gui) << "closing application";
   QApplication::quit();
 }
 
 void MainWindow::createWidgets() {
-  qCDebug(mainWindow) << "Creating Widgets";
+  qCDebug(gui) << "Creating Widgets";
   m_selectedFilesWidget = new QListWidget();
   m_selectedFilesWidget->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(m_selectedFilesWidget, SIGNAL(customContextMenuRequested(QPoint)),
@@ -232,9 +236,9 @@ void MainWindow::createWidgets() {
   QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
   m_benchmarkNameFilter = new QLineEdit(this);
   m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
-  m_benchmarkModel = new BenchmarkModel(this);
-  m_proxyModel = new BenchmarkProxyModel(this);
-  m_benchmarkView = new BenchmarkView(this);
+  m_benchmarkModel = new BenchmarkModel(m_bmColumns, this);
+  m_proxyModel = new BenchmarkProxyModel(m_bmColumns, this);
+  m_benchmarkView = new BenchmarkView(m_bmColumns, this);
   m_benchmarkDelegate = new BenchmarkDelegate(this);
 
   m_proxyModel->setSourceModel(m_benchmarkModel);
@@ -263,9 +267,6 @@ void MainWindow::createWidgets() {
 
   m_selectedFilesWidget->hide();
   m_toogleSelectedFileWidget->setChecked(m_selectedFilesWidget->isVisible());
-  m_benchmarkView->hideColumn(2);
-  m_benchmarkView->hideColumn(5);
-  m_benchmarkView->hideColumn(6);
 
   m_selectionModel = new QItemSelectionModel(m_proxyModel);
   m_benchmarkView->setSelectionModel(m_selectionModel);
@@ -284,7 +285,7 @@ void MainWindow::onSelectedFileDeleted(QString file) {
 }
 
 void MainWindow::connectSignalsToSlots() {
-  qCDebug(mainWindow) << "Connecting Signals to Slots";
+  qCDebug(gui) << "Connecting Signals to Slots";
   connect(this, SIGNAL(newFileSelected(QString)), this,
           SLOT(onNewFileSelected(QString)));
 
@@ -305,6 +306,11 @@ void MainWindow::connectSignalsToSlots() {
 
   connect(m_selectionModel, &QItemSelectionModel::selectionChanged, this,
           &MainWindow::onSelectionChanged);
+
+  connect(m_bmColumns, &BmColumns::showColumn,
+          [this]() { onUpdateColumnStatus(); });
+  connect(m_bmColumns, &BmColumns::hideColumn,
+          [this]() { onUpdateColumnStatus(); });
 }
 
 void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos) {
@@ -335,7 +341,7 @@ void MainWindow::onToogleSelectedFileWidget() {
 }
 
 void MainWindow::onBenchmarkFilter(QString filterText) {
-  qCDebug(mainWindow) << "Benchmark filter: " << filterText;
+  qCDebug(gui) << "Benchmark filter: " << filterText;
   QRegExp regExp(filterText.toLower(), Qt::CaseSensitive, QRegExp::FixedString);
   m_proxyModel->setFilterRegExp(regExp);
 }
@@ -348,4 +354,18 @@ void MainWindow::onAboutApp() {
   QMessageBox::about(this, tr("About BenchmarkViewer"), text);
 }
 
-void MainWindow::onToggleColumnAction() {}
+void MainWindow::onToggleColumnAction() {
+  QAction* act = qobject_cast<QAction*>(sender());
+  BmColumns::Columns col = act->data().value<BmColumns::Columns>();
+  if (m_bmColumns->isColumnHidden(col))
+    emit m_bmColumns->showColumn(col);
+  else
+    emit m_bmColumns->hideColumn(col);
+}
+
+void MainWindow::onUpdateColumnStatus() {
+  for (auto i = 0; i < m_bmColumns->getColumnCount(); i++) {
+    auto col = m_bmColumns->indexToColumns(i);
+    m_showColumns.at(i)->setChecked(!m_bmColumns->isColumnHidden(col));
+  }
+}

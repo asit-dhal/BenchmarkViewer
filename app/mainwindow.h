@@ -38,8 +38,6 @@
 #include "chartviewwidget.h"
 #include "parser.h"
 
-Q_DECLARE_LOGGING_CATEGORY(mainWindow);
-
 QT_CHARTS_USE_NAMESPACE
 
 class QMenu;
@@ -54,6 +52,7 @@ class BenchmarkDelegate;
 class BenchmarkProxyModel;
 class QItemSelectionModel;
 class QItemSelection;
+class BmColumns;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -77,6 +76,7 @@ class MainWindow : public QMainWindow {
  public slots:
   void onNewBenchmarks(QString filename, Benchmark benchmark);
   void onToggleColumnAction();
+  void onUpdateColumnStatus();
 
  private slots:
   void onOpenFile();
@@ -119,6 +119,7 @@ class MainWindow : public QMainWindow {
   QItemSelectionModel* m_selectionModel;
   BenchmarkView* m_benchmarkView;
   BenchmarkDelegate* m_benchmarkDelegate;
+  BmColumns* m_bmColumns;
   Parser* m_parser;
   QChart* m_chart;
   ChartViewWidget* m_chartView;
