@@ -39,24 +39,12 @@ struct BenchmarkViewUnit {
   bool isSelected{false};
 };
 
-enum class Columns {
-  STATUS,
-  NAME,
-  ITERATIONS,
-  REAL_TIME,
-  CPU_TIME,
-  TIME_UNIT,
-  FILENAME
-};
-
-static const int COLUMN_COUNT = 7;
-
-QString columnName(Columns cols);
+class BmColumns;
 
 class BenchmarkModel : public QAbstractTableModel {
   Q_OBJECT
  public:
-  explicit BenchmarkModel(QObject* parent = nullptr);
+  explicit BenchmarkModel(BmColumns* bmColumns, QObject* parent = nullptr);
   void addBenchmark(QString filename, Benchmark benchmarks);
   void removeBenchmark(QString filename);
   QVariant headerData(int section,
@@ -79,6 +67,7 @@ class BenchmarkModel : public QAbstractTableModel {
 
  private:
   QList<BenchmarkViewUnit> m_benchmarks;
+  BmColumns* m_bmColumns;
 };
 
 #endif  // BENCHMARKMODEL_H

@@ -22,29 +22,6 @@
 
 ========================================================================*/
 
-#ifndef BENCHMARKPROXYMODEL_H
-#define BENCHMARKPROXYMODEL_H
+#include "globals.h"
 
-#include <QLoggingCategory>
-#include <QSortFilterProxyModel>
-#include <QString>
-
-class BmColumns;
-
-Q_DECLARE_LOGGING_CATEGORY(proxyModel);
-
-class BenchmarkProxyModel : public QSortFilterProxyModel {
- public:
-  BenchmarkProxyModel(BmColumns* bmColumns, QObject* parent = nullptr);
-
- protected:
-  bool lessThan(const QModelIndex& left,
-                const QModelIndex& right) const override;
-  bool filterAcceptsRow(int sourceRow,
-                        const QModelIndex& sourceParent) const override;
-
- private:
-  BmColumns* m_bmColumns;
-};
-
-#endif  // BENCHMARKPROXYMODEL_H
+Q_LOGGING_CATEGORY(gui, "gui")

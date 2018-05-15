@@ -25,29 +25,12 @@
 #include "benchmarkmodel.h"
 #include <QAbstractItemModel>
 #include <QColor>
+#include "bmcolumns.h"
 
 Q_LOGGING_CATEGORY(benchmarkModel, "benchmarkModel")
 
-QString columnName(Columns cols) {
-  switch (cols) {
-    case Columns::STATUS:
-      return QString(QObject::tr("Status"));
-    case Columns::NAME:
-      return QString(QObject::tr("Name"));
-    case Columns::ITERATIONS:
-      return QString(QObject::tr("Iterations"));
-    case Columns::REAL_TIME:
-      return QString(QObject::tr("Realtime"));
-    case Columns::CPU_TIME:
-      return QString(QObject::tr("Cpu Time"));
-    case Columns::TIME_UNIT:
-      return QString(QObject::tr("Timeunit"));
-    case Columns::FILENAME:
-      return QString(QObject::tr("Filename"));
-  }
-}
-
-BenchmarkModel::BenchmarkModel(QObject* parent) : QAbstractTableModel(parent) {}
+BenchmarkModel::BenchmarkModel(BmColumns* bmColumns, QObject* parent)
+    : QAbstractTableModel(parent), m_bmColumns(bmColumns) {}
 
 void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
   auto mmt = benchmark.getMeasurements();
@@ -60,8 +43,9 @@ void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
   }
 
   emit layoutChanged();
-  emit dataChanged(createIndex(0, 0),
-                   createIndex(m_benchmarks.size(), COLUMN_COUNT - 1));
+  emit dataChanged(
+      createIndex(0, 0),
+      createIndex(m_benchmarks.size(), m_bmColumns->getColumnCount() - 1));
 }
 
 void BenchmarkModel::removeBenchmark(QString filename) {
@@ -93,23 +77,11 @@ QVariant BenchmarkModel::headerData(int section,
   }
 
   if (orientation == Qt::Horizontal) {
-    switch (static_cast<Columns>(section)) {
-      case Columns::STATUS:
-        return QString(QObject::tr("Status"));
-      case Columns::NAME:
-        return QString(QObject::tr("Name"));
-      case Columns::ITERATIONS:
-        return QString(QObject::tr("Iterations"));
-      case Columns::REAL_TIME:
-        return QString(QObject::tr("Realtime"));
-      case Columns::CPU_TIME:
-        return QString(QObject::tr("Cpu Time"));
-      case Columns::TIME_UNIT:
-        return QString(QObject::tr("Timeunit"));
-      case Columns::FILENAME:
-        return QString(QObject::tr("Filename"));
-      default:
-        return QVariant();
+    BmColumns::Columns cols = m_bmColumns->indexToColumns(section);
+    if (cols != BmColumns::Columns::INVALID) {
+      return m_bmColumns->columnNameToString(cols);
+    } else {
+      return QVariant();
     }
   } else if (orientation == Qt::Vertical) {
     return QString("%1").arg(section + 1);
@@ -125,7 +97,7 @@ int BenchmarkModel::rowCount(const QModelIndex& parent) const {
 
 int BenchmarkModel::columnCount(const QModelIndex& parent) const {
   Q_UNUSED(parent);
-  return COLUMN_COUNT;
+  return m_bmColumns->getColumnCount();
 }
 
 QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
@@ -137,20 +109,21 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
 
   if (role == Qt::DisplayRole) {
     BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-    switch (static_cast<Columns>(index.column())) {
-      case Columns::STATUS:
+    BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
+    switch (cols) {
+      case BmColumns::Columns::STATUS:
         return viewunit.isSelected;
-      case Columns::NAME:
+      case BmColumns::Columns::NAME:
         return viewunit.measurement.getName();
-      case Columns::ITERATIONS:
+      case BmColumns::Columns::ITERATIONS:
         return viewunit.measurement.getIterations();
-      case Columns::REAL_TIME:
+      case BmColumns::Columns::REAL_TIME:
         return viewunit.measurement.getRealTime();
-      case Columns::CPU_TIME:
+      case BmColumns::Columns::CPU_TIME:
         return viewunit.measurement.getCpuTime();
-      case Columns::TIME_UNIT:
+      case BmColumns::Columns::TIME_UNIT:
         return viewunit.measurement.getTimeUnit();
-      case Columns::FILENAME:
+      case BmColumns::Columns::FILENAME:
         return viewunit.filename;
       default:
         return QVariant();
@@ -181,10 +154,12 @@ bool BenchmarkModel::setData(const QModelIndex& index,
                              int role) {
   if (index.isValid() && role == Qt::EditRole) {
     auto row = index.row();
-    if (static_cast<Columns>(index.column()) == Columns::STATUS) {
+    BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
+    if (cols == BmColumns::Columns::STATUS) {
       m_benchmarks[row].isSelected = value.toBool();
-      emit dataChanged(createIndex(index.row(), 0),
-                       createIndex(index.row(), COLUMN_COUNT - 1));
+      emit dataChanged(
+          createIndex(index.row(), 0),
+          createIndex(index.row(), m_bmColumns->getColumnCount() - 1));
       if (m_benchmarks[row].isSelected) {
         emit measurementActive(m_benchmarks[row].measurement);
       } else {

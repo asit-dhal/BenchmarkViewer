@@ -22,29 +22,51 @@
 
 ========================================================================*/
 
-#ifndef BENCHMARKPROXYMODEL_H
-#define BENCHMARKPROXYMODEL_H
+#ifndef BMCOLUMNS_H
+#define BMCOLUMNS_H
 
-#include <QLoggingCategory>
-#include <QSortFilterProxyModel>
-#include <QString>
+#include <QMap>
+#include <QMetaType>
+#include <QObject>
 
-class BmColumns;
-
-Q_DECLARE_LOGGING_CATEGORY(proxyModel);
-
-class BenchmarkProxyModel : public QSortFilterProxyModel {
+class BmColumns : public QObject {
+  Q_OBJECT
  public:
-  BenchmarkProxyModel(BmColumns* bmColumns, QObject* parent = nullptr);
+  enum class Columns {
+    INVALID,
+    STATUS,
+    NAME,
+    ITERATIONS,
+    REAL_TIME,
+    CPU_TIME,
+    TIME_UNIT,
+    FILENAME
+  };
 
- protected:
-  bool lessThan(const QModelIndex& left,
-                const QModelIndex& right) const override;
-  bool filterAcceptsRow(int sourceRow,
-                        const QModelIndex& sourceParent) const override;
+  int getColumnCount() { return m_columnIndex.size(); }
+
+  QString columnNameToString(Columns cols);
+  int columnNameToIndex(Columns cols);
+  BmColumns::Columns indexToColumns(int index);
+  bool isColumnHidden(Columns cols);
+  BmColumns(QObject* parent = nullptr);
+
+ signals:
+  void hideColumn(Columns);
+  void showColumn(Columns);
+
+ public slots:
+  void onHideColumn(Columns col);
+  void onShowColumn(Columns col);
 
  private:
-  BmColumns* m_bmColumns;
+  QMap<Columns, bool> m_columnViewStatus;
+  QMap<Columns, int> m_columnIndex;
+  QMap<Columns, QString> m_columnName;
 };
 
-#endif  // BENCHMARKPROXYMODEL_H
+Q_DECLARE_METATYPE(BmColumns::Columns);
+
+QDebug operator<<(QDebug d, const BmColumns::Columns& mmt);
+
+#endif  // BMCOLUMNS_H

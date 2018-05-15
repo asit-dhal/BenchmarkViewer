@@ -22,6 +22,8 @@ set(SRCS
     mainwindow.cpp
     measurement.cpp
     parser.cpp
+    globals.cpp
+    bmcolumns.cpp
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
