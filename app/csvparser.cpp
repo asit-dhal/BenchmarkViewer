@@ -64,6 +64,13 @@ QList<QString> CsvParser::parseHeaders(QString header) {
 
 QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
                                               QStringList& header) {
+  auto cleanString = [](QString s) -> QString {
+    s = s.trimmed();
+    s.replace("'", "");
+    s.replace("\"", "");
+    return s.trimmed();
+  };
+
   QList<Measurement> mmts;
   for (auto const& rec : data) {
     QStringList fields = rec.split(",", QString::KeepEmptyParts);
@@ -72,10 +79,7 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
     for (auto i = 0; i < header.size(); i++) {
       qCDebug(parser) << "Data: " << fields;
       if (header.at(i).compare("name", Qt::CaseInsensitive) == 0) {
-        QString name = fields.at(i);
-        name.replace("'", "");
-        name.replace("\"", "");
-        mmt.setName(name);
+        mmt.setName(cleanString(fields.at(i)));
       } else if (header.at(i).compare("iterations", Qt::CaseInsensitive) == 0) {
         mmt.setIterations(fields.at(i).toDouble());
       } else if (header.at(i).compare("real_time", Qt::CaseInsensitive) == 0) {
@@ -91,13 +95,13 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
                                       Qt::CaseInsensitive) == 0) {
         mmt.setItemsPerSecond(fields.at(i).toDouble());
       } else if (header.at(i).compare("label", Qt::CaseInsensitive) == 0) {
-        mmt.setLabel(fields.at(i).trimmed());
+        mmt.setLabel(cleanString(fields.at(i)));
       } else if (header.at(i).compare("error_occured", Qt::CaseInsensitive) ==
                  0) {
         mmt.setErrorOccured(fields.at(i).toInt());
       } else if (header.at(i).compare("error_message", Qt::CaseInsensitive) ==
                  0) {
-        mmt.setErrorMessage(fields.at(i).trimmed());
+        mmt.setErrorMessage(cleanString(fields.at(i)));
       } else {
         qCDebug(parser) << "Error occured Unknown field: " << fields.at(i);
       }

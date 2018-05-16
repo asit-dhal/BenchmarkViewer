@@ -112,6 +112,30 @@ QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json) {
         mmt.setTimeUnit(jsonObj["time_unit"].toString());
       }
 
+      if (jsonObj.contains("bytes_per_second") &&
+          jsonObj["bytes_per_second"].isDouble()) {
+        mmt.setBytesPerSecond(jsonObj["bytes_per_second"].toDouble());
+      }
+
+      if (jsonObj.contains("items_per_second") &&
+          jsonObj["items_per_second"].isDouble()) {
+        mmt.setItemsPerSecond(jsonObj["items_per_second"].toDouble());
+      }
+
+      if (jsonObj.contains("label") && jsonObj["label"].isString()) {
+        mmt.setLabel(jsonObj["label"].toString());
+      }
+
+      if (jsonObj.contains("error_occured") &&
+          jsonObj["error_occured"].isBool()) {
+        mmt.setErrorOccured(jsonObj["error_occured"].toBool());
+      }
+
+      if (jsonObj.contains("error_message") &&
+          jsonObj["error_message"].isString()) {
+        mmt.setErrorMessage(jsonObj["error_message"].toString());
+      }
+
       mmts.push_back(mmt);
     }
   } else {
