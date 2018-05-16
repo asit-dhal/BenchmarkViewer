@@ -49,6 +49,15 @@ before_install:
       brew update;
       brew cleanup;
     fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      wget -q -O - http://files.viva64.com/etc/pubkey.txt | sudo apt-key add - ;
+      sudo wget -O /etc/apt/sources.list.d/viva64.list http://files.viva64.com/etc/viva64.list ;
+      sudo apt-get update;
+      sudo apt-get install strace;
+      sudo apt-get install pvs-studio;
+      wget https://github.com/viva64/how-to-use-pvs-studio-free/releases/download/v1.1/how-to-use-pvs-studio-free.tar.gz;
+      tar -xzf how-to-use-pvs-studio-free.tar.gz;
+    fi
 
 install:
   - if [ "$QT_BASE" = "510" ]; then
@@ -75,6 +84,17 @@ script:
       make -j2  ;
     fi
 
+after_success:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      cd ..;
+      root=${PWD};
+      mkdir -p "${root}/static_analysis";
+      ./how-to-use-pvs-studio-free -c 1 .;
+      pvs-studio-analyzer trace -o "${root}/static_analysis/strace_out" -- make -j2;
+      pvs-studio-analyzer analyze -f "${root}/static_analysis/strace_out" -o "${root}/static_analysis/project.log";
+      plog-converter -a GA:1,2 -t tasklist -o "${root}/static_analysis/project.tasks" "${root}/static_analysis/project.log";
+      cat static_analysis/project.tasks;
+    fi
 
 notifications:
 email: false
