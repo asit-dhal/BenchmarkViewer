@@ -246,6 +246,7 @@ void MainWindow::createWidgets() {
   m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
   m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
   m_benchmarkView->setSortingEnabled(true);
+  m_benchmarkView->setSelectionBehavior(QAbstractItemView::SelectRows);
   m_benchmarkView->sortByColumn(1, Qt::DescendingOrder);
   QHBoxLayout* benchmarkFilterLayout = new QHBoxLayout;
   benchmarkFilterLayout->addWidget(m_benchmarkNameFilter);
@@ -306,6 +307,14 @@ void MainWindow::connectSignalsToSlots() {
 
   connect(m_selectionModel, &QItemSelectionModel::selectionChanged, this,
           &MainWindow::onSelectionChanged);
+  connect(m_benchmarkView, &BenchmarkView::select, this,
+          &MainWindow::onPlotSelection);
+  connect(m_benchmarkView, &BenchmarkView::selectAllRows, this,
+          &MainWindow::onPlotAllRows);
+  connect(m_benchmarkView, &BenchmarkView::clearSelection, this,
+          &MainWindow::onClearSelection);
+  connect(m_benchmarkView, &BenchmarkView::clearAllRows, this,
+          &MainWindow::onClearAllRows);
 
   connect(m_bmColumns, &BmColumns::showColumn,
           [this]() { onUpdateColumnStatus(); });
@@ -367,5 +376,55 @@ void MainWindow::onUpdateColumnStatus() {
   for (auto i = 0; i < m_bmColumns->getColumnCount(); i++) {
     auto col = m_bmColumns->indexToColumns(i);
     m_showColumns.at(i)->setChecked(!m_bmColumns->isColumnHidden(col));
+  }
+}
+
+void MainWindow::onPlotSelection() {
+  QItemSelectionModel* select = m_benchmarkView->selectionModel();
+  if (select->hasSelection()) {
+    foreach (QModelIndex idx, select->selectedRows()) {
+      auto srcIdx = m_proxyModel->mapToSource(idx);
+      qCDebug(gui) << "proxy model index: " << idx
+                   << " source model index : " << srcIdx;
+      m_benchmarkModel->setData(srcIdx, true);
+    }
+  }
+}
+
+void MainWindow::onPlotAllRows() {
+  m_benchmarkView->selectAll();
+  QItemSelectionModel* select = m_benchmarkView->selectionModel();
+  if (select->hasSelection()) {
+    foreach (QModelIndex idx, select->selectedRows()) {
+      auto srcIdx = m_proxyModel->mapToSource(idx);
+      qCDebug(gui) << "proxy model index: " << idx
+                   << " source model index : " << srcIdx;
+      m_benchmarkModel->setData(srcIdx, true);
+    }
+  }
+}
+
+void MainWindow::onClearSelection() {
+  QItemSelectionModel* select = m_benchmarkView->selectionModel();
+  if (select->hasSelection()) {
+    foreach (QModelIndex idx, select->selectedRows()) {
+      auto srcIdx = m_proxyModel->mapToSource(idx);
+      qCDebug(gui) << "proxy model index: " << idx
+                   << " source model index : " << srcIdx;
+      m_benchmarkModel->setData(srcIdx, false);
+    }
+  }
+}
+
+void MainWindow::onClearAllRows() {
+  m_benchmarkView->selectAll();
+  QItemSelectionModel* select = m_benchmarkView->selectionModel();
+  if (select->hasSelection()) {
+    foreach (QModelIndex idx, select->selectedRows()) {
+      auto srcIdx = m_proxyModel->mapToSource(idx);
+      qCDebug(gui) << "proxy model index: " << idx
+                   << " source model index : " << srcIdx;
+      m_benchmarkModel->setData(srcIdx, false);
+    }
   }
 }

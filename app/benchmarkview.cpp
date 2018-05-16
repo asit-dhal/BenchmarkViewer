@@ -33,7 +33,11 @@ BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
   m_header->setSectionsMovable(true);
   m_header->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(m_header, SIGNAL(customContextMenuRequested(const QPoint&)), this,
-          SLOT(onShowHeaderMenu(const QPoint&)));
+          SLOT(onContextMenuOnHeader(const QPoint&)));
+
+  this->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this,
+          SLOT(onContextMenuOnBody(const QPoint&)));
 
   for (auto i = 0; i < m_bmColumns->getColumnCount(); i++) {
     auto col = m_bmColumns->indexToColumns(i);
@@ -58,6 +62,18 @@ BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
   connect(m_moveFirstAction, SIGNAL(triggered(bool)), this,
           SLOT(onSlotMoveFirst()));
 
+  m_select = new QAction(tr("Select"), this);
+  connect(m_select, &QAction::triggered, [&]() { emit this->select(); });
+  m_selectAll = new QAction(tr("Select All"), this);
+  connect(m_selectAll, &QAction::triggered,
+          [&]() { emit this->selectAllRows(); });
+  m_clearSelection = new QAction(tr("Clear Selection"), this);
+  connect(m_clearSelection, &QAction::triggered,
+          [&]() { emit this->clearSelection(); });
+  m_clearAllRows = new QAction(tr("Clear All rows"), this);
+  connect(m_clearAllRows, &QAction::triggered,
+          [&]() { emit this->clearAllRows(); });
+
   qCDebug(gui)
       << "signal[BmColumns::hideColumn] -> slot[BenchmarkView::onHideColumn]";
   connect(m_bmColumns, &BmColumns::hideColumn, this,
@@ -68,16 +84,29 @@ BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
           &BenchmarkView::onShowColumn);
 }
 
-void BenchmarkView::onShowHeaderMenu(QPoint p) {
+void BenchmarkView::onContextMenuOnHeader(QPoint p) {
   qCDebug(gui) << "context menu requested";
   QMenu menu;
   QPoint p2 = mapToGlobal(p);
   int logicIndex = m_header->logicalIndexAt(p);
+  qCDebug(gui) << "Logical Index: " << logicIndex;
   menu.addActions(m_columnShowHideActions);
+  menu.addSeparator();
   menu.addAction(m_moveLastAction);
   m_moveLastAction->setData(logicIndex);
   menu.addAction(m_moveFirstAction);
   m_moveFirstAction->setData(logicIndex);
+  menu.exec(p2);
+}
+
+void BenchmarkView::onContextMenuOnBody(QPoint p) {
+  qCDebug(gui) << "context menu requested";
+  QMenu menu;
+  QPoint p2 = mapToGlobal(p);
+  menu.addAction(m_select);
+  menu.addAction(m_selectAll);
+  menu.addAction(m_clearSelection);
+  menu.addAction(m_clearAllRows);
   menu.exec(p2);
 }
 

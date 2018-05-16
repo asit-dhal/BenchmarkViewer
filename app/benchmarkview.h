@@ -14,12 +14,19 @@ class BenchmarkView : public QTableView {
   BenchmarkView(BmColumns* bmColumns, QWidget* parent = 0);
   ~BenchmarkView() = default;
 
+ signals:
+  void select();
+  void selectAllRows();
+  void clearSelection();
+  void clearAllRows();
+
  public slots:
   void onShowColumn(BmColumns::Columns col);
   void onHideColumn(BmColumns::Columns col);
 
  private slots:
-  void onShowHeaderMenu(QPoint p);
+  void onContextMenuOnHeader(QPoint p);
+  void onContextMenuOnBody(QPoint p);
   void onSlotMoveLast();
   void onSlotMoveFirst();
 
@@ -30,6 +37,11 @@ class BenchmarkView : public QTableView {
   QList<QAction*> m_columnShowHideActions;
   QAction* m_moveLastAction;
   QAction* m_moveFirstAction;
+
+  QAction* m_select;
+  QAction* m_selectAll;
+  QAction* m_clearSelection;
+  QAction* m_clearAllRows;
   QList<int> m_currentHiddenColumns;
 };
 
