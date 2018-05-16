@@ -35,17 +35,14 @@ BenchmarkModel::BenchmarkModel(BmColumns* bmColumns, QObject* parent)
 void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
   auto mmt = benchmark.getMeasurements();
   qCDebug(benchmarkModel) << "Adding benchmark file: " << filename;
+  beginResetModel();
   for (auto itr = mmt.begin(); itr != mmt.end(); itr++) {
     BenchmarkViewUnit unit;
     unit.filename = filename;
     unit.measurement = *itr;
     m_benchmarks.append(unit);
   }
-
-  emit layoutChanged();
-  emit dataChanged(
-      createIndex(0, 0),
-      createIndex(m_benchmarks.size(), m_bmColumns->getColumnCount() - 1));
+  endResetModel();
 }
 
 void BenchmarkModel::removeBenchmark(QString filename) {

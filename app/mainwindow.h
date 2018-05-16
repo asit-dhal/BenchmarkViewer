@@ -92,6 +92,10 @@ class MainWindow : public QMainWindow {
   void onAboutApp();
   void onSelectionChanged(const QItemSelection& selected,
                           const QItemSelection& deselected);
+  void onPlotSelection();
+  void onPlotAllRows();
+  void onClearSelection();
+  void onClearAllRows();
 
  private:
   QMenu* m_fileMenu;
