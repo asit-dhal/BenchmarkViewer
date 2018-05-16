@@ -47,7 +47,8 @@ SOURCES += \
     bmcolumns.cpp \
     globals.cpp \
     jsonparser.cpp \
-    csvparser.cpp
+    csvparser.cpp \
+    abstractparser.cpp
 
 HEADERS += \
         mainwindow.h \

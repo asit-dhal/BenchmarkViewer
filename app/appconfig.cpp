@@ -51,7 +51,5 @@ void updateRecentFiles(QString fileName) {
   if (recentFiles.size() > 5)
     recentFiles.pop_back();
   appSettings.setValue("files", recentFiles.join(" "));
-
-  // appSettings.setValue("files", ""); // to reset recent file list
   appSettings.endGroup();
 }

@@ -1,6 +1,6 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
@@ -21,22 +21,6 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
+#include "abstractparser.h"
 
-#ifndef ABSTRACTPARSER_H
-#define ABSTRACTPARSER_H
-
-#include <QObject>
-#include <QVector>
-#include "benchmark.h"
-
-class AbstractParser : public QObject {
-  Q_OBJECT
- public:
-  AbstractParser(QObject* parent = nullptr);
-  virtual void parse(QString filename) = 0;
- signals:
-  void parsingStatus(QString statusMsg);
-  void parsingFinished(QString fileName, Benchmark benchmark);
-};
-
-#endif  // ABSTRACTPARSER_H
+AbstractParser::AbstractParser(QObject* parent) : QObject(parent) {}
