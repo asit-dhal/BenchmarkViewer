@@ -22,19 +22,17 @@
 
 ========================================================================*/
 
-#include "parser.h"
-#include <QDebug>
+#include "jsonparser.h"
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include "globals.h"
 
-Q_LOGGING_CATEGORY(parser, "parser")
+JsonParser::JsonParser(QObject* parent) : AbstractParser(parent) {}
 
-Parser::Parser(QObject* parent) : QObject(parent) {}
-
-void Parser::parse(QString filename) {
+void JsonParser::parse(QString filename) {
   emit parsingStatus(QString("Parsing started: ") + filename);
   qCDebug(parser) << "Parsing started: " << filename;
   QFile file;
@@ -54,7 +52,7 @@ void Parser::parse(QString filename) {
   qCDebug(parser) << "Parsing finished: " << filename;
 }
 
-Context Parser::parseContext(const QJsonObject& json) {
+Context JsonParser::parseContext(const QJsonObject& json) {
   Context ctx;
   if (json.contains("context")) {
     QJsonObject ctxJObject = json["context"].toObject();
@@ -86,7 +84,7 @@ Context Parser::parseContext(const QJsonObject& json) {
   return ctx;
 }
 
-QVector<Measurement> Parser::parseBenchmarks(const QJsonObject& json) {
+QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json) {
   QVector<Measurement> mmts;
   if (json.contains("benchmarks") && json["benchmarks"].isArray()) {
     QJsonArray jsonArrayObject = json["benchmarks"].toArray();

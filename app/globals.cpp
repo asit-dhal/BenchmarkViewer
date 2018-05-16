@@ -25,3 +25,4 @@
 #include "globals.h"
 
 Q_LOGGING_CATEGORY(gui, "gui")
+Q_LOGGING_CATEGORY(parser, "parser")

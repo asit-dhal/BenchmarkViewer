@@ -48,12 +48,32 @@ class Measurement {
 
   int getId() const;
 
+  quint64 getBytesPerSecond() const;
+  void setBytesPerSecond(const quint64& bytesPerSecond);
+
+  quint64 getItemsPerSecond() const;
+  void setItemsPerSecond(const quint64& itemsPerSecond);
+
+  QString getLabel() const;
+  void setLabel(const QString& label);
+
+  bool getErrorOccured() const;
+  void setErrorOccured(bool errorOccured);
+
+  QString getErrorMessage() const;
+  void setErrorMessage(const QString& errorMessage);
+
  private:
   QString m_name;
   quint64 m_iterations;
   quint64 m_realTime;
   quint64 m_cpuTime;
   QString m_timeUnit;
+  quint64 m_bytesPerSecond;
+  quint64 m_itemsPerSecond;
+  QString m_label;
+  bool m_errorOccured;
+  QString m_errorMessage;
   int m_id;
 };
 

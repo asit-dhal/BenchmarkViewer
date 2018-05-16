@@ -26,21 +26,15 @@
 #define PARSER_H
 
 #include <QJsonObject>
-#include <QLoggingCategory>
 #include <QObject>
 #include <QVector>
-#include "benchmark.h"
+#include "abstractparser.h"
 
-Q_DECLARE_LOGGING_CATEGORY(parser);
-
-class Parser : public QObject {
+class JsonParser : public AbstractParser {
   Q_OBJECT
  public:
-  Parser(QObject* parent = nullptr);
-  void parse(QString filename);
- signals:
-  void parsingStatus(QString statusMsg);
-  void parsingFinished(QString fileName, Benchmark benchmark);
+  JsonParser(QObject* parent = nullptr);
+  void parse(QString filename) override;
 
  private:
   Context parseContext(const QJsonObject& json);

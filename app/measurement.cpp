@@ -73,10 +73,60 @@ int Measurement::getId() const {
   return m_id;
 }
 
+quint64 Measurement::getBytesPerSecond() const
+{
+    return m_bytesPerSecond;
+}
+
+void Measurement::setBytesPerSecond(const quint64 &bytesPerSecond)
+{
+    m_bytesPerSecond = bytesPerSecond;
+}
+
+quint64 Measurement::getItemsPerSecond() const
+{
+    return m_itemsPerSecond;
+}
+
+void Measurement::setItemsPerSecond(const quint64 &itemsPerSecond)
+{
+    m_itemsPerSecond = itemsPerSecond;
+}
+
+QString Measurement::getLabel() const
+{
+    return m_label;
+}
+
+void Measurement::setLabel(const QString &label)
+{
+    m_label = label;
+}
+
+bool Measurement::getErrorOccured() const
+{
+    return m_errorOccured;
+}
+
+void Measurement::setErrorOccured(bool errorOccured)
+{
+    m_errorOccured = errorOccured;
+}
+
+QString Measurement::getErrorMessage() const
+{
+    return m_errorMessage;
+}
+
+void Measurement::setErrorMessage(const QString &errorMessage)
+{
+    m_errorMessage = errorMessage;
+}
+
 QDebug operator<<(QDebug d, const Measurement& mmt) {
-  d << "id: " << mmt.getId() << "name: " << mmt.getName()
-    << " iterations: " << mmt.getIterations()
-    << " real_time: " << mmt.getRealTime() << " cpu_time: " << mmt.getCpuTime()
+    d << "id: " << mmt.getId() << "name: " << mmt.getName()
+      << " iterations: " << mmt.getIterations()
+      << " real_time: " << mmt.getRealTime() << " cpu_time: " << mmt.getCpuTime()
     << " time_unit: " << mmt.getTimeUnit();
   return d;
 }

@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -22,12 +22,21 @@
 
 ========================================================================*/
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef ABSTRACTPARSER_H
+#define ABSTRACTPARSER_H
 
-#include <QLoggingCategory>
+#include <QObject>
+#include <QVector>
+#include "benchmark.h"
 
-Q_DECLARE_LOGGING_CATEGORY(gui);
-Q_DECLARE_LOGGING_CATEGORY(parser);
+class AbstractParser : public QObject {
+  Q_OBJECT
+ public:
+  AbstractParser(QObject* parent = nullptr) : QObject(parent) {}
+  virtual void parse(QString filename) = 0;
+ signals:
+  void parsingStatus(QString statusMsg);
+  void parsingFinished(QString fileName, Benchmark benchmark);
+};
 
-#endif  // GLOBALS_H
+#endif  // ABSTRACTPARSER_H
