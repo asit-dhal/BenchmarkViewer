@@ -54,7 +54,7 @@ bool BenchmarkProxyModel::filterAcceptsRow(
     int sourceRow,
     const QModelIndex& sourceParent) const {
   QModelIndex nameIndex = sourceModel()->index(
-      sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::FILENAME),
+      sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::NAME),
       sourceParent);
 
   if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(

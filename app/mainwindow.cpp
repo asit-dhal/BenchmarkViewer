@@ -351,7 +351,7 @@ void MainWindow::onToogleSelectedFileWidget() {
 
 void MainWindow::onBenchmarkFilter(QString filterText) {
   qCDebug(gui) << "Benchmark filter: " << filterText;
-  QRegExp regExp(filterText.toLower(), Qt::CaseSensitive, QRegExp::FixedString);
+  QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
   m_proxyModel->setFilterRegExp(regExp);
 }
 
