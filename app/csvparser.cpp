@@ -72,13 +72,18 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
     for (auto i = 0; i < header.size(); i++) {
       qCDebug(parser) << "Data: " << fields;
       if (header.at(i).compare("name", Qt::CaseInsensitive) == 0) {
-        mmt.setName(fields.at(i));
+        QString name = fields.at(i);
+        name.replace("'", "");
+        name.replace("\"", "");
+        mmt.setName(name);
       } else if (header.at(i).compare("iterations", Qt::CaseInsensitive) == 0) {
         mmt.setIterations(fields.at(i).toDouble());
       } else if (header.at(i).compare("real_time", Qt::CaseInsensitive) == 0) {
         mmt.setRealTime(fields.at(i).toDouble());
       } else if (header.at(i).compare("cpu_time", Qt::CaseInsensitive) == 0) {
         mmt.setCpuTime(fields.at(i).toDouble());
+      } else if (header.at(i).compare("time_unit", Qt::CaseInsensitive) == 0) {
+        mmt.setTimeUnit(fields.at(i));
       } else if (header.at(i).compare("bytes_per_second",
                                       Qt::CaseInsensitive) == 0) {
         mmt.setBytesPerSecond(fields.at(i).toDouble());
