@@ -22,12 +22,23 @@
 
 ========================================================================*/
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef PARSER_H
+#define PARSER_H
 
-#include <QLoggingCategory>
+#include <QJsonObject>
+#include <QObject>
+#include <QVector>
+#include "abstractparser.h"
 
-Q_DECLARE_LOGGING_CATEGORY(gui);
-Q_DECLARE_LOGGING_CATEGORY(parser);
+class JsonParser : public AbstractParser {
+  Q_OBJECT
+ public:
+  JsonParser(QObject* parent = nullptr);
+  void parse(QString filename) override;
 
-#endif  // GLOBALS_H
+ private:
+  Context parseContext(const QJsonObject& json);
+  QVector<Measurement> parseBenchmarks(const QJsonObject& json);
+};
+
+#endif  // PARSER_H

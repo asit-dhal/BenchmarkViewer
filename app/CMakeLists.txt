@@ -42,7 +42,9 @@ set(SRCS
     main.cpp
     mainwindow.cpp
     measurement.cpp
-    parser.cpp
+    abstractparser.cpp
+    jsonparser.cpp
+    csvparser.cpp
     globals.cpp
     bmcolumns.cpp
 )

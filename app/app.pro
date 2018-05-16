@@ -35,7 +35,6 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     context.cpp \
-    parser.cpp \
     benchmarkmodel.cpp \
     measurement.cpp \
     helper.cpp \
@@ -46,12 +45,14 @@ SOURCES += \
     benchmarkproxymodel.cpp \
     appconfig.cpp \
     bmcolumns.cpp \
-    globals.cpp
+    globals.cpp \
+    jsonparser.cpp \
+    csvparser.cpp \
+    abstractparser.cpp
 
 HEADERS += \
         mainwindow.h \
     context.h \
-    parser.h \
     benchmarkmodel.h \
     measurement.h \
     helper.h \
@@ -62,7 +63,10 @@ HEADERS += \
     benchmarkproxymodel.h \
     appconfig.h \
     bmcolumns.h \
-    globals.h
+    globals.h \
+    abstractparser.h \
+    jsonparser.h \
+    csvparser.h
 
 DISTFILES += \
     appconfig.ini \

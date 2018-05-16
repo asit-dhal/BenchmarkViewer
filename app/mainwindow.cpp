@@ -46,10 +46,10 @@
 #include "benchmarkproxymodel.h"
 #include "benchmarkview.h"
 #include "bmcolumns.h"
+#include "csvparser.h"
 #include "globals.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
-  m_parser = new Parser(this);
   m_bmColumns = new BmColumns(this);
   createActions();
   createMenus();
@@ -276,7 +276,21 @@ void MainWindow::createWidgets() {
 void MainWindow::onNewFileSelected(QString file) {
   m_files.push(file);
   m_selectedFilesWidget->addItem(file);
+  QFileInfo fi(file);
+  if (fi.suffix().compare("json", Qt::CaseInsensitive) == 0) {
+    qCDebug(gui) << "JSON File";
+    m_parser = new JsonParser(this);
+  } else if (fi.suffix().compare("csv", Qt::CaseInsensitive) == 0) {
+    qCDebug(gui) << "CSV File";
+    m_parser = new CsvParser(this);
+  } else {
+    qCDebug(gui) << "Invalid file: " << file;
+  }
+  // to be multithreaded
+  connect(m_parser, SIGNAL(parsingFinished(QString, Benchmark)), this,
+          SLOT(onNewBenchmarks(QString, Benchmark)));
   m_parser->parse(file);
+  m_parser->deleteLater();
 }
 
 void MainWindow::onSelectedFileDeleted(QString file) {
@@ -294,8 +308,6 @@ void MainWindow::connectSignalsToSlots() {
           [this](QString) { updateCloseFileActions(); });
   connect(this, SIGNAL(selectedFileDeleted(QString)), this,
           SLOT(onSelectedFileDeleted(QString)));
-  connect(m_parser, SIGNAL(parsingFinished(QString, Benchmark)), this,
-          SLOT(onNewBenchmarks(QString, Benchmark)));
 
   connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this,
           SLOT(onBenchmarkFilter(QString)));

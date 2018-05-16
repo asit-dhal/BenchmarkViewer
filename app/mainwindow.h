@@ -36,7 +36,7 @@
 #include <QtCharts/QVXYModelMapper>
 #include "benchmark.h"
 #include "chartviewwidget.h"
-#include "parser.h"
+#include "jsonparser.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -124,7 +124,7 @@ class MainWindow : public QMainWindow {
   BenchmarkView* m_benchmarkView;
   BenchmarkDelegate* m_benchmarkDelegate;
   BmColumns* m_bmColumns;
-  Parser* m_parser;
+  AbstractParser* m_parser;
   QChart* m_chart;
   ChartViewWidget* m_chartView;
 
