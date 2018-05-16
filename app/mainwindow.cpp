@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: QCommander
+   Program: BenchmarkViewer
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   QCommander is a free software; you can redistribute it and/or modify it.
+   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -351,7 +351,7 @@ void MainWindow::onToogleSelectedFileWidget() {
 
 void MainWindow::onBenchmarkFilter(QString filterText) {
   qCDebug(gui) << "Benchmark filter: " << filterText;
-  QRegExp regExp(filterText.toLower(), Qt::CaseSensitive, QRegExp::FixedString);
+  QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
   m_proxyModel->setFilterRegExp(regExp);
 }
 

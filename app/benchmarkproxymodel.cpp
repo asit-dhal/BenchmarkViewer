@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: QCommander
+   Program: BenchmarkViewer
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   QCommander is a free software; you can redistribute it and/or modify it.
+   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -54,7 +54,7 @@ bool BenchmarkProxyModel::filterAcceptsRow(
     int sourceRow,
     const QModelIndex& sourceParent) const {
   QModelIndex nameIndex = sourceModel()->index(
-      sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::FILENAME),
+      sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::NAME),
       sourceParent);
 
   if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(

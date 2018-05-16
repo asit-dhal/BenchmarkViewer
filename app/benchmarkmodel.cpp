@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: QCommander
+   Program: BenchmarkViewer
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   QCommander is a free software; you can redistribute it and/or modify it.
+   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -152,11 +152,13 @@ bool BenchmarkModel::setData(const QModelIndex& index,
   if (index.isValid() && role == Qt::EditRole) {
     auto row = index.row();
     BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
-    if (cols == BmColumns::Columns::STATUS) {
+    if (cols == BmColumns::Columns::STATUS &&
+        m_benchmarks[row].isSelected != value.toBool()) {
       m_benchmarks[row].isSelected = value.toBool();
       emit dataChanged(
           createIndex(index.row(), 0),
           createIndex(index.row(), m_bmColumns->getColumnCount() - 1));
+
       if (m_benchmarks[row].isSelected) {
         emit measurementActive(m_benchmarks[row].measurement);
       } else {
