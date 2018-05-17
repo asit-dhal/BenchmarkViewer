@@ -186,6 +186,21 @@ QDebug operator<<(QDebug d, const BmColumns::Columns& col) {
     case BmColumns::Columns::ERROR_MESSAGE:
       d << "ERROR_MESSAGE";
       break;
+    case BmColumns::Columns::BYTES_PER_SECOND:
+      d << "BYTES_PER_SECOND";
+      break;
+    case BmColumns::Columns::ITEMS_PER_SECOND:
+      d << "ITEMS_PER_SECOND";
+      break;
+    case BmColumns::Columns::LABEL:
+      d << "LABEL";
+      break;
+    case BmColumns::Columns::IS_ERROR_OCCURED:
+      d << "IS_ERROR_OCCURED";
+      break;
+    case BmColumns::Columns::ERROR_MESSAGE:
+      d << "ERROR_MESSAGE";
+      break;
     case BmColumns::Columns::FILENAME:
       d << "FILENAME";
       break;
