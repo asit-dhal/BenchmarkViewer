@@ -33,6 +33,11 @@ BmColumns::BmColumns(QObject* parent) : QObject(parent) {
   m_columnName[Columns::REAL_TIME] = tr("Realtime");
   m_columnName[Columns::CPU_TIME] = tr("Cpu Time");
   m_columnName[Columns::TIME_UNIT] = tr("Timeunit");
+  m_columnName[Columns::BYTES_PER_SECOND] = tr("BytesPerSecond");
+  m_columnName[Columns::ITEMS_PER_SECOND] = tr("ItemsPerSecond");
+  m_columnName[Columns::LABEL] = tr("Label");
+  m_columnName[Columns::IS_ERROR_OCCURED] = tr("IsErrorOccured");
+  m_columnName[Columns::ERROR_MESSAGE] = tr("ErrorMessage");
   m_columnName[Columns::FILENAME] = tr("Filename");
 
   m_columnViewStatus[Columns::STATUS] = true;
@@ -41,6 +46,11 @@ BmColumns::BmColumns(QObject* parent) : QObject(parent) {
   m_columnViewStatus[Columns::REAL_TIME] = true;
   m_columnViewStatus[Columns::CPU_TIME] = true;
   m_columnViewStatus[Columns::TIME_UNIT] = true;
+  m_columnViewStatus[Columns::BYTES_PER_SECOND] = true;
+  m_columnViewStatus[Columns::ITEMS_PER_SECOND] = true;
+  m_columnViewStatus[Columns::LABEL] = true;
+  m_columnViewStatus[Columns::IS_ERROR_OCCURED] = true;
+  m_columnViewStatus[Columns::ERROR_MESSAGE] = true;
   m_columnViewStatus[Columns::FILENAME] = true;
 
   m_columnIndex[Columns::STATUS] = 0;
@@ -49,7 +59,12 @@ BmColumns::BmColumns(QObject* parent) : QObject(parent) {
   m_columnIndex[Columns::REAL_TIME] = 3;
   m_columnIndex[Columns::CPU_TIME] = 4;
   m_columnIndex[Columns::TIME_UNIT] = 5;
-  m_columnIndex[Columns::FILENAME] = 6;
+  m_columnIndex[Columns::BYTES_PER_SECOND] = 7;
+  m_columnIndex[Columns::ITEMS_PER_SECOND] = 8;
+  m_columnIndex[Columns::LABEL] = 9;
+  m_columnIndex[Columns::IS_ERROR_OCCURED] = 10;
+  m_columnIndex[Columns::ERROR_MESSAGE] = 11;
+  m_columnIndex[Columns::FILENAME] = 12;
 
   qCDebug(gui)
       << "signal[BmColumns::hideColumn] -> slot[BmColumns::onHideColumn]";
@@ -99,6 +114,16 @@ BmColumns::Columns BmColumns::indexToColumns(int index) {
     case 5:
       return Columns::TIME_UNIT;
     case 6:
+      return Columns::BYTES_PER_SECOND;
+    case 7:
+      return Columns::ITEMS_PER_SECOND;
+    case 8:
+      return Columns::LABEL;
+    case 9:
+      return Columns::IS_ERROR_OCCURED;
+    case 10:
+      return Columns::ERROR_MESSAGE;
+    case 11:
       return Columns::FILENAME;
     default:
       return Columns::INVALID;
@@ -127,6 +152,21 @@ QDebug operator<<(QDebug d, const BmColumns::Columns& col) {
       break;
     case BmColumns::Columns::TIME_UNIT:
       d << "TIME_UNIT";
+      break;
+    case BmColumns::Columns::BYTES_PER_SECOND:
+      d << "BYTES_PER_SECOND";
+      break;
+    case BmColumns::Columns::ITEMS_PER_SECOND:
+      d << "ITEMS_PER_SECOND";
+      break;
+    case BmColumns::Columns::LABEL:
+      d << "LABEL";
+      break;
+    case BmColumns::Columns::IS_ERROR_OCCURED:
+      d << "IS_ERROR_OCCURED";
+      break;
+    case BmColumns::Columns::ERROR_MESSAGE:
+      d << "ERROR_MESSAGE";
       break;
     case BmColumns::Columns::FILENAME:
       d << "FILENAME";

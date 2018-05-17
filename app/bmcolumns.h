@@ -40,6 +40,11 @@ class BmColumns : public QObject {
     REAL_TIME,
     CPU_TIME,
     TIME_UNIT,
+    BYTES_PER_SECOND,
+    ITEMS_PER_SECOND,
+    LABEL,
+    IS_ERROR_OCCURED,
+    ERROR_MESSAGE,
     FILENAME
   };
 

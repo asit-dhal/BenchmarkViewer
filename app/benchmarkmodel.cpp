@@ -120,6 +120,16 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
         return viewunit.measurement.getCpuTime();
       case BmColumns::Columns::TIME_UNIT:
         return viewunit.measurement.getTimeUnit();
+      case BmColumns::Columns::BYTES_PER_SECOND:
+        return viewunit.measurement.getBytesPerSecond();
+      case BmColumns::Columns::ITEMS_PER_SECOND:
+        return viewunit.measurement.getItemsPerSecond();
+      case BmColumns::Columns::LABEL:
+        return viewunit.measurement.getLabel();
+      case BmColumns::Columns::IS_ERROR_OCCURED:
+        return viewunit.measurement.getErrorOccured();
+      case BmColumns::Columns::ERROR_MESSAGE:
+        return viewunit.measurement.getErrorMessage();
       case BmColumns::Columns::FILENAME:
         return viewunit.filename;
       default:

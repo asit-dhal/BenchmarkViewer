@@ -37,13 +37,18 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
 
   switch (m_bmColumns->indexToColumns(left.column())) {
     case BmColumns::Columns::STATUS:
+    case BmColumns::Columns::IS_ERROR_OCCURED:
       return leftData.toBool();
     case BmColumns::Columns::ITERATIONS:
     case BmColumns::Columns::REAL_TIME:
     case BmColumns::Columns::CPU_TIME:
+    case BmColumns::Columns::BYTES_PER_SECOND:
+    case BmColumns::Columns::ITEMS_PER_SECOND:
       return leftData.toDouble() < rightData.toDouble();
     case BmColumns::Columns::NAME:
     case BmColumns::Columns::FILENAME:
+    case BmColumns::Columns::LABEL:
+    case BmColumns::Columns::ERROR_MESSAGE:
     default:
       return QString::localeAwareCompare(leftData.toString(),
                                          rightData.toString()) < 0;
