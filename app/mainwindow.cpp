@@ -48,6 +48,7 @@
 #include "bmcolumns.h"
 #include "csvparser.h"
 #include "globals.h"
+#include "plotconfig.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   m_bmColumns = new BmColumns(this);
@@ -253,6 +254,8 @@ void MainWindow::createWidgets() {
   QVBoxLayout* benchmarkLayout = new QVBoxLayout;
   benchmarkLayout->addLayout(benchmarkFilterLayout);
   benchmarkLayout->addWidget(m_benchmarkView);
+  m_plotConfigWidget = new PlotConfig(m_bmColumns, this);
+  benchmarkLayout->addWidget(m_plotConfigWidget);
   benckmarkSelectorGB->setLayout(benchmarkLayout);
 
   m_chartView = new ChartViewWidget(this);

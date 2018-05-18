@@ -47,6 +47,7 @@ set(SRCS
     csvparser.cpp
     globals.cpp
     bmcolumns.cpp
+    plotconfig.cpp
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

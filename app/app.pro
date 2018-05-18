@@ -48,7 +48,8 @@ SOURCES += \
     globals.cpp \
     jsonparser.cpp \
     csvparser.cpp \
-    abstractparser.cpp
+    abstractparser.cpp \
+    plotconfig.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -66,7 +67,8 @@ HEADERS += \
     globals.h \
     abstractparser.h \
     jsonparser.h \
-    csvparser.h
+    csvparser.h \
+    plotconfig.h
 
 DISTFILES += \
     appconfig.ini \

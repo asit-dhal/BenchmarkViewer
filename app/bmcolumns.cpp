@@ -66,6 +66,19 @@ BmColumns::BmColumns(QObject* parent) : QObject(parent) {
   m_columnIndex[Columns::ERROR_MESSAGE] = 11;
   m_columnIndex[Columns::FILENAME] = 12;
 
+  m_colPlotAttrs[Columns::STATUS] = ColumnPlotAttr::INVALID;
+  m_colPlotAttrs[Columns::NAME] = ColumnPlotAttr::X_AXIS;
+  m_colPlotAttrs[Columns::ITERATIONS] = ColumnPlotAttr::NONE;
+  m_colPlotAttrs[Columns::REAL_TIME] = ColumnPlotAttr::Y_AXIS;
+  m_colPlotAttrs[Columns::CPU_TIME] = ColumnPlotAttr::Y_AXIS;
+  m_colPlotAttrs[Columns::TIME_UNIT] = ColumnPlotAttr::INVALID;
+  m_colPlotAttrs[Columns::BYTES_PER_SECOND] = ColumnPlotAttr::NONE;
+  m_colPlotAttrs[Columns::ITEMS_PER_SECOND] = ColumnPlotAttr::NONE;
+  m_colPlotAttrs[Columns::LABEL] = ColumnPlotAttr::X_AXIS;
+  m_colPlotAttrs[Columns::IS_ERROR_OCCURED] = ColumnPlotAttr::NONE;
+  m_colPlotAttrs[Columns::ERROR_MESSAGE] = ColumnPlotAttr::INVALID;
+  m_colPlotAttrs[Columns::FILENAME] = ColumnPlotAttr::INVALID;
+
   qCDebug(gui)
       << "signal[BmColumns::hideColumn] -> slot[BmColumns::onHideColumn]";
   connect(this, &BmColumns::hideColumn, this, &BmColumns::onHideColumn);
@@ -93,6 +106,11 @@ void BmColumns::onShowColumn(Columns col) {
   qCDebug(gui) << "col name: " << columnNameToString(col)
                << " index: " << columnNameToIndex(col);
   m_columnViewStatus[col] = true;
+}
+
+QMap<BmColumns::Columns, BmColumns::ColumnPlotAttr>&
+BmColumns::getColPlotAttrs() {
+  return m_colPlotAttrs;
 }
 
 bool BmColumns::isColumnHidden(Columns col) {
@@ -170,6 +188,24 @@ QDebug operator<<(QDebug d, const BmColumns::Columns& col) {
       break;
     case BmColumns::Columns::FILENAME:
       d << "FILENAME";
+      break;
+  }
+  return d;
+}
+
+QDebug operator<<(QDebug d, const BmColumns::ColumnPlotAttr& attr) {
+  switch (attr) {
+    case BmColumns::ColumnPlotAttr::INVALID:
+      d << "INVALID";
+      break;
+    case BmColumns::ColumnPlotAttr::NONE:
+      d << "NONE";
+      break;
+    case BmColumns::ColumnPlotAttr::X_AXIS:
+      d << "X_AXIS";
+      break;
+    case BmColumns::ColumnPlotAttr::Y_AXIS:
+      d << "Y_AXIS";
       break;
   }
   return d;

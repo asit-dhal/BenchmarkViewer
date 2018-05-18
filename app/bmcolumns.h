@@ -48,6 +48,13 @@ class BmColumns : public QObject {
     FILENAME
   };
 
+  enum class ColumnPlotAttr {
+    INVALID,
+    NONE,
+    X_AXIS,
+    Y_AXIS,
+  };
+
   int getColumnCount() { return m_columnIndex.size(); }
 
   QString columnNameToString(Columns cols);
@@ -56,9 +63,12 @@ class BmColumns : public QObject {
   bool isColumnHidden(Columns cols);
   BmColumns(QObject* parent = nullptr);
 
+  QMap<Columns, ColumnPlotAttr>& getColPlotAttrs();
+
  signals:
   void hideColumn(Columns);
   void showColumn(Columns);
+  void plotAttrUpdated(Columns, ColumnPlotAttr);
 
  public slots:
   void onHideColumn(Columns col);
@@ -68,10 +78,13 @@ class BmColumns : public QObject {
   QMap<Columns, bool> m_columnViewStatus;
   QMap<Columns, int> m_columnIndex;
   QMap<Columns, QString> m_columnName;
+  QMap<Columns, ColumnPlotAttr> m_colPlotAttrs;
 };
 
 Q_DECLARE_METATYPE(BmColumns::Columns);
+Q_DECLARE_METATYPE(BmColumns::ColumnPlotAttr);
 
 QDebug operator<<(QDebug d, const BmColumns::Columns& mmt);
+QDebug operator<<(QDebug d, const BmColumns::ColumnPlotAttr& attr);
 
 #endif  // BMCOLUMNS_H

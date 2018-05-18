@@ -53,6 +53,7 @@ class BenchmarkProxyModel;
 class QItemSelectionModel;
 class QItemSelection;
 class BmColumns;
+class PlotConfig;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -127,7 +128,7 @@ class MainWindow : public QMainWindow {
   AbstractParser* m_parser;
   QChart* m_chart;
   ChartViewWidget* m_chartView;
-
+  PlotConfig* m_plotConfigWidget;
   QLineEdit* m_benchmarkNameFilter;
 };
 
