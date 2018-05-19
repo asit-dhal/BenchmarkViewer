@@ -32,3 +32,6 @@ SUBDIRS = \
 
 DISTFILES += \
     CMakeLists.txt
+
+OTHER_FILES += \
+    appveyor.yml
