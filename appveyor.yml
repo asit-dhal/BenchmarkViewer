@@ -1,58 +1,106 @@
-version: '{build}'
+version: 0.0.1-{build}
 
-init:
-- git config --global core.autocrlf input
+configuration:
+  - Release
+  - Debug
 
-branches:
-  only:
-    - master
-    - dev
+image:
+  - Visual Studio 2017
+  - Visual Studio 2015
 
-
-environment:
-  matrix:
-  - QT5: C:\Qt\5.7\mingw53_32
-    MINGW: C:\Qt\Tools\mingw530_32
-    use_cmake: "false"
-  - QT5: C:\Qt\5.8\mingw53_32
-    MINGW: C:\Qt\Tools\mingw530_32
-    use_cmake: "false"
-  - QT5: C:\Qt\5.9\mingw53_32
-    MINGW: C:\Qt\Tools\mingw530_32
-    use_cmake: "false"
-  - QT5: C:\Qt\5.10.1\mingw53_32
-    MINGW: C:\Qt\Tools\mingw530_32
-    use_cmake: "false"
+platform: 
+  - x64
+  - win32
 
 matrix:
   fast_finish: true
+  exclude:
+    - platform: win32
+      image: Visual Studio 2017
 
-before_build:
-- set PATH=%MINGW%\bin;%QT5%\bin;%PATH%
+environment:
+  matrix:
+    - CMAKE_BUILD_SYS: True
+    - QMAKE_BUILD_SYS: True
+
+install:
+    - ps: | 
+        if ($Env:Platform -Match "x64") {
+          if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2015") {
+            $qt_path="C:\Qt\5.10.1\msvc2015_64\bin"
+            $mingw_path="C:\MinGW\bin"
+            $env:Path+=";" + $qt_path +";" + $mingw_path
+            cmd.exe /c "call `"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd`" /x64 && call `"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat`" x86_amd64 && set > %temp%\vcvars.txt"
+          } else {
+            $qt_path="C:\Qt\5.10.1\msvc2017_64\bin"
+            $mingw_path="C:\MinGW\bin"
+            $env:Path+=";" + $qt_path +";" + $mingw_path
+            cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
+          }
+        } else {
+          if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2015") {
+            $qt_path="C:\Qt\5.10.1\msvc2015\bin"
+            $mingw_path="C:\MinGW\bin"
+            $env:Path+=";" + $qt_path +";" + $mingw_path
+            cmd.exe /c "call `"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd`" /x64 && call `"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat`" x86 && set > %temp%\vcvars.txt"
+          }
+          # win32 build is not available for vs2017
+        }
+
+        Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
+          if ($_ -match "^(.*?)=(.*)$") {
+            Set-Content "env:\$($matches[1])" $matches[2]
+          }
+        }
+
+build:
+  parallel: true  
 
 build_script:
-- mkdir .\build
-- cd .\build
+    - ps: $env:BUILD_PATH=$env:APPVEYOR_BUILD_FOLDER + "\build_" + $env:platform
+    - mkdir %BUILD_PATH%
+    - cd %BUILD_PATH%
+    - if "%platform%"=="x64" ( 
+        if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2017" (
+          if "%CMAKE_BUILD_SYS%" == "True" (
+            cmake %APPVEYOR_BUILD_FOLDER% -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=%configuration%
+          ) else (
+            qmake %APPVEYOR_BUILD_FOLDER%\BenchmarkViewer.pro CONFIG+=%configuration% DESTDIR=%cd%
+          )
+        ) else (
+          if "%CMAKE_BUILD_SYS%" == "True" (
+            cmake %APPVEYOR_BUILD_FOLDER% -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=%configuration%
+          ) else (
+            qmake %APPVEYOR_BUILD_FOLDER%\BenchmarkViewer.pro CONFIG+=%configuration% DESTDIR=%cd%
+          )
+        )
+      ) else (
+        if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2015" (
+          if "%CMAKE_BUILD_SYS%" == "True" (
+            cmake %APPVEYOR_BUILD_FOLDER% -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=%configuration%
+          ) else (
+            qmake %APPVEYOR_BUILD_FOLDER%\BenchmarkViewer.pro CONFIG+=%configuration% DESTDIR=%cd%
+          )
+        )
+      )
 
-# build library and binary
-- if [%use_cmake%]==[true] (
-    cmake --version &&
-    cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release .. &&
-    make &&
-    dir /s &&
-    cd .\example)
-  else (
-    qmake -v &&
-    qmake ..\BenchmarkViewer.pro CONFIG+=release DESTDIR=%cd% &&
-    mingw32-make)
+    - if "%CMAKE_BUILD_SYS%" == "True" (
+        cmake --build . --config %configuration% 
+      ) else (
+        nmake 
+      )
 
 after_build:
-  - mkdir bin
-  - copy BenchmarkViewer.exe bin\
-  - windeployqt bin\BenchmarkViewer.exe
-  - 7z a BenchmarkViewer.7z bin\*
-  - dir
+    - if "%CMAKE_BUILD_SYS%" == "True" (
+        windeployqt  %BUILD_PATH%\bin\%configuration%\BenchmarkViewer.exe &&
+        7z a %APPVEYOR_BUILD_FOLDER%\BenchmarkViewer.7z %BUILD_PATH%\bin\%configuration%\*
+      ) else (
+        mkdir %BUILD_PATH%\bin  &&
+        copy %BUILD_PATH%\BenchmarkViewer.exe %BUILD_PATH%\bin &&
+        windeployqt  %BUILD_PATH%\bin\BenchmarkViewer.exe &&
+        7z a %APPVEYOR_BUILD_FOLDER%\BenchmarkViewer.7z %BUILD_PATH%\bin\*
+      )
 
 artifacts:
-  - path: build\BenchmarkViewer.7z
+  - path: BenchmarkViewer.7z
     name: BenchmarkViewer
