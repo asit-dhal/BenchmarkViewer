@@ -34,4 +34,5 @@ DISTFILES += \
     CMakeLists.txt
 
 OTHER_FILES += \
-    appveyor.yml
+    appveyor.yml \
+    .travis.yml

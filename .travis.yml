@@ -2,45 +2,53 @@
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 language: cpp
+sudo: required
 dist: trusty
+
+compiler:
+  - gcc
+  - clang
+
+configuration:
+  - Release
+  - Debug
+
+environment:
+  matrix:
+    - CMAKE_BUILD_SYS: true
+    - QMAKE_BUILD_SYS: true
+
 
 matrix:
   include:
-  - os: linux
-    dist: trusty
-    sudo: required
-    compiler: gcc
-    env:
-     - QT_BASE=510
-  - os: linux
-    dist: trusty
-    sudo: required
-    compiler: clang
-    env:
-     - QT_BASE=510
-  - os: linux
-    dist: trusty
-    sudo: required
-    compiler: gcc
-    env:
-     - QT_BASE=510 USE_CMAKE=true
-  - os: linux
-    dist: trusty
-    sudo: required
-    compiler: clang
-    env:
-     - QT_BASE=510 USE_CMAKE=true
   - os: osx
+    osx_image: xcode9
     compiler: clang
-    env:
-     - QT_BASE=510
-  - os: osx
+  - os: linux
     compiler: gcc
     env:
-     - QT_BASE=510
+      - CXX_COMPILER=g++-7
+      - C_COMPILER=gcc-7
+    addons:
+      apt:
+        sources: ["ubuntu-toolchain-r-test"]
+        packages: ["g++-7", "ninja-build"]
+  - os: linux
+    compiler: clang
+    env:
+      - CXX_COMPILER=clang++-5.0
+      - C_COMPILER=clang-5.0
+    addons:
+      apt:
+        sources: ["ubuntu-toolchain-r-test", "llvm-toolchain-trusty-5.0"]
+        packages: ["clang-5.0", "g++-7", "ninja-build"]
 
 before_install:
-  - if [[ "$QT_BASE" = "510" && "$TRAVIS_OS_NAME" = "linux" ]]; then 
+  - export CXX=${CXX_COMPILER}
+  - export CC=${C_COMPILER}
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
       sudo add-apt-repository ppa:beineri/opt-qt-5.10.1-trusty -y; 
     fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
@@ -49,51 +57,28 @@ before_install:
       brew update;
       brew cleanup;
     fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      wget -q -O - http://files.viva64.com/etc/pubkey.txt | sudo apt-key add - ;
-      sudo wget -O /etc/apt/sources.list.d/viva64.list http://files.viva64.com/etc/viva64.list ;
-      sudo apt-get update;
-      sudo apt-get install strace;
-      sudo apt-get install pvs-studio;
-      wget https://github.com/viva64/how-to-use-pvs-studio-free/releases/download/v1.1/how-to-use-pvs-studio-free.tar.gz;
-      tar -xzf how-to-use-pvs-studio-free.tar.gz;
-    fi
 
 install:
-  - if [ "$QT_BASE" = "510" ]; then
-      if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
         sudo apt-get install -qq qt510base qt510charts-no-lgpl; source /opt/qt510/bin/qt510-env.sh;
-      else
+    else
         brew install qt5;
         brew link --force qt5;
         export HOMEBREW_QT5_VERSION=$(brew list --versions qt5 | rev | cut -d' ' -f1 | rev);
         sudo ln -s /usr/local/Cellar/qt5/$HOMEBREW_QT5_VERSION/mkspecs /usr/local/mkspecs;
         echo 'export PATH="/usr/local/opt/qt/bin:$PATH"' >> ~/.bash_profile;
-      fi
     fi
 
 script:
   - mkdir ./build && cd ./build
-  - if [ "$USE_CMAKE" = "true" ]; then
+  - if [ "$CMAKE_BUILD_SYS" = "true" ]; then
       cmake --version;
-      cmake -DCMAKE_BUILD_TYPE=Release ..;
+      cmake -DCMAKE_BUILD_TYPE=$configuration ..;
       make -j2;
     else
       qmake -v;
-      qmake ../BenchmarkViewer.pro CONFIG+=release;
-      make -j2  ;
-    fi
-
-after_success:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      cd ..;
-      root=${PWD};
-      mkdir -p "${root}/static_analysis";
-      ./how-to-use-pvs-studio-free -c 1 .;
-      pvs-studio-analyzer trace -o "${root}/static_analysis/strace_out" -- make -j2;
-      pvs-studio-analyzer analyze -f "${root}/static_analysis/strace_out" -o "${root}/static_analysis/project.log";
-      plog-converter -a GA:1,2 -t tasklist -o "${root}/static_analysis/project.tasks" "${root}/static_analysis/project.log";
-      cat static_analysis/project.tasks;
+      qmake ../BenchmarkViewer.pro CONFIG+=$configuration;
+      make -j2 ;
     fi
 
 notifications:

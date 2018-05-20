@@ -1,5 +1,5 @@
-#   Copyright (c) 2018 Asit Dhal
-#   All rights reserved.
+# Copyright (c) 2018 Asit Dhal
+# Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 version: 0.0.1-{build}
 
@@ -16,7 +16,7 @@ platform:
   - win32
 
 matrix:
-  fast_finish: true
+  fast_finish: false
   exclude:
     - platform: win32
       image: Visual Studio 2017
@@ -25,6 +25,8 @@ environment:
   matrix:
     - CMAKE_BUILD_SYS: True
     - QMAKE_BUILD_SYS: True
+    - platform: win32
+      image: Visual Studio 2017
 
 install:
     - ps: | 
@@ -53,6 +55,11 @@ install:
         Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
           if ($_ -match "^(.*?)=(.*)$") {
             Set-Content "env:\$($matches[1])" $matches[2]
+          }
+        }
+
+build:
+  parallel: true  
           }
         }
 
