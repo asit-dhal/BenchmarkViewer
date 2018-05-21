@@ -31,5 +31,7 @@
 void loadAppSettings();
 QStringList readRecentFiles();
 void updateRecentFiles(QString fileName);
+QString readLastOpenedFilePath();
+void updateLastOpenedFilePath(QString path);
 
 #endif  // APPCONFIG_H

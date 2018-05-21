@@ -191,13 +191,15 @@ void MainWindow::onSelectionChanged(const QItemSelection& selected,
 }
 
 void MainWindow::onOpenFile() {
+  QString lastPath = readLastOpenedFilePath();
   QStringList files =
-      QFileDialog::getOpenFileNames(this, tr("Open Directory"), "/home");
+      QFileDialog::getOpenFileNames(this, tr("Open Directory"), lastPath);
   for (auto file : files) {
     if (!file.isEmpty()) {
       updateRecentFiles(file);
       updateRecentFileActions();
       emit newFileSelected(file);
+      updateLastOpenedFilePath(QFileInfo(file).path());
     }
   }
 }
