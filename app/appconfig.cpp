@@ -53,3 +53,18 @@ void updateRecentFiles(QString fileName) {
   appSettings.setValue("files", recentFiles.join(" "));
   appSettings.endGroup();
 }
+
+QString readLastOpenedFilePath() {
+  QSettings appSettings;
+  appSettings.beginGroup("last-opened-file-path");
+  QString temp = appSettings.value("path").toString();
+  appSettings.endGroup();
+  return temp.trimmed();
+}
+
+void updateLastOpenedFilePath(QString path) {
+  QSettings appSettings;
+  appSettings.beginGroup("last-opened-file-path");
+  appSettings.setValue("path", path);
+  appSettings.endGroup();
+}
