@@ -26,4 +26,4 @@ The standalone binary packages support the following platforms:
 
 ### Sample Screenshot 
 ![alt text](https://github.com/asit-dhal/BenchmarkViewer/raw/master/screenshot.png "Screenshot of chart view")
-![alt text](https://github.com/asit-dhal/BenchmarkViewer/raw/master/app_screenshot.png "Screenshot of the application")
+![alt text](https://github.com/asit-dhal/BenchmarkViewer/raw/master/app_screenshot.gif "Recording of BenchmarkViewer")
