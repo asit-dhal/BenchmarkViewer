@@ -25,6 +25,7 @@
 #include "benchmarkmodel.h"
 #include <QAbstractItemModel>
 #include <QColor>
+#include <QFileInfo>
 #include "bmcolumns.h"
 
 Q_LOGGING_CATEGORY(benchmarkModel, "benchmarkModel")
@@ -120,6 +121,17 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
         return viewunit.measurement.getCpuTime();
       case BmColumns::Columns::TIME_UNIT:
         return viewunit.measurement.getTimeUnit();
+      case BmColumns::Columns::FILENAME:
+        return QFileInfo(viewunit.filename).fileName();
+      default:
+        return QVariant();
+    }
+  }
+
+  if (role == Qt::ToolTipRole) {
+    BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+    BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
+    switch (cols) {
       case BmColumns::Columns::FILENAME:
         return viewunit.filename;
       default:
