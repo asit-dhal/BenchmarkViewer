@@ -49,7 +49,8 @@ SOURCES += \
     jsonparser.cpp \
     csvparser.cpp \
     abstractparser.cpp \
-    plotconfig.cpp
+    plotconfig.cpp \
+    xaxiscombobox.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -68,7 +69,8 @@ HEADERS += \
     abstractparser.h \
     jsonparser.h \
     csvparser.h \
-    plotconfig.h
+    plotconfig.h \
+    xaxiscombobox.h
 
 DISTFILES += \
     appconfig.ini \

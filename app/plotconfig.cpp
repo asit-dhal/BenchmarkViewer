@@ -23,18 +23,18 @@
 ========================================================================*/
 
 #include "plotconfig.h"
-#include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include "bmcolumns.h"
 #include "globals.h"
+#include "xaxiscombobox.h"
 
 PlotConfig::PlotConfig(BmColumns* bmColumns, QWidget* parent)
     : QWidget(parent), m_bmColumns(bmColumns) {
   QLabel* xAxisLabel = new QLabel(tr("X-Axis"));
-  m_xAxisSelector = new QComboBox;
+  m_xAxisSelector = new XAxisComboBox(bmColumns, this);
   m_yAxisSelector = new QTableWidget;
 
   m_yAxisSelector->setColumnCount(2);
@@ -56,7 +56,7 @@ PlotConfig::PlotConfig(BmColumns* bmColumns, QWidget* parent)
 
   setLayout(mainLayout);
 
-  connect(m_xAxisSelector, &QComboBox::currentTextChanged, this,
+  connect(m_xAxisSelector, &XAxisComboBox::currentColumnChanged, this,
           &PlotConfig::xAxisAttrChanged);
   connect(m_yAxisSelector, &QTableWidget::cellChanged, this,
           &PlotConfig::yAxisAttrChanged);
@@ -67,12 +67,8 @@ PlotConfig::PlotConfig(BmColumns* bmColumns, QWidget* parent)
 void PlotConfig::update() {
   auto& colAttrs = m_bmColumns->getColPlotAttrs();
   int row = 0;
+  m_xAxisSelector->update(m_bmColumns);
   for (auto key : colAttrs.keys()) {
-    // sex x-axis
-    if (colAttrs[key] == BmColumns::ColumnPlotAttr::X_AXIS) {
-      m_xAxisSelector->addItem(m_bmColumns->columnNameToString(key));
-    }
-
     // sex y-axis
     if (colAttrs[key] == BmColumns::ColumnPlotAttr::Y_AXIS ||
         colAttrs[key] == BmColumns::ColumnPlotAttr::NONE) {
@@ -94,8 +90,8 @@ void PlotConfig::update() {
   m_yAxisSelector->resizeColumnsToContents();
 }
 
-void PlotConfig::xAxisAttrChanged(const QString& text) {
-  qCDebug(gui) << "text: " << text;
+void PlotConfig::xAxisAttrChanged(BmColumns::Columns cols) {
+  qCDebug(gui) << "column: " << cols;
 }
 
 void PlotConfig::yAxisAttrChanged(int row, int col) {

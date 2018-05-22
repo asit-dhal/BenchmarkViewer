@@ -22,32 +22,24 @@
 
 ========================================================================*/
 
-#ifndef PLOTCONFIG_H
-#define PLOTCONFIG_H
+#ifndef XAXISCOMBOBOX_H
+#define XAXISCOMBOBOX_H
 
-#include <QWidget>
+#include <QComboBox>
+#include <QList>
 #include "bmcolumns.h"
-class XAxisComboBox;
-class QTableWidget;
 
-class PlotConfig : public QWidget {
+class XAxisComboBox : public QComboBox {
   Q_OBJECT
  public:
-  explicit PlotConfig(BmColumns* bmColumns, QWidget* parent = nullptr);
+  XAxisComboBox(BmColumns* bmColumns, QWidget* parent = nullptr);
+  void update(BmColumns* bmColumns);
 
  signals:
-
- private slots:
-  void xAxisAttrChanged(BmColumns::Columns cols);
-  void yAxisAttrChanged(int, int);
+  void currentColumnChanged(BmColumns::Columns cols);
 
  private:
-  void update();
-
- private:
-  XAxisComboBox* m_xAxisSelector;
-  QTableWidget* m_yAxisSelector;
-  BmColumns* m_bmColumns;
+  QList<BmColumns::Columns> m_bmColumnList;
 };
 
-#endif  // PLOTCONFIG_H
+#endif  // XAXISCOMBOBOX_H

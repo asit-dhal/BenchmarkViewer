@@ -22,32 +22,35 @@
 
 ========================================================================*/
 
-#ifndef PLOTCONFIG_H
-#define PLOTCONFIG_H
+#include "xaxiscombobox.h"
+#include <bmcolumns.h>
+#include "globals.h"
 
-#include <QWidget>
-#include "bmcolumns.h"
-class XAxisComboBox;
-class QTableWidget;
+XAxisComboBox::XAxisComboBox(BmColumns* bmColumns, QWidget* parent)
+    : QComboBox(parent) {
+  auto& colAttrs = bmColumns->getColPlotAttrs();
+  for (auto key : colAttrs.keys()) {
+    if (colAttrs[key] == BmColumns::ColumnPlotAttr::X_AXIS) {
+      addItem(bmColumns->columnNameToString(key));
+      m_bmColumnList.append(key);
+    }
+  }
 
-class PlotConfig : public QWidget {
-  Q_OBJECT
- public:
-  explicit PlotConfig(BmColumns* bmColumns, QWidget* parent = nullptr);
+  connect(this, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          [=](int index) {
+            if (index >= 0 && index < m_bmColumnList.size())
+              emit currentColumnChanged(m_bmColumnList.at(index));
+          });
+}
 
- signals:
-
- private slots:
-  void xAxisAttrChanged(BmColumns::Columns cols);
-  void yAxisAttrChanged(int, int);
-
- private:
-  void update();
-
- private:
-  XAxisComboBox* m_xAxisSelector;
-  QTableWidget* m_yAxisSelector;
-  BmColumns* m_bmColumns;
-};
-
-#endif  // PLOTCONFIG_H
+void XAxisComboBox::update(BmColumns* bmColumns) {
+  auto& colAttrs = bmColumns->getColPlotAttrs();
+  clear();
+  m_bmColumnList.clear();
+  for (auto key : colAttrs.keys()) {
+    if (colAttrs[key] == BmColumns::ColumnPlotAttr::X_AXIS) {
+      addItem(bmColumns->columnNameToString(key));
+      m_bmColumnList.append(key);
+    }
+  }
+}
