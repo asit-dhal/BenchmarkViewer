@@ -26,7 +26,7 @@
 #include <QFile>
 #include <QRegExp>
 #include <QVector>
-#include "globals.h"
+#include "modelglobals.h"
 
 CsvParser::CsvParser(QObject* parent) : AbstractParser(parent) {}
 

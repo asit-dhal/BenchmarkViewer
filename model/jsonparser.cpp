@@ -28,7 +28,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
-#include "globals.h"
+#include "modelglobals.h"
 
 JsonParser::JsonParser(QObject* parent) : AbstractParser(parent) {}
 

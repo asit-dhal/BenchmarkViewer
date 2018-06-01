@@ -29,45 +29,39 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = BenchmarkViewer
 TEMPLATE = app
 
+
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    context.cpp \
     benchmarkmodel.cpp \
-    measurement.cpp \
-    helper.cpp \
-    benchmark.cpp \
     benchmarkview.cpp \
     benchmarkdelegate.cpp \
     chartviewwidget.cpp \
     benchmarkproxymodel.cpp \
     appconfig.cpp \
     bmcolumns.cpp \
-    globals.cpp \
-    jsonparser.cpp \
-    csvparser.cpp \
-    abstractparser.cpp
+    globals.cpp 
 
 HEADERS += \
         mainwindow.h \
-    context.h \
     benchmarkmodel.h \
-    measurement.h \
-    helper.h \
-    benchmark.h \
     benchmarkview.h \
     benchmarkdelegate.h \
     chartviewwidget.h \
     benchmarkproxymodel.h \
     appconfig.h \
     bmcolumns.h \
-    globals.h \
-    abstractparser.h \
-    jsonparser.h \
-    csvparser.h
+    globals.h 
 
 DISTFILES += \
     appconfig.ini \
     CMakeLists.txt
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../model/release/ -lmodel
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../model/debug/ -lmodel
+else:unix: LIBS += -L$$OUT_PWD/../model/ -lmodel
+
+INCLUDEPATH += $$PWD/../model
+DEPENDPATH += $$PWD/../model

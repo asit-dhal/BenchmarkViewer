@@ -22,16 +22,32 @@
 
 #========================================================================*/
 
-TEMPLATE = subdirs
+QT       += core
+QT       -= gui
 
-CONFIG += c++14
+TARGET = model
+TEMPLATE = lib
+CONFIG += staticlib c++14
 
-SUBDIRS = app model
+DEFINES += QT_DEPRECATED_WARNINGS
 
-
-DISTFILES += \
-    CMakeLists.txt
-
-OTHER_FILES += \
-    appveyor.yml \
-    .travis.yml
+SOURCES += \
+    benchmark.cpp \
+    context.cpp \
+    measurement.cpp \
+    helper.cpp \
+    abstractparser.cpp \
+    jsonparser.cpp \
+    csvparser.cpp
+    
+HEADERS += \
+    modelglobals.h \
+    benchmark.h \
+    context.h \
+    measurement.h \
+    helper.h \
+    abstractparser.h \
+    jsonparser.h \
+    csvparser.h
+    
+    

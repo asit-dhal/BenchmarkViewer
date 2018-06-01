@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QVector>
 #include "benchmark.h"
+#include "modelglobals.h"
 
 class AbstractParser : public QObject {
   Q_OBJECT
