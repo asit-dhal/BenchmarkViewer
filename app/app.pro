@@ -36,21 +36,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     benchmarkmodel.cpp \
-    benchmarkview.cpp \
-    benchmarkdelegate.cpp \
     benchmarkproxymodel.cpp \
     appconfig.cpp \
-    bmcolumns.cpp \
     globals.cpp 
 
 HEADERS += \
         mainwindow.h \
     benchmarkmodel.h \
-    benchmarkview.h \
-    benchmarkdelegate.h \
     benchmarkproxymodel.h \
     appconfig.h \
-    bmcolumns.h \
     globals.h 
 
 DISTFILES += \

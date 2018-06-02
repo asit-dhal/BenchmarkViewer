@@ -25,7 +25,7 @@
 #include "benchmarkview.h"
 #include <QHeaderView>
 #include <QMenu>
-#include "globals.h"
+#include "viewglobals.h"
 
 BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
     : QTableView(parent), m_bmColumns(bmColumns) {
@@ -74,22 +74,22 @@ BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
   connect(m_clearAllRows, &QAction::triggered,
           [&]() { emit this->clearAllRows(); });
 
-  qCDebug(gui)
+  qCDebug(view)
       << "signal[BmColumns::hideColumn] -> slot[BenchmarkView::onHideColumn]";
   connect(m_bmColumns, &BmColumns::hideColumn, this,
           &BenchmarkView::onHideColumn);
-  qCDebug(gui)
+  qCDebug(view)
       << "signal[BmColumns::showColumn] -> slot[BenchmarkView::onShowColumn]";
   connect(m_bmColumns, &BmColumns::showColumn, this,
           &BenchmarkView::onShowColumn);
 }
 
 void BenchmarkView::onContextMenuOnHeader(QPoint p) {
-  qCDebug(gui) << "context menu requested";
+  qCDebug(view) << "context menu requested";
   QMenu menu;
   QPoint p2 = mapToGlobal(p);
   int logicIndex = m_header->logicalIndexAt(p);
-  qCDebug(gui) << "Logical Index: " << logicIndex;
+  qCDebug(view) << "Logical Index: " << logicIndex;
   menu.addActions(m_columnShowHideActions);
   menu.addSeparator();
   menu.addAction(m_moveLastAction);
@@ -100,7 +100,7 @@ void BenchmarkView::onContextMenuOnHeader(QPoint p) {
 }
 
 void BenchmarkView::onContextMenuOnBody(QPoint p) {
-  qCDebug(gui) << "context menu requested";
+  qCDebug(view) << "context menu requested";
   QMenu menu;
   QPoint p2 = mapToGlobal(p);
   menu.addAction(m_select);
@@ -124,13 +124,13 @@ void BenchmarkView::onSlotMoveFirst() {
 }
 
 void BenchmarkView::onShowColumn(BmColumns::Columns col) {
-  qCDebug(gui) << "Col: " << m_bmColumns->columnNameToString(col);
+  qCDebug(view) << "Col: " << m_bmColumns->columnNameToString(col);
   showColumn(m_bmColumns->columnNameToIndex(col));
   updateColumnViewStatus();
 }
 
 void BenchmarkView::onHideColumn(BmColumns::Columns col) {
-  qCDebug(gui) << "Col: " << m_bmColumns->columnNameToString(col);
+  qCDebug(view) << "Col: " << m_bmColumns->columnNameToString(col);
   hideColumn(m_bmColumns->columnNameToIndex(col));
   updateColumnViewStatus();
 }

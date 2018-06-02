@@ -32,9 +32,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     chartviewwidget.cpp \
-    viewglobals.cpp
+    viewglobals.cpp \
+    benchmarkview.cpp \
+    bmcolumns.cpp \
+    benchmarkdelegate.cpp
     
 HEADERS += \
     viewglobals.h \
-    chartviewwidget.h
+    chartviewwidget.h \
+    benchmarkview.h \
+    bmcolumns.h \
+    benchmarkdelegate.h
     

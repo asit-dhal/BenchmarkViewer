@@ -24,7 +24,7 @@
 
 #include "bmcolumns.h"
 #include <QObject>
-#include "globals.h"
+#include "viewglobals.h"
 
 BmColumns::BmColumns(QObject* parent) : QObject(parent) {
   m_columnName[Columns::STATUS] = tr("Status");
@@ -51,14 +51,14 @@ BmColumns::BmColumns(QObject* parent) : QObject(parent) {
   m_columnIndex[Columns::TIME_UNIT] = 5;
   m_columnIndex[Columns::FILENAME] = 6;
 
-  qCDebug(gui)
+  qCDebug(view)
       << "signal[BmColumns::hideColumn] -> slot[BmColumns::onHideColumn]";
   connect(this, &BmColumns::hideColumn, this, &BmColumns::onHideColumn);
-  qCDebug(gui)
+  qCDebug(view)
       << "signal[BmColumns::showColumn] -> slot[BmColumns::onShowColumn]";
   connect(this, &BmColumns::showColumn, this, &BmColumns::onShowColumn);
 
-  qCDebug(gui) << m_columnName;
+  qCDebug(view) << m_columnName;
 }
 
 QString BmColumns::columnNameToString(Columns cols) {
@@ -69,14 +69,14 @@ int BmColumns::columnNameToIndex(Columns cols) {
 }
 
 void BmColumns::onHideColumn(Columns col) {
-  qCDebug(gui) << "col name: " << columnNameToString(col)
-               << " index: " << columnNameToIndex(col);
+  qCDebug(view) << "col name: " << columnNameToString(col)
+                << " index: " << columnNameToIndex(col);
   m_columnViewStatus[col] = false;
 }
 
 void BmColumns::onShowColumn(Columns col) {
-  qCDebug(gui) << "col name: " << columnNameToString(col)
-               << " index: " << columnNameToIndex(col);
+  qCDebug(view) << "col name: " << columnNameToString(col)
+                << " index: " << columnNameToIndex(col);
   m_columnViewStatus[col] = true;
 }
 
