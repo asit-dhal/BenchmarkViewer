@@ -54,7 +54,7 @@ void BenchmarkModel::removeBenchmark(QString filename) {
   while (itr != m_benchmarks.end()) {
     if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) {
       if (itr->isSelected) {
-        emit measurementInactive(itr->measurement);
+        emit measurementInactive(itr->measurement.getId());
       }
       itr = m_benchmarks.erase(itr);
     } else {
@@ -172,9 +172,13 @@ bool BenchmarkModel::setData(const QModelIndex& index,
           createIndex(index.row(), m_bmColumns->getColumnCount() - 1));
 
       if (m_benchmarks[row].isSelected) {
-        emit measurementActive(m_benchmarks[row].measurement);
+        QList<double> vals;
+        vals.append(m_benchmarks[row].measurement.getCpuTime());
+        vals.append(m_benchmarks[row].measurement.getRealTime());
+        emit measurementActive(m_benchmarks[row].measurement.getId(),
+                               m_benchmarks[row].measurement.getName(), vals);
       } else {
-        emit measurementInactive(m_benchmarks[row].measurement);
+        emit measurementInactive(m_benchmarks[row].measurement.getId());
       }
 
       return true;

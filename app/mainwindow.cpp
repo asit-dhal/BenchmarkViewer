@@ -257,7 +257,7 @@ void MainWindow::createWidgets() {
   benchmarkLayout->addWidget(m_benchmarkView);
   benckmarkSelectorGB->setLayout(benchmarkLayout);
 
-  m_chartView = new ChartViewWidget(this);
+  m_chartView = new ChartViewWidget(QStringList{"CPU Time", "Real Time"}, this);
 
   QSplitter* splitter = new QSplitter(this);
   splitter->addWidget(m_selectedFilesWidget);

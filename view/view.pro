@@ -22,16 +22,19 @@
 
 #========================================================================*/
 
-TEMPLATE = subdirs
+QT       += core gui charts
 
-CONFIG += c++14
+TARGET = view
+TEMPLATE = lib
+CONFIG += staticlib c++14
 
-SUBDIRS = app model view
+DEFINES += QT_DEPRECATED_WARNINGS
 
-
-DISTFILES += \
-    CMakeLists.txt
-
-OTHER_FILES += \
-    appveyor.yml \
-    .travis.yml
+SOURCES += \
+    chartviewwidget.cpp \
+    viewglobals.cpp
+    
+HEADERS += \
+    viewglobals.h \
+    chartviewwidget.h
+    

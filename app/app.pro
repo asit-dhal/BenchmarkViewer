@@ -38,7 +38,6 @@ SOURCES += \
     benchmarkmodel.cpp \
     benchmarkview.cpp \
     benchmarkdelegate.cpp \
-    chartviewwidget.cpp \
     benchmarkproxymodel.cpp \
     appconfig.cpp \
     bmcolumns.cpp \
@@ -49,7 +48,6 @@ HEADERS += \
     benchmarkmodel.h \
     benchmarkview.h \
     benchmarkdelegate.h \
-    chartviewwidget.h \
     benchmarkproxymodel.h \
     appconfig.h \
     bmcolumns.h \
@@ -63,5 +61,13 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../model/release/ -lmo
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../model/debug/ -lmodel
 else:unix: LIBS += -L$$OUT_PWD/../model/ -lmodel
 
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../view/release/ -lview
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../view/debug/ -lview
+else:unix: LIBS += -L$$OUT_PWD/../view/ -lview
+
+
 INCLUDEPATH += $$PWD/../model
+INCLUDEPATH += $$PWD/../view
+
 DEPENDPATH += $$PWD/../model
+DEPENDPATH += $$PWD/../view

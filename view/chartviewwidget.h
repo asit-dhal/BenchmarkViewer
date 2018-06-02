@@ -22,11 +22,39 @@
 
 ========================================================================*/
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef CHARTVIEWWIDGET_H
+#define CHARTVIEWWIDGET_H
 
-#include <QLoggingCategory>
+#include <QBarCategoryAxis>
+#include <QBarSet>
+#include <QMap>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QVXYModelMapper>
+#include <QtWidgets>
 
-Q_DECLARE_LOGGING_CATEGORY(gui);
+QT_CHARTS_USE_NAMESPACE
 
-#endif  // GLOBALS_H
+class ChartViewWidget : public QWidget {
+ public:
+  ChartViewWidget(QStringList categories, QWidget* parent = nullptr);
+
+ public slots:
+  void onAddMeasurement(int id, QString name, QList<double> data);
+  void onRemoveMeasurement(int id);
+
+ private:
+  void init();
+  double calculateMaxY();
+
+  double m_maxY = 0;
+  QBarCategoryAxis* m_axis;
+  QChart* m_chart;
+  QChartView* m_chartView;
+  QBarSeries* m_series;
+  QMap<int, QBarSet*> m_barSet;
+  QStringList m_categories;
+};
+
+#endif  // CHARTVIEWWIDGET_H

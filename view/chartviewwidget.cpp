@@ -26,11 +26,10 @@
 
 #include <QBarSet>
 #include <QHBoxLayout>
+#include "viewglobals.h"
 
-Q_LOGGING_CATEGORY(chartView, "chartView");
-
-ChartViewWidget::ChartViewWidget(QWidget* parent)
-    : QWidget(parent), m_chartView(new QChartView) {
+ChartViewWidget::ChartViewWidget(QStringList categories, QWidget* parent)
+    : QWidget(parent), m_chartView(new QChartView), m_categories(categories) {
   init();
   QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_chartView);
@@ -43,11 +42,8 @@ void ChartViewWidget::init() {
   m_chart->addSeries(m_series);
   m_chart->legend()->setVisible(true);
   m_chart->legend()->setAlignment(Qt::AlignRight);
-  QStringList categories;
-  categories << "CPU Time"
-             << "Real Time";
   m_axis = new QBarCategoryAxis();
-  m_axis->append(categories);
+  m_axis->append(m_categories);
   m_chart->createDefaultAxes();
   m_chart->axisY()->setMin(0);
   m_chart->setAxisX(m_axis, m_series);
@@ -56,14 +52,15 @@ void ChartViewWidget::init() {
   m_chartView->setRenderHint(QPainter::Antialiasing);
 }
 
-void ChartViewWidget::onAddMeasurement(Measurement mmt) {
-  qCDebug(chartView) << "New Measurement: " << mmt;
-  QString name = mmt.getName();
-  double cpuTime = mmt.getCpuTime();
-  double realTime = mmt.getRealTime();
+void ChartViewWidget::onAddMeasurement(int id,
+                                       QString name,
+                                       QList<double> data) {
+  qCDebug(view) << "New Measurement: " << name;
   QBarSet* set = new QBarSet(name);
-  *set << cpuTime << realTime;
-  m_barSet[mmt.getId()] = set;
+  for (auto& ele : data) {
+    *set << ele;
+  }
+  m_barSet[id] = set;
   m_series->append(set);
   m_chart->axisY()->setMax(calculateMaxY() + 10);
 }
@@ -81,10 +78,10 @@ double ChartViewWidget::calculateMaxY() {
   return maxY;
 }
 
-void ChartViewWidget::onRemoveMeasurement(Measurement mmt) {
-  qCDebug(chartView) << "Removed Measurement: " << mmt;
-  QBarSet* set = m_barSet[mmt.getId()];
+void ChartViewWidget::onRemoveMeasurement(int id) {
+  qCDebug(view) << "Removed Measurement: " << id;
+  QBarSet* set = m_barSet[id];
   m_series->remove(set);
-  m_barSet.remove(mmt.getId());
+  m_barSet.remove(id);
   m_chart->axisY()->setMax(calculateMaxY());
 }

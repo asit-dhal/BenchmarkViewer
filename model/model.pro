@@ -38,7 +38,8 @@ SOURCES += \
     helper.cpp \
     abstractparser.cpp \
     jsonparser.cpp \
-    csvparser.cpp
+    csvparser.cpp \
+    modelglobals.cpp
     
 HEADERS += \
     modelglobals.h \

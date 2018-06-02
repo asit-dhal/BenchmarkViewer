@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -21,12 +21,6 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
+#include "modelglobals.h"
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
-
-#include <QLoggingCategory>
-
-Q_DECLARE_LOGGING_CATEGORY(gui);
-
-#endif  // GLOBALS_H
+Q_LOGGING_CATEGORY(parser, "parser")

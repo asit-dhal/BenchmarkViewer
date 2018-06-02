@@ -62,8 +62,8 @@ class BenchmarkModel : public QAbstractTableModel {
                int role = Qt::EditRole) override;
 
  signals:
-  void measurementActive(Measurement);
-  void measurementInactive(Measurement);
+  void measurementActive(int id, QString name, QList<double> vals);
+  void measurementInactive(int id);
 
  private:
   QList<BenchmarkViewUnit> m_benchmarks;
