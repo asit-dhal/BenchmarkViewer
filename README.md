@@ -29,9 +29,10 @@ The standalone binary packages support the following platforms:
 ![alt text](https://github.com/asit-dhal/BenchmarkViewer/raw/master/app_screenshot.gif "Recording of BenchmarkViewer")
 
 ### Todo(By December 2018)
-* [ ] Redesign to follow Model-View-Presenter
-* [ ] Make it extendable by using Plugin Architecture(QtCreator Plugin Architecture)
-* [ ] Support Celero
-* [ ] Support Hayai
-* [ ] Support Nonius
-* [ ] Benchmarking for non-C++ language(at least Rust and Python)
+- [x] Release first working version
+- [ ] Redesign to follow Model-View-Presenter
+- [ ] Make it extendable by using Plugin Architecture(QtCreator Plugin Architecture)
+- [ ] Support Celero
+- [ ] Support Hayai
+- [ ] Support Nonius
+- [ ] Benchmarking for non-C++ language(at least Rust and Python)
