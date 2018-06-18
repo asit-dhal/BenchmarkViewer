@@ -35,15 +35,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    benchmarkmodel.cpp \
-    benchmarkproxymodel.cpp \
     appconfig.cpp \
     globals.cpp 
 
 HEADERS += \
         mainwindow.h \
-    benchmarkmodel.h \
-    benchmarkproxymodel.h \
     appconfig.h \
     globals.h 
 
@@ -59,9 +55,14 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../view/release/ -lvie
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../view/debug/ -lview
 else:unix: LIBS += -L$$OUT_PWD/../view/ -lview
 
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../presenter/release/ -lpresenter
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../presenter/debug/ -lpresenter
+else:unix: LIBS += -L$$OUT_PWD/../presenter/ -lpresenter
 
 INCLUDEPATH += $$PWD/../model
 INCLUDEPATH += $$PWD/../view
+INCLUDEPATH += $$PWD/../presenter
 
 DEPENDPATH += $$PWD/../model
 DEPENDPATH += $$PWD/../view
+DEPENDPATH += $$PWD/../presenter

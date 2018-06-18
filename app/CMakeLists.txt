@@ -22,13 +22,6 @@
 
 #========================================================================*/
 
-set(CMAKE_AUTOMOC ON)
-
-find_package(Qt5Widgets 5.10 REQUIRED)
-find_package(Qt5Charts 5.10 REQUIRED)
-find_package(Qt5Core 5.10 REQUIRED)
-find_package(Qt5Gui 5.10 REQUIRED)
-
 set(SRCS
     appconfig.cpp
     benchmark.cpp

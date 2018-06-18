@@ -22,16 +22,27 @@
 
 #========================================================================*/
 
-TEMPLATE = subdirs
+QT       += core gui
 
-CONFIG += c++14
+TARGET = presenter
+TEMPLATE = lib
+CONFIG += staticlib c++14
 
-SUBDIRS = app model view presenter
+DEFINES += QT_DEPRECATED_WARNINGS
 
-
-DISTFILES += \
-    CMakeLists.txt
-
-OTHER_FILES += \
-    appveyor.yml \
-    .travis.yml
+SOURCES += \
+    presenterlobals.cpp \
+    benchmarkmodel.cpp \
+    benchmarkproxymodel.cpp \
+    columnpresenter.cpp
+    
+    
+HEADERS += \
+    presenterlobals.h \
+    benchmarkmodel.h \
+    benchmarkproxymodel.h \
+    columnpresenter.h
+    
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../model/release/ -lmodel
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../model/debug/ -lmodel
+else:unix: LIBS += -L$$OUT_PWD/../model/ -lmodel

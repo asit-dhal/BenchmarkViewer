@@ -35,12 +35,18 @@ SOURCES += \
     viewglobals.cpp \
     benchmarkview.cpp \
     bmcolumns.cpp \
-    benchmarkdelegate.cpp
+    benchmarkdelegate.cpp \
+    yaxisselectorview.cpp \
+    yaxisselectordelegate.cpp \
+    viewhelper.cpp
     
 HEADERS += \
     viewglobals.h \
     chartviewwidget.h \
     benchmarkview.h \
     bmcolumns.h \
-    benchmarkdelegate.h
+    benchmarkdelegate.h \
+    yaxisselectorview.h \
+    yaxisselectordelegate.h \
+    viewhelper.h
     

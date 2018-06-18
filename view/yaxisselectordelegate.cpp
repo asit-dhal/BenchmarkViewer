@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -22,31 +22,18 @@
 
 ========================================================================*/
 
-#include "benchmarkdelegate.h"
-#include <QApplication>
-#include <QCheckBox>
+#include "yaxisselectordelegate.h"
+#include <QEvent>
+#include <QKeyEvent>
 #include <QMouseEvent>
 
-static QRect CheckBoxRect(const QStyleOptionViewItem& view_item_style_options) {
-  QStyleOptionButton check_box_style_option;
-  QRect check_box_rect = QApplication::style()->subElementRect(
-      QStyle::SE_CheckBoxIndicator, &check_box_style_option);
-  QPoint check_box_point(view_item_style_options.rect.x() +
-                             view_item_style_options.rect.width() / 2 -
-                             check_box_rect.width() / 2,
-                         view_item_style_options.rect.y() +
-                             view_item_style_options.rect.height() / 2 -
-                             check_box_rect.height() / 2);
-  return QRect(check_box_point, check_box_rect.size());
-}
-
-BenchmarkDelegate::BenchmarkDelegate(QObject* parent)
+YAxisSelectorDelegate::YAxisSelectorDelegate(QObject* parent)
     : QStyledItemDelegate(parent) {}
 
-bool BenchmarkDelegate::editorEvent(QEvent* event,
-                                    QAbstractItemModel* model,
-                                    const QStyleOptionViewItem& option,
-                                    const QModelIndex& index) {
+bool YAxisSelectorDelegate::editorEvent(QEvent* event,
+                                        QAbstractItemModel* model,
+                                        const QStyleOptionViewItem& option,
+                                        const QModelIndex& index) {
   if (index.column() == 0) {
     if ((event->type() == QEvent::MouseButtonRelease) ||
         (event->type() == QEvent::MouseButtonDblClick)) {
@@ -74,9 +61,9 @@ bool BenchmarkDelegate::editorEvent(QEvent* event,
   }
 }
 
-void BenchmarkDelegate::paint(QPainter* painter,
-                              const QStyleOptionViewItem& option,
-                              const QModelIndex& index) const {
+void YAxisSelectorDelegate::paint(QPainter* painter,
+                                  const QStyleOptionViewItem& option,
+                                  const QModelIndex& index) const {
   if (index.column() == 0) {
     bool checked = index.model()->data(index, Qt::DisplayRole).toBool();
 

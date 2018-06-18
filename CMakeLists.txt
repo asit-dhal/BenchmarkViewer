@@ -39,4 +39,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+set(CMAKE_AUTOMOC ON)
+
+find_package(Qt5Widgets 5.10 REQUIRED)
+find_package(Qt5Charts 5.10 REQUIRED)
+find_package(Qt5Core 5.10 REQUIRED)
+find_package(Qt5Gui 5.10 REQUIRED)
+
 add_subdirectory(app)
+add_subdirectory(model)
+add_subdirectory(view)
+add_subdirectory(presenter)
