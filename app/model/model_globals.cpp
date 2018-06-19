@@ -5,7 +5,7 @@
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -21,24 +21,6 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
+#include "model_globals.h"
 
-#ifndef PARSER_H
-#define PARSER_H
-
-#include <QJsonObject>
-#include <QObject>
-#include <QVector>
-#include "abstractparser.h"
-
-class JsonParser : public AbstractParser {
-  Q_OBJECT
- public:
-  JsonParser(QObject* parent = nullptr);
-  void parse(QString filename) override;
-
- private:
-  Context parseContext(const QJsonObject& json);
-  QVector<Measurement> parseBenchmarks(const QJsonObject& json);
-};
-
-#endif  // PARSER_H
+Q_LOGGING_CATEGORY(model, "model")

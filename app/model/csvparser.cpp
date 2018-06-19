@@ -26,13 +26,12 @@
 #include <QFile>
 #include <QRegExp>
 #include <QVector>
-#include "globals.h"
+#include "model_globals.h"
 
-CsvParser::CsvParser(QObject* parent) : AbstractParser(parent) {}
+CsvParser::CsvParser(QObject* parent) : IAbstractParser(parent) {}
 
 void CsvParser::parse(QString filename) {
-  emit parsingStatus(QString("Parsing started: ") + filename);
-  qCDebug(parser) << "Parsing started: " << filename;
+  qCDebug(model) << "Parsing started: " << filename;
   QFile file;
   file.setFileName(filename);
   file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -49,8 +48,7 @@ void CsvParser::parse(QString filename) {
   benchmark.setMeasurements(mmts.toVector());
 
   emit parsingFinished(filename, benchmark);
-  emit parsingStatus(QString("Parsing finished: ") + filename);
-  qCDebug(parser) << "Parsing finished: " << filename;
+  qCDebug(model) << "Parsing finished: " << filename;
 }
 
 QList<QString> CsvParser::parseHeaders(QString header) {
@@ -70,7 +68,7 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
 
     Measurement mmt;
     for (auto i = 0; i < header.size(); i++) {
-      qCDebug(parser) << "Data: " << fields;
+      qCDebug(model) << "Data: " << fields;
       if (header.at(i).compare("name", Qt::CaseInsensitive) == 0) {
         QString name = fields.at(i);
         name.replace("'", "");
@@ -99,7 +97,7 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
                  0) {
         mmt.setErrorMessage(fields.at(i).trimmed());
       } else {
-        qCDebug(parser) << "Error occured Unknown field: " << fields.at(i);
+        qCDebug(model) << "Error occured Unknown field: " << fields.at(i);
       }
     }
     mmts.append(mmt);

@@ -21,22 +21,11 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
+#ifndef MODEL_GLOBALS_H
+#define MODEL_GLOBALS_H
 
-#ifndef ABSTRACTPARSER_H
-#define ABSTRACTPARSER_H
+#include <QLoggingCategory>
 
-#include <QObject>
-#include <QVector>
-#include "benchmark.h"
+Q_DECLARE_LOGGING_CATEGORY(model);
 
-class AbstractParser : public QObject {
-  Q_OBJECT
- public:
-  AbstractParser(QObject* parent = nullptr);
-  virtual void parse(QString filename) = 0;
- signals:
-  void parsingStatus(QString statusMsg);
-  void parsingFinished(QString fileName, Benchmark benchmark);
-};
-
-#endif  // ABSTRACTPARSER_H
+#endif // MODEL_GLOBALS_H

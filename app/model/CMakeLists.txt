@@ -22,43 +22,33 @@
 
 #========================================================================*/
 
-set(CMAKE_AUTOMOC ON)
+project(model)
 
-find_package(Qt5Widgets 5.10 REQUIRED)
-find_package(Qt5Charts 5.10 REQUIRED)
-find_package(Qt5Core 5.10 REQUIRED)
-find_package(Qt5Gui 5.10 REQUIRED)
-
-add_subdirectory(model)
+cmake_minimum_required(VERSION 3.10)
 
 set(SRCS
-    appconfig.cpp
-    benchmark.cpp
-    benchmarkdelegate.cpp
-    benchmarkmodel.cpp
-    benchmarkproxymodel.cpp
-    benchmarkview.cpp
-    chartviewwidget.cpp
-    context.cpp
-    helper.cpp
-    main.cpp
-    mainwindow.cpp
-    measurement.cpp
     abstractparser.cpp
-    jsonparser.cpp
+    benchmark.cpp
+    context.cpp
     csvparser.cpp
-    globals.cpp
-    bmcolumns.cpp
+    jsonparser.cpp
+    measurement.cpp
+    model_globals.cpp
+    helper.cpp
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-#add_executable(${PROJECT_NAME} ${SRCS})
+add_library(${PROJECT_NAME} ${SRCS})
 
-#target_link_libraries(${PROJECT_NAME}
-#                    Qt5::Widgets
-#                    Qt5::Core
-#                    Qt5::Gui
-#                    Qt5::Charts
-#                    )
+add_library(app::model ALIAS ${PROJECT_NAME})
+
+target_include_directories( ${PROJECT_NAME}
+    PUBLIC ${PROJECT_SOURCE_DIR}
+)
+
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Core
+)
+
 

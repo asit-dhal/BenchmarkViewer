@@ -29,8 +29,9 @@
 #include <QObject>
 #include "abstractparser.h"
 
-class CsvParser : public AbstractParser {
+class CsvParser : public IAbstractParser {
   Q_OBJECT
+  Q_INTERFACES(IAbstractParser)
 
  public:
   explicit CsvParser(QObject* parent = nullptr);
