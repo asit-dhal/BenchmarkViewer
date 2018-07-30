@@ -22,5 +22,11 @@
 
 ========================================================================*/
 #include "abstractparser.h"
+#include "csvparser.h"
+#include "jsonparser.h"
+
+namespace model {
 
 IAbstractParser::IAbstractParser(QObject* parent) : QObject(parent) {}
+
+}  // namespace model

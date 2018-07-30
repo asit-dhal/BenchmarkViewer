@@ -24,30 +24,40 @@
 
 #include "benchmark.h"
 
-Benchmark::Benchmark() {}
+namespace model {
 
-Context Benchmark::getContext() const {
-  return m_context;
+BenchmarkManager& BenchmarkManager::getInstance() {
+  static BenchmarkManager instance;
+  return instance;
 }
 
-void Benchmark::setContext(const Context& value) {
-  m_context = value;
-}
-
-QVector<Measurement> Benchmark::getMeasurements() const {
+Measurements BenchmarkManager::getMeasurements() const {
   return m_measurements;
 }
 
-void Benchmark::addMeasurement(const Measurement& _mmt) {
+Measurement BenchmarkManager::getMeasurement(int index) const {
+  return m_measurements.at(index);
+}
+
+int BenchmarkManager::getCount() const {
+  return m_measurements.size();
+}
+
+void BenchmarkManager::addMeasurement(const Measurement& _mmt) {
   m_measurements.append(_mmt);
 }
 
-void Benchmark::setMeasurements(const QVector<Measurement>& value) {
-  m_measurements = value;
+void BenchmarkManager::appendMeasurements(const Measurements& value) {
+  m_measurements.append(value);
 }
 
-QDebug operator<<(QDebug d, const Benchmark& bmk) {
-  d << "context: {" << bmk.getContext() << "}"
-    << " benchmarks: [" << bmk.getMeasurements() << "]";
+void BenchmarkManager::clear() {
+  m_measurements.clear();
+}
+
+QDebug operator<<(QDebug d, const BenchmarkManager& bmk) {
+  d << " BenchmarkManagers: [" << bmk.getMeasurements() << "]";
   return d;
 }
+
+}  // namespace model

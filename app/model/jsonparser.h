@@ -26,6 +26,9 @@
 #define PARSER_H
 
 #include "abstractparser.h"
+#include "measurement.h"
+
+namespace model {
 
 class JsonParser : public IAbstractParser {
   Q_OBJECT
@@ -34,8 +37,10 @@ class JsonParser : public IAbstractParser {
   void parse(QString filename) override;
 
  private:
-  Context parseContext(const QJsonObject& json);
-  QVector<Measurement> parseBenchmarks(const QJsonObject& json);
+  // Context parseContext(const QJsonObject& json);
+  Measurements parseBenchmarks(const QJsonObject& json);
 };
+
+}  // namespace model
 
 #endif  // PARSER_H

@@ -1,6 +1,6 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
@@ -21,18 +21,45 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#include "model_globals.h"
+
+#include "columnmodel.h"
 
 namespace model {
 
-#include <QtCore/qglobal.h>
+ColumnModel::ColumnModel(QObject* parent) : QAbstractListModel(parent) {}
 
-#if defined(MODEL_LIBRARY)
-#define GALLERYCORESHARED_EXPORT Q_DECL_EXPORT
-#else
-#define MODELSHARED_EXPORT Q_DECL_IMPORT
-#endif
+int ColumnModel::rowCount(const QModelIndex& parent) const {
+  Q_UNUSED(parent);
+  return m_columns.size();
+}
 
-Q_LOGGING_CATEGORY(model, "model")
+QVariant ColumnModel::data(const QModelIndex& index, int role) const {
+  if (!index.isValid()) {
+    return QVariant();
+  }
+
+  if (index.row() >= m_columns.size() || index.row() < 0) {
+    return QVariant();
+  }
+
+  if (role == Qt::DisplayRole) {
+    return Measurement::getAttributeNames()[m_columns.at(index.row())];
+  } else if (role == AttrRole) {
+    return QVariant::fromValue(m_columns.at(index.row()));
+  }
+  return QVariant();
+}
+
+void ColumnModel::addColumn(Measurement::Attributes attr) {
+  beginResetModel();
+  m_columns.append(attr);
+  endResetModel();
+}
+
+void ColumnModel::removeColumn(Measurement::Attributes attr) {
+  beginResetModel();
+  m_columns.removeOne(attr);
+  endResetModel();
+}
 
 }  // namespace model

@@ -22,23 +22,52 @@
 
 ========================================================================*/
 
-#include <QApplication>
-#include <QLoggingCategory>
-#include "appconfig.h"
-#include "mainwindow.h"
+#ifndef BENCHMARKVIEW_H
+#define BENCHMARKVIEW_H
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
+#include <QTableView>
 
-  appconfig::loadAppSettings();
+class QHeaderView;
 
-  MainWindow w;
+namespace view {
 
-  QLoggingCategory::setFilterRules(
-      "*.debug=true\n"
-      "qt.*.debug=false\n");
+class BenchmarkView : public QTableView {
+  Q_OBJECT
 
-  w.show();
+ public:
+  BenchmarkView(QWidget* parent = 0);
+  ~BenchmarkView() = default;
 
-  return a.exec();
-}
+  QHeaderView* getHeader();
+
+  QAction* getMoveLastAction();
+  QAction* getMoveFirstAction();
+  QAction* getSelect();
+  QAction* getSelectAll();
+  QAction* getClearSelection();
+  QAction* getClearAllRows();
+  QList<QAction*> getColumnShowHideActions() const;
+
+ signals:
+  void select();
+  void selectAllRows();
+  void clearSelection();
+  void clearAllRows();
+
+ private:
+  QStringList m_columns;
+  QHeaderView* m_header;
+  QList<QAction*> m_columnShowHideActions;
+
+  QAction* m_moveLastAction;
+  QAction* m_moveFirstAction;
+  QAction* m_select;
+  QAction* m_selectAll;
+  QAction* m_clearSelection;
+  QAction* m_clearAllRows;
+
+  QList<int> m_currentHiddenColumns;
+};
+
+}  // namespace view
+#endif  // BENCHMARKVIEW_H

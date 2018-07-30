@@ -24,6 +24,8 @@
 
 #include "appconfig.h"
 
+namespace appconfig {
+
 void loadAppSettings() {
   QSettings::setDefaultFormat(QSettings::IniFormat);
 }
@@ -68,3 +70,5 @@ void updateLastOpenedFilePath(QString path) {
   appSettings.setValue("path", path);
   appSettings.endGroup();
 }
+
+}  // namespace appconfig

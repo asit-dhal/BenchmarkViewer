@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -22,29 +22,32 @@
 
 ========================================================================*/
 
-#ifndef BENCHMARKPROXYMODEL_H
-#define BENCHMARKPROXYMODEL_H
+#ifndef MODEL_TEST_H
+#define MODEL_TEST_H
 
-#include <QLoggingCategory>
-#include <QSortFilterProxyModel>
-#include <QString>
+#include <QObject>
+#include <QSharedPointer>
+#include "measurement.h"
 
-class BmColumns;
-
-Q_DECLARE_LOGGING_CATEGORY(proxyModel);
-
-class BenchmarkProxyModel : public QSortFilterProxyModel {
+class ModelTester : public QObject {
+  Q_OBJECT
  public:
-  BenchmarkProxyModel(BmColumns* bmColumns, QObject* parent = nullptr);
+  explicit ModelTester(QObject* parent = 0);
 
- protected:
-  bool lessThan(const QModelIndex& left,
-                const QModelIndex& right) const override;
-  bool filterAcceptsRow(int sourceRow,
-                        const QModelIndex& sourceParent) const override;
+ signals:
+
+ private slots:
+  void initTestCase();
+  void testCsvParser();
+  void testJsonParser();
+  void cleanupTestCase();
 
  private:
-  BmColumns* m_bmColumns;
+  void verifyMeasurements(model::Measurements mmts);
+
+ private:
+  QSharedPointer<model::IAbstractParser> m_jsonParser;
+  QSharedPointer<model::IAbstractParser> m_csvParser;
 };
 
-#endif  // BENCHMARKPROXYMODEL_H
+#endif  // MODEL_TEST_H

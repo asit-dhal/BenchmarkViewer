@@ -22,23 +22,41 @@
 
 ========================================================================*/
 
-#ifndef BENCHMARKDELEGATE_H
-#define BENCHMARKDELEGATE_H
+#ifndef CHARTVIEWWIDGET_H
+#define CHARTVIEWWIDGET_H
 
-#include <QStyledItemDelegate>
+#include <QBarCategoryAxis>
+#include <QBarSet>
+#include <QLoggingCategory>
+#include <QMap>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QVXYModelMapper>
+#include <QtWidgets>
 
-class BenchmarkDelegate : public QStyledItemDelegate {
-  Q_OBJECT
+Q_DECLARE_LOGGING_CATEGORY(chartView);
+
+QT_CHARTS_USE_NAMESPACE
+
+class ChartViewWidget : public QWidget {
  public:
-  BenchmarkDelegate(QObject* parent = nullptr);
-  void paint(QPainter* painter,
-             const QStyleOptionViewItem& option,
-             const QModelIndex& index) const override;
+  ChartViewWidget(QWidget* parent = nullptr);
 
-  bool editorEvent(QEvent* event,
-                   QAbstractItemModel* model,
-                   const QStyleOptionViewItem& option,
-                   const QModelIndex& index) override;
+ public slots:
+  void onAddBarSet(QBarSet* barSet);
+  void onRemoveBarSet(QBarSet* barSet);
+  void onSetMaxY(double maxY);
+
+ private:
+  void init();
+
+  double m_maxY = 0;
+  QBarCategoryAxis* m_axis;
+  QChart* m_chart;
+  QChartView* m_chartView;
+  QBarSeries* m_series;
+
 };
 
-#endif  // BENCHMARKDELEGATE_H
+#endif  // CHARTVIEWWIDGET_H

@@ -27,6 +27,8 @@
 #include <QCheckBox>
 #include <QMouseEvent>
 
+namespace presenter {
+
 static QRect CheckBoxRect(const QStyleOptionViewItem& view_item_style_options) {
   QStyleOptionButton check_box_style_option;
   QRect check_box_rect = QApplication::style()->subElementRect(
@@ -95,3 +97,5 @@ void BenchmarkDelegate::paint(QPainter* painter,
     QStyledItemDelegate::paint(painter, option, index);
   }
 }
+
+}  // namespace presenter

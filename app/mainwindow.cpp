@@ -41,71 +41,56 @@
 #include <QSplitter>
 #include <QTableView>
 #include "appconfig.h"
-#include "benchmarkdelegate.h"
-#include "benchmarkmodel.h"
-#include "benchmarkproxymodel.h"
-#include "benchmarkview.h"
-#include "bmcolumns.h"
-#include "csvparser.h"
 #include "globals.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
-  m_bmColumns = new BmColumns(this);
+  // m_bmColumns = new BmColumns(this);
   createActions();
   createMenus();
   createWidgets();
   connectSignalsToSlots();
   updateRecentFileActions();
   updateCloseFileActions();
-  showMaximized();
+  // showMaximized();
 }
 
 MainWindow::~MainWindow() {}
 
 void MainWindow::createActions() {
-  qCDebug(gui) << "Creating Actions";
   m_openFileAction = new QAction(tr("&Open File(s)"), this);
   m_openFileAction->setShortcuts(QKeySequence::Open);
-  connect(m_openFileAction, &QAction::triggered, this, &MainWindow::onOpenFile);
 
   m_closeAllFilesAction = new QAction(tr("Close All files"), this);
   m_closeAllFilesAction->setStatusTip(tr("Close All Files "));
-  connect(m_closeAllFilesAction, &QAction::triggered, this,
-          &MainWindow::onCloseAllFiles);
 
   m_exportChart = new QAction(tr("Export Chart as png"), this);
-  connect(m_exportChart, &QAction::triggered, this, &MainWindow::onExportChart);
 
   m_exitAction = new QAction(tr("E&xit"), this);
   m_exitAction->setStatusTip(tr("Exit"));
-  connect(m_exitAction, &QAction::triggered, this, &MainWindow::onExit);
 
   m_toogleSelectedFileWidget =
       new QAction(tr("Toggle selected file widget"), this);
   m_toogleSelectedFileWidget->setStatusTip(tr("Toggle selected file widget"));
   m_toogleSelectedFileWidget->setCheckable(true);
-  connect(m_toogleSelectedFileWidget, &QAction::triggered, this,
-          &MainWindow::onToogleSelectedFileWidget);
 
-  for (auto i = 0; i < m_bmColumns->getColumnCount(); i++) {
-    auto col = m_bmColumns->indexToColumns(i);
-    QAction* showColumn =
-        new QAction(m_bmColumns->columnNameToString(col), this);
-    showColumn->setCheckable(true);
-    showColumn->setChecked(!m_bmColumns->isColumnHidden(col));
-    connect(showColumn, &QAction::triggered, this, [=]() {
-      if (m_bmColumns->isColumnHidden(col)) {
-        emit m_bmColumns->showColumn(col);
-      } else {
-        emit m_bmColumns->hideColumn(col);
-      }
-    });
-    m_showColumns.append(showColumn);
-  }
-
+  /*  for (auto i = 0; i < m_bmColumns->getColumnCount(); i++) {
+      auto col = m_bmColumns->indexToColumns(i);
+      QAction* showColumn =
+          new QAction(m_bmColumns->columnNameToString(col), this);
+      showColumn->setCheckable(true);
+      showColumn->setChecked(!m_bmColumns->isColumnHidden(col));
+      connect(showColumn, &QAction::triggered, this, [=]() {
+        if (m_bmColumns->isColumnHidden(col)) {
+          emit m_bmColumns->showColumn(col);
+        } else {
+          emit m_bmColumns->hideColumn(col);
+        }
+      });
+      m_showColumns.append(showColumn);
+    }
+  */
   m_aboutApp = new QAction(tr("About BenchmarkViewer"), this);
   m_aboutApp->setStatusTip(tr("About BenchmarkViewer"));
-  connect(m_aboutApp, &QAction::triggered, this, &MainWindow::onAboutApp);
 }
 
 void MainWindow::updateRecentFileActions() {
@@ -441,4 +426,40 @@ void MainWindow::onClearAllRows() {
       m_benchmarkModel->setData(srcIdx, false);
     }
   }
+}
+
+QAction* MainWindow::getAboutApp() const {
+  return m_aboutApp;
+}
+
+QList<QAction*> MainWindow::getShowColumns() const {
+  return m_showColumns;
+}
+
+QAction* MainWindow::getToogleSelectedFileWidget() const {
+  return m_toogleSelectedFileWidget;
+}
+
+QAction* MainWindow::getExitAction() const {
+  return m_exitAction;
+}
+
+QAction* MainWindow::getExportChart() const {
+  return m_exportChart;
+}
+
+QAction* MainWindow::getCloseAllFilesAction() const {
+  return m_closeAllFilesAction;
+}
+
+QList<QAction*> MainWindow::getCloseFileActions() const {
+  return m_closeFileActions;
+}
+
+QList<QAction*> MainWindow::getOpenRecentFilesAction() const {
+  return m_openRecentFilesAction;
+}
+
+QAction* MainWindow::getOpenFileAction() const {
+  return m_openFileAction;
 }

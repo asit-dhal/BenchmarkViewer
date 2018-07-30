@@ -26,6 +26,9 @@
 
 #include <QLoggingCategory>
 
+namespace model {
+
 Q_DECLARE_LOGGING_CATEGORY(model);
 
+}  // namespace model
 #endif // MODEL_GLOBALS_H

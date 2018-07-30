@@ -28,10 +28,13 @@
 #include <QSettings>
 #include <QStringList>
 
+namespace appconfig {
+
 void loadAppSettings();
 QStringList readRecentFiles();
 void updateRecentFiles(QString fileName);
 QString readLastOpenedFilePath();
 void updateLastOpenedFilePath(QString path);
 
+}  // namespace appconfig
 #endif  // APPCONFIG_H

@@ -25,6 +25,8 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+namespace model {
+
 class Helper {
  public:
   static int getUniqueMeasurementId();
@@ -32,5 +34,7 @@ class Helper {
  private:
   static int m_measurementId;
 };
+
+}  // namespace model
 
 #endif  // HELPER_H

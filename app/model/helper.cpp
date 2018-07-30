@@ -24,8 +24,12 @@
 
 #include "helper.h"
 
+namespace model {
+
 int Helper::m_measurementId = 0;
 int Helper::getUniqueMeasurementId() {
   m_measurementId++;
   return m_measurementId;
 }
+
+}  // namespace model

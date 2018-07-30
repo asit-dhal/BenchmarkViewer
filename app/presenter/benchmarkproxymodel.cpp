@@ -23,27 +23,33 @@
 ========================================================================*/
 
 #include "benchmarkproxymodel.h"
-#include "bmcolumns.h"
+#include <model/columnmodel.h>
+#include "measurement.h"
 
-Q_LOGGING_CATEGORY(proxyModel, "proxyModel")
+namespace presenter {
 
-BenchmarkProxyModel::BenchmarkProxyModel(BmColumns* bmColumns, QObject* parent)
-    : QSortFilterProxyModel(parent), m_bmColumns(bmColumns) {}
+BenchmarkProxyModel::BenchmarkProxyModel(model::ColumnModel* columnModel,
+                                         QObject* parent)
+    : QSortFilterProxyModel(parent), m_columnModel(columnModel) {}
 
 bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
                                    const QModelIndex& right) const {
   QVariant leftData = sourceModel()->data(left);
   QVariant rightData = sourceModel()->data(right);
 
-  switch (m_bmColumns->indexToColumns(left.column())) {
-    case BmColumns::Columns::STATUS:
+  auto colAttr =
+      m_columnModel
+          ->data(createIndex(left.column(), 0), model::ColumnModel::AttrRole)
+          .value<model::Measurement::Attributes>();
+
+  switch (colAttr) {
+    case model::Measurement::Attributes::eIsSelected:
       return leftData.toBool();
-    case BmColumns::Columns::ITERATIONS:
-    case BmColumns::Columns::REAL_TIME:
-    case BmColumns::Columns::CPU_TIME:
+    case model::Measurement::Attributes::eIterations:
+    case model::Measurement::Attributes::eRealTime:
+    case model::Measurement::Attributes::eCpuTime:
       return leftData.toDouble() < rightData.toDouble();
-    case BmColumns::Columns::NAME:
-    case BmColumns::Columns::FILENAME:
+    case model::Measurement::Attributes::eName:
     default:
       return QString::localeAwareCompare(leftData.toString(),
                                          rightData.toString()) < 0;
@@ -53,9 +59,7 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
 bool BenchmarkProxyModel::filterAcceptsRow(
     int sourceRow,
     const QModelIndex& sourceParent) const {
-  QModelIndex nameIndex = sourceModel()->index(
-      sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::NAME),
-      sourceParent);
+  QModelIndex nameIndex = sourceModel()->index(sourceRow, 1, sourceParent);
 
   if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(
           filterRegExp())) {
@@ -64,3 +68,5 @@ bool BenchmarkProxyModel::filterAcceptsRow(
     return false;
   }
 }
+
+}  // namespace presenter

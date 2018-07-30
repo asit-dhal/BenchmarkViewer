@@ -24,6 +24,8 @@
 
 #include "context.h"
 
+namespace model {
+
 QDateTime Context::getTimestamp() const {
   return timestamp;
 }
@@ -72,3 +74,5 @@ QDebug operator<<(QDebug d, const Context& ctx) {
     << " library_build_type: " << ctx.getLibraryBuildType();
   return d;
 }
+
+}  // namespace model

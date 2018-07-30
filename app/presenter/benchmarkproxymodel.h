@@ -22,51 +22,33 @@
 
 ========================================================================*/
 
-#ifndef BENCHMARKVIEW_H
-#define BENCHMARKVIEW_H
+#ifndef BENCHMARKPROXYMODEL_H
+#define BENCHMARKPROXYMODEL_H
 
-#include <QTableView>
-#include "bmcolumns.h"
+#include <QSortFilterProxyModel>
+#include <QString>
 
-class BmColumns;
-class QHeaderView;
+namespace model {
+class ColumnModel;
+}
 
-class BenchmarkView : public QTableView {
-  Q_OBJECT
+namespace presenter {
 
+class BenchmarkProxyModel : public QSortFilterProxyModel {
  public:
-  BenchmarkView(BmColumns* bmColumns, QWidget* parent = 0);
-  ~BenchmarkView() = default;
+  BenchmarkProxyModel(model::ColumnModel* columnModel,
+                      QObject* parent = nullptr);
 
- signals:
-  void select();
-  void selectAllRows();
-  void clearSelection();
-  void clearAllRows();
-
- public slots:
-  void onShowColumn(BmColumns::Columns col);
-  void onHideColumn(BmColumns::Columns col);
-
- private slots:
-  void onContextMenuOnHeader(QPoint p);
-  void onContextMenuOnBody(QPoint p);
-  void onSlotMoveLast();
-  void onSlotMoveFirst();
+ protected:
+  bool lessThan(const QModelIndex& left,
+                const QModelIndex& right) const override;
+  bool filterAcceptsRow(int sourceRow,
+                        const QModelIndex& sourceParent) const override;
 
  private:
-  void updateColumnViewStatus();
-  BmColumns* m_bmColumns;
-  QHeaderView* m_header;
-  QList<QAction*> m_columnShowHideActions;
-  QAction* m_moveLastAction;
-  QAction* m_moveFirstAction;
-
-  QAction* m_select;
-  QAction* m_selectAll;
-  QAction* m_clearSelection;
-  QAction* m_clearAllRows;
-  QList<int> m_currentHiddenColumns;
+  model::ColumnModel* m_columnModel;
 };
 
-#endif  // BENCHMARKVIEW_H
+}  // namespace presenter
+
+#endif  // BENCHMARKPROXYMODEL_H

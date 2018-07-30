@@ -25,26 +25,33 @@
 #ifndef BENCHMARKS_H
 #define BENCHMARKS_H
 
+#include <QMap>
 #include <QVector>
+#include <list>
+#include <map>
 #include "context.h"
 #include "measurement.h"
 
-class Benchmark {
+namespace model {
+
+class BenchmarkManager {
  public:
-  Benchmark();
+  BenchmarkManager& getInstance();
 
-  Context getContext() const;
-  void setContext(const Context& value);
-
-  QVector<Measurement> getMeasurements() const;
+  Measurements getMeasurements() const;
+  Measurement getMeasurement(int index) const;
+  int getCount() const;
   void addMeasurement(const Measurement& _mmt);
-  void setMeasurements(const QVector<Measurement>& value);
+  void appendMeasurements(const Measurements& value);
+  void clear();
 
  private:
-  Context m_context;
-  QVector<Measurement> m_measurements;
+  BenchmarkManager() = default;
+  Measurements m_measurements;
 };
 
-QDebug operator<<(QDebug d, const Benchmark& bmk);
+QDebug operator<<(QDebug d, const BenchmarkManager& bmk);
+
+}  // namespace model
 
 #endif  // BENCHMARKS_H

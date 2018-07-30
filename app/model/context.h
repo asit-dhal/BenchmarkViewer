@@ -29,6 +29,8 @@
 #include <QDebug>
 #include <QObject>
 
+namespace model {
+
 class Context {
  public:
   Context() = default;
@@ -53,4 +55,5 @@ class Context {
 
 QDebug operator<<(QDebug d, const Context& ctx);
 
+}  // namespace model
 #endif  // CONTEXT_H

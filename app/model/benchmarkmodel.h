@@ -25,28 +25,23 @@
 #ifndef BENCHMARKMODEL_H
 #define BENCHMARKMODEL_H
 
+#include <benchmark.h>
 #include <QAbstractTableModel>
-#include <QList>
 #include <QLoggingCategory>
-#include "benchmark.h"
+#include "columnmodel.h"
 #include "measurement.h"
 
-Q_DECLARE_LOGGING_CATEGORY(benchmarkModel);
-
-struct BenchmarkViewUnit {
-  Measurement measurement;
-  QString filename;
-  bool isSelected{false};
-};
-
-class BmColumns;
+namespace model {
 
 class BenchmarkModel : public QAbstractTableModel {
   Q_OBJECT
  public:
-  explicit BenchmarkModel(BmColumns* bmColumns, QObject* parent = nullptr);
-  void addBenchmark(QString filename, Benchmark benchmarks);
-  void removeBenchmark(QString filename);
+  explicit BenchmarkModel(ColumnModel* columnModel, QObject* parent = nullptr);
+
+  void addMeasurements(Measurements mmts);
+  void addMeasurement(Measurement mmt);
+  void removeMeasurement(int id);
+
   QVariant headerData(int section,
                       Qt::Orientation orientation,
                       int role = Qt::DisplayRole) const override;
@@ -66,8 +61,9 @@ class BenchmarkModel : public QAbstractTableModel {
   void measurementInactive(Measurement);
 
  private:
-  QList<BenchmarkViewUnit> m_benchmarks;
-  BmColumns* m_bmColumns;
+  Measurements m_mmts;
+  ColumnModel* m_columnModel;
 };
 
+}  // namespace model
 #endif  // BENCHMARKMODEL_H

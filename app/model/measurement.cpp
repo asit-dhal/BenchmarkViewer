@@ -25,6 +25,8 @@
 #include "measurement.h"
 #include "helper.h"
 
+namespace model {
+
 Measurement::Measurement() noexcept {
   m_id = Helper::getUniqueMeasurementId();
   m_name = "";
@@ -123,6 +125,44 @@ void Measurement::setErrorMessage(const QString& errorMessage) {
   m_errorMessage = errorMessage;
 }
 
+QString Measurement::getFileName() const {
+  return m_fileName;
+}
+
+void Measurement::setFileName(const QString& fileName) {
+  m_fileName = fileName;
+}
+
+QMap<Measurement::Attributes, QString> Measurement::getAttributeNames() {
+  auto initializeMap = []() {
+    QMap<Attributes, QString> map;
+    map.insert(Attributes::eName, "Name");
+    map.insert(Attributes::eFileName, "FileName");
+    map.insert(Attributes::eIterations, "Iterations");
+    map.insert(Attributes::eRealTime, "RealTime");
+    map.insert(Attributes::eCpuTime, "CpuTime");
+    map.insert(Attributes::eTimeUnit, "TimeUnit");
+    map.insert(Attributes::eBytesPerSecond, "BytesPerSecond");
+    map.insert(Attributes::eItemsPerSecond, "ItemsPerSecond");
+    map.insert(Attributes::eLabel, "Label");
+    map.insert(Attributes::eErrorOccured, "ErrorOccured");
+    map.insert(Attributes::eErrorMessage, "ErrorMessage");
+    map.insert(Attributes::eIsSelected, "Selected");
+    map.insert(Attributes::eId, "Id");
+    return map;
+  };
+  static QMap<Attributes, QString> metaData = initializeMap();
+  return metaData;
+}
+
+bool Measurement::isSelected() const {
+  return m_isSelected;
+}
+
+void Measurement::setSelected(bool isSelected) {
+  m_isSelected = isSelected;
+}
+
 QDebug operator<<(QDebug d, const Measurement& mmt) {
   d << "id: " << mmt.getId() << "name: " << mmt.getName()
     << " iterations: " << mmt.getIterations()
@@ -135,3 +175,5 @@ QDebug operator<<(QDebug d, const Measurement& mmt) {
     << " error_message: " << mmt.getErrorMessage();
   return d;
 }
+
+}  // namespace model

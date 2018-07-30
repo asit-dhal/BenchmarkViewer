@@ -5,7 +5,7 @@
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   QCommander is a free software; you can redistribute it and/or modify it.
+   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -21,18 +21,28 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#include "model_globals.h"
 
-namespace model {
+#ifndef BENCHMARKDELEGATE_H
+#define BENCHMARKDELEGATE_H
 
-#include <QtCore/qglobal.h>
+#include <QStyledItemDelegate>
 
-#if defined(MODEL_LIBRARY)
-#define GALLERYCORESHARED_EXPORT Q_DECL_EXPORT
-#else
-#define MODELSHARED_EXPORT Q_DECL_IMPORT
-#endif
+namespace presenter {
 
-Q_LOGGING_CATEGORY(model, "model")
+class BenchmarkDelegate : public QStyledItemDelegate {
+  Q_OBJECT
+ public:
+  BenchmarkDelegate(QObject* parent = nullptr);
+  void paint(QPainter* painter,
+             const QStyleOptionViewItem& option,
+             const QModelIndex& index) const override;
 
-}  // namespace model
+  bool editorEvent(QEvent* event,
+                   QAbstractItemModel* model,
+                   const QStyleOptionViewItem& option,
+                   const QModelIndex& index) override;
+};
+
+}
+
+#endif  // BENCHMARKDELEGATE_H

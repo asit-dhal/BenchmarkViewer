@@ -22,33 +22,30 @@
 
 #========================================================================*/
 
-project(model)
-
-cmake_minimum_required(VERSION 3.10)
-
-set(SRCS
+set(MODEL_SRCS
     abstractparser.cpp
     benchmark.cpp
     context.cpp
     csvparser.cpp
     jsonparser.cpp
+    parserfactory.cpp
     measurement.cpp
     model_globals.cpp
     helper.cpp
+    benchmarkmodel.cpp
+    columnmodel.cpp
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_library(${PROJECT_NAME} ${SRCS})
+add_library(model ${MODEL_SRCS})
+add_library(app::model ALIAS model)
 
-add_library(app::model ALIAS ${PROJECT_NAME})
-
-target_include_directories( ${PROJECT_NAME}
+target_include_directories( model
     PUBLIC ${PROJECT_SOURCE_DIR}
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(model
     Qt5::Core
+    Qt5::Gui
 )
-
-

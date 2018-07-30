@@ -1,6 +1,6 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
@@ -21,18 +21,13 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#include "model_globals.h"
 
-namespace model {
+#include <QCoreApplication>
+#include <QTest>
+#include "model_test.h"
 
-#include <QtCore/qglobal.h>
+int main(int argc, char* argv[]) {
+  ModelTester modelTester;
 
-#if defined(MODEL_LIBRARY)
-#define GALLERYCORESHARED_EXPORT Q_DECL_EXPORT
-#else
-#define MODELSHARED_EXPORT Q_DECL_IMPORT
-#endif
-
-Q_LOGGING_CATEGORY(model, "model")
-
-}  // namespace model
+  QTest::qExec(&modelTester);
+}

@@ -23,9 +23,9 @@
 ========================================================================*/
 
 #include "chartviewwidget.h"
-
 #include <QBarSet>
 #include <QHBoxLayout>
+#include "view_globals.h"
 
 Q_LOGGING_CATEGORY(chartView, "chartView");
 
@@ -56,35 +56,20 @@ void ChartViewWidget::init() {
   m_chartView->setRenderHint(QPainter::Antialiasing);
 }
 
-void ChartViewWidget::onAddMeasurement(Measurement mmt) {
-  qCDebug(chartView) << "New Measurement: " << mmt;
-  QString name = mmt.getName();
-  double cpuTime = mmt.getCpuTime();
-  double realTime = mmt.getRealTime();
-  QBarSet* set = new QBarSet(name);
-  *set << cpuTime << realTime;
-  m_barSet[mmt.getId()] = set;
-  m_series->append(set);
-  m_chart->axisY()->setMax(calculateMaxY() + 10);
+void ChartViewWidget::onAddBarSet(QBarSet* barSet) {
+  qCDebug(chartView) << "Adding Barset: " << barSet->label();
+  m_series->append(barSet);
 }
 
-double ChartViewWidget::calculateMaxY() {
-  double maxY = 50;
-  foreach (QBarSet* barSet, m_barSet.values()) {
-    if (barSet->at(0) > maxY) {
-      maxY = barSet->at(0);
-    }
-    if (barSet->at(1) > maxY) {
-      maxY = barSet->at(1);
-    }
-  }
-  return maxY;
+void ChartViewWidget::onRemoveBarSet(QBarSet* barSet) {
+  qCDebug(chartView) << "Removing Barset: " << barSet->label();
+  m_series->remove(barSet);
 }
 
-void ChartViewWidget::onRemoveMeasurement(Measurement mmt) {
-  qCDebug(chartView) << "Removed Measurement: " << mmt;
-  QBarSet* set = m_barSet[mmt.getId()];
-  m_series->remove(set);
-  m_barSet.remove(mmt.getId());
-  m_chart->axisY()->setMax(calculateMaxY());
+void ChartViewWidget::onSetMaxY(double maxY) {
+  if (maxY < 50)
+    maxY = 60;
+  else
+    maxY = maxY + 10;
+  m_chart->axisY()->setMax(maxY);
 }

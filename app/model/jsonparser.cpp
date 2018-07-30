@@ -30,7 +30,11 @@
 #include <QJsonValue>
 #include "model_globals.h"
 
-JsonParser::JsonParser(QObject* parent) : IAbstractParser(parent) {}
+namespace model {
+
+JsonParser::JsonParser(QObject* parent) : IAbstractParser(parent) {
+  qCDebug(model) << "Parser created";
+}
 
 void JsonParser::parse(QString filename) {
   qCDebug(model) << "Parsing started: " << filename;
@@ -40,47 +44,48 @@ void JsonParser::parse(QString filename) {
   QString fileContent = file.readAll();
   file.close();
 
-  Benchmark benchmark;
+  Measurements mmts;
 
   QJsonDocument jsonDocument = QJsonDocument::fromJson(fileContent.toUtf8());
   QJsonObject jsonObj = jsonDocument.object();
-  benchmark.setContext(parseContext(jsonObj));
-  benchmark.setMeasurements(parseBenchmarks(jsonObj));
-  emit parsingFinished(filename, benchmark);
+  // benchmark.setContext(parseContext(jsonObj));
+  mmts = parseBenchmarks(jsonObj);
+  emit parsingFinished(filename, mmts);
   qCDebug(model) << "Parsing finished: " << filename;
 }
 
-Context JsonParser::parseContext(const QJsonObject& json) {
-  Context ctx;
-  if (json.contains("context")) {
-    QJsonObject ctxJObject = json["context"].toObject();
-    if (ctxJObject.contains("date") && ctxJObject["date"].isString()) {
-      auto timestampStr = ctxJObject["date"].toString();
-      QDateTime timestamp = QDateTime::fromString(
-          timestampStr, "yyyy-MM-dd HH:mm:ss");  // 2017-12-09 22:01:41
-      ctx.setTimestamp(timestamp);
-    }
-    if (ctxJObject.contains("num_cpus") && ctxJObject["num_cpus"].isDouble()) {
-      ctx.setCpuCount(ctxJObject["num_cpus"].toInt());
-    }
-    if (ctxJObject.contains("mhz_per_cpu") &&
-        ctxJObject["mhz_per_cpu"].isDouble()) {
-      ctx.setCpuFrequency(ctxJObject["mhz_per_cpu"].toInt());
-    }
-    if (ctxJObject.contains("cpu_scaling_enabled") &&
-        ctxJObject["cpu_scaling_enabled"].isBool()) {
-      ctx.setCpuScalingEnabled(ctxJObject["cpu_scaling_enabled"].toBool());
-    }
-    if (ctxJObject.contains("library_build_type") &&
-        ctxJObject["library_build_type"].isString()) {
-      ctx.setLibraryBuildType(ctxJObject["library_build_type"].toString());
-    }
-  } else {
-    qCCritical(model) << "No context exists";
-  }
-  qCDebug(model) << "Context: " << ctx;
-  return ctx;
-}
+// Context JsonParser::parseContext(const QJsonObject& json) {
+//  Context ctx;
+//  if (json.contains("context")) {
+//    QJsonObject ctxJObject = json["context"].toObject();
+//    if (ctxJObject.contains("date") && ctxJObject["date"].isString()) {
+//      auto timestampStr = ctxJObject["date"].toString();
+//      QDateTime timestamp = QDateTime::fromString(
+//          timestampStr, "yyyy-MM-dd HH:mm:ss");  // 2017-12-09 22:01:41
+//      ctx.setTimestamp(timestamp);
+//    }
+//    if (ctxJObject.contains("num_cpus") && ctxJObject["num_cpus"].isDouble())
+//    {
+//      ctx.setCpuCount(ctxJObject["num_cpus"].toInt());
+//    }
+//    if (ctxJObject.contains("mhz_per_cpu") &&
+//        ctxJObject["mhz_per_cpu"].isDouble()) {
+//      ctx.setCpuFrequency(ctxJObject["mhz_per_cpu"].toInt());
+//    }
+//    if (ctxJObject.contains("cpu_scaling_enabled") &&
+//        ctxJObject["cpu_scaling_enabled"].isBool()) {
+//      ctx.setCpuScalingEnabled(ctxJObject["cpu_scaling_enabled"].toBool());
+//    }
+//    if (ctxJObject.contains("library_build_type") &&
+//        ctxJObject["library_build_type"].isString()) {
+//      ctx.setLibraryBuildType(ctxJObject["library_build_type"].toString());
+//    }
+//  } else {
+//    qCCritical(model) << "No context exists";
+//  }
+//  qCDebug(model) << "Context: " << ctx;
+//  return ctx;
+//}
 
 QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json) {
   QVector<Measurement> mmts;
@@ -120,3 +125,5 @@ QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json) {
 
   return mmts;
 }
+
+}  // namespace model

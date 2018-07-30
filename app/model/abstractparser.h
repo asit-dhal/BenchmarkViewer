@@ -26,18 +26,22 @@
 #define ABSTRACTPARSER_H
 
 #include <QObject>
+#include <QSharedPointer>
 #include <QVector>
-#include "benchmark.h"
+#include "measurement.h"
+
+namespace model {
 
 class IAbstractParser : public QObject {
   Q_OBJECT
  public:
   IAbstractParser(QObject* parent = nullptr);
   virtual void parse(QString filename) = 0;
+  virtual ~IAbstractParser() = default;
  signals:
-  void parsingFinished(QString fileName, Benchmark benchmark);
+  void parsingFinished(QString fileName, Measurements mmts);
 };
 
-Q_DECLARE_INTERFACE(IAbstractParser, "com.github.asit-dhal")
+}  // namespace model
 
 #endif  // ABSTRACTPARSER_H

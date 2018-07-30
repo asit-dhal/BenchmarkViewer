@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -22,42 +22,33 @@
 
 ========================================================================*/
 
-#ifndef CHARTVIEWWIDGET_H
-#define CHARTVIEWWIDGET_H
+#ifndef COLUMNMODEL_H
+#define COLUMNMODEL_H
 
-#include <QBarCategoryAxis>
-#include <QBarSet>
-#include <QLoggingCategory>
-#include <QMap>
-#include <QtCharts/QBarSeries>
-#include <QtCharts/QChart>
-#include <QtCharts/QChartView>
-#include <QtCharts/QVXYModelMapper>
-#include <QtWidgets>
+#include <QAbstractListModel>
+#include <QList>
 #include "measurement.h"
 
-Q_DECLARE_LOGGING_CATEGORY(chartView);
+namespace model {
 
-QT_CHARTS_USE_NAMESPACE
+class ColumnModel : public QAbstractListModel
+{
+    Q_OBJECT
+public:
+    enum ColumnRoles {
+        AttrRole = Qt::UserRole + 1,
+        IndexRole,
+    };
+    ColumnModel(QObject *parent=nullptr);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    void addColumn(Measurement::Attributes attr);
+    void removeColumn(Measurement::Attributes attr);
 
-class ChartViewWidget : public QWidget {
- public:
-  ChartViewWidget(QWidget* parent = nullptr);
-
- public slots:
-  void onAddMeasurement(Measurement mmt);
-  void onRemoveMeasurement(Measurement mmt);
-
- private:
-  void init();
-  double calculateMaxY();
-
-  double m_maxY = 0;
-  QBarCategoryAxis* m_axis;
-  QChart* m_chart;
-  QChartView* m_chartView;
-  QBarSeries* m_series;
-  QMap<int, QBarSet*> m_barSet;
+private:
+    QList<Measurement::Attributes> m_columns;
 };
 
-#endif  // CHARTVIEWWIDGET_H
+}
+
+#endif // COLUMNMODEL_H

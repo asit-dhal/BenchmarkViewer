@@ -28,6 +28,8 @@
 #include <QDebug>
 #include <QString>
 
+namespace model {
+
 class Measurement {
  public:
   Measurement() noexcept;
@@ -63,8 +65,33 @@ class Measurement {
   QString getErrorMessage() const;
   void setErrorMessage(const QString& errorMessage);
 
+  QString getFileName() const;
+  void setFileName(const QString& fileName);
+
+  enum class Attributes : int {
+    eName = 0,
+    eFileName,
+    eIterations,
+    eRealTime,
+    eCpuTime,
+    eTimeUnit,
+    eBytesPerSecond,
+    eItemsPerSecond,
+    eLabel,
+    eErrorOccured,
+    eErrorMessage,
+    eIsSelected,
+    eId,
+  };
+
+  static QMap<Attributes, QString> getAttributeNames();
+
+  bool isSelected() const;
+  void setSelected(bool isSelected);
+
  private:
   QString m_name;
+  QString m_fileName;
   quint64 m_iterations;
   quint64 m_realTime;
   quint64 m_cpuTime;
@@ -74,11 +101,17 @@ class Measurement {
   QString m_label;
   bool m_errorOccured;
   QString m_errorMessage;
+  bool m_isSelected{false};
   int m_id;
 };
 
-Q_DECLARE_METATYPE(Measurement);
+using Measurements = QVector<Measurement>;
 
 QDebug operator<<(QDebug d, const Measurement& mmt);
+
+}  // namespace model
+
+Q_DECLARE_METATYPE(model::Measurement::Attributes);
+Q_DECLARE_METATYPE(model::Measurement);
 
 #endif  // ITEM_H

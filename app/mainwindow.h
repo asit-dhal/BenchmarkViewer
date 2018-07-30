@@ -34,9 +34,6 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QVXYModelMapper>
-#include "benchmark.h"
-#include "chartviewwidget.h"
-#include "jsonparser.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -61,6 +58,16 @@ class MainWindow : public QMainWindow {
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
 
+  QAction* getOpenFileAction() const;
+  QList<QAction*> getOpenRecentFilesAction() const;
+  QList<QAction*> getCloseFileActions() const;
+  QAction* getCloseAllFilesAction() const;
+  QAction* getExportChart() const;
+  QAction* getExitAction() const;
+  QAction* getToogleSelectedFileWidget() const;
+  QList<QAction*> getShowColumns() const;
+  QAction* getAboutApp() const;
+
  signals:
   void newFileSelected(QString);
   void selectedFileDeleted(QString);
@@ -77,8 +84,6 @@ class MainWindow : public QMainWindow {
   void onNewBenchmarks(QString filename, Benchmark benchmark);
   void onToggleColumnAction();
   void onUpdateColumnStatus();
-
- private slots:
   void onOpenFile();
   void onCloseFile(QString filename);
   void onCloseAllFiles();
@@ -123,8 +128,6 @@ class MainWindow : public QMainWindow {
   QItemSelectionModel* m_selectionModel;
   BenchmarkView* m_benchmarkView;
   BenchmarkDelegate* m_benchmarkDelegate;
-  BmColumns* m_bmColumns;
-  AbstractParser* m_parser;
   QChart* m_chart;
   ChartViewWidget* m_chartView;
 

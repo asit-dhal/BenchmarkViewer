@@ -30,35 +30,29 @@ find_package(Qt5Core 5.10 REQUIRED)
 find_package(Qt5Gui 5.10 REQUIRED)
 
 add_subdirectory(model)
+add_subdirectory(view)
+add_subdirectory(presenter)
+#add_subdirectory(test)
 
 set(SRCS
     appconfig.cpp
-    benchmark.cpp
-    benchmarkdelegate.cpp
-    benchmarkmodel.cpp
-    benchmarkproxymodel.cpp
-    benchmarkview.cpp
-    chartviewwidget.cpp
-    context.cpp
-    helper.cpp
     main.cpp
     mainwindow.cpp
-    measurement.cpp
-    abstractparser.cpp
-    jsonparser.cpp
-    csvparser.cpp
     globals.cpp
-    bmcolumns.cpp
+    mainwindowpresenter.cpp
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-#add_executable(${PROJECT_NAME} ${SRCS})
+add_executable(${PROJECT_NAME} ${SRCS})
 
-#target_link_libraries(${PROJECT_NAME}
-#                    Qt5::Widgets
-#                    Qt5::Core
-#                    Qt5::Gui
-#                    Qt5::Charts
-#                    )
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Widgets
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Charts
+    app::model
+    app::view
+    app::presenter
+)
 

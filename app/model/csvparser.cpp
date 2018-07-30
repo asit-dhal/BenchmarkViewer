@@ -28,7 +28,11 @@
 #include <QVector>
 #include "model_globals.h"
 
-CsvParser::CsvParser(QObject* parent) : IAbstractParser(parent) {}
+namespace model {
+
+CsvParser::CsvParser(QObject* parent) : IAbstractParser(parent) {
+  qCDebug(model) << "Parser created";
+}
 
 void CsvParser::parse(QString filename) {
   qCDebug(model) << "Parsing started: " << filename;
@@ -43,11 +47,13 @@ void CsvParser::parse(QString filename) {
 
   QStringList headerFields = parseHeaders(lines.at(0));
   lines.pop_front();
-  QList<Measurement> mmts = parseBenchmarks(lines, headerFields);
-  Benchmark benchmark;
-  benchmark.setMeasurements(mmts.toVector());
+  Measurements mmts = parseBenchmarks(lines, headerFields);
 
-  emit parsingFinished(filename, benchmark);
+  for (auto& mmt : mmts) {
+    mmt.setFileName(filename);
+  }
+
+  emit parsingFinished(filename, mmts);
   qCDebug(model) << "Parsing finished: " << filename;
 }
 
@@ -60,9 +66,9 @@ QList<QString> CsvParser::parseHeaders(QString header) {
   return headerFields;
 }
 
-QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
-                                              QStringList& header) {
-  QList<Measurement> mmts;
+Measurements CsvParser::parseBenchmarks(QStringList& data,
+                                        QStringList& header) {
+  Measurements mmts;
   for (auto const& rec : data) {
     QStringList fields = rec.split(",", QString::KeepEmptyParts);
 
@@ -104,3 +110,5 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
   }
   return mmts;
 }
+
+}  // namespace model
