@@ -23,29 +23,33 @@
 #========================================================================*/
 
 set(MODEL_SRCS
-    abstractparser.cpp
-    benchmark.cpp
-    context.cpp
-    csvparser.cpp
-    jsonparser.cpp
-    parserfactory.cpp
-    measurement.cpp
-    model_globals.cpp
-    helper.cpp
-    benchmarkmodel.cpp
-    columnmodel.cpp
+    src/abstractparser.cpp
+    src/benchmark.cpp
+    src/context.cpp
+    src/csvparser.cpp
+    src/jsonparser.cpp
+    src/parserfactory.cpp
+    src/measurement.cpp
+    src/model_globals.cpp
+    src/helper.cpp
+    src/benchmarkmodel.cpp
+    src/columnmodel.cpp
 )
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_library(model ${MODEL_SRCS})
 add_library(app::model ALIAS model)
 
-target_include_directories( model
-    PUBLIC ${PROJECT_SOURCE_DIR}
+target_include_directories(model
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/
 )
 
 target_link_libraries(model
     Qt5::Core
     Qt5::Gui
 )
+
+include (CMakePrintHelpers)
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+cmake_print_properties(TARGETS model PROPERTIES INTERFACE_INCLUDE_DIRECTORIES IMPORTED_LOCATION)
+cmake_print_properties(TARGETS model PROPERTIES INCLUDE_DIRECTORIES IMPORTED_LOCATION)
+

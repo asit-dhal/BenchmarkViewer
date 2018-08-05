@@ -35,18 +35,20 @@ add_subdirectory(presenter)
 #add_subdirectory(test)
 
 set(SRCS
-    appconfig.cpp
-    main.cpp
-    mainwindow.cpp
-    globals.cpp
-    mainwindowpresenter.cpp
+    src/appconfig.cpp
+    src/main.cpp
+    src/mainwindow.cpp
+    src/globals.cpp
+    src/mainwindowpresenter.cpp
 )
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+add_executable(benchmarkViewer ${SRCS})
 
-add_executable(${PROJECT_NAME} ${SRCS})
+target_include_directories(benchmarkViewer
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(benchmarkViewer
     Qt5::Widgets
     Qt5::Core
     Qt5::Gui

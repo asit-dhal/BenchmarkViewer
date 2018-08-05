@@ -1,9 +1,9 @@
 set(PRESENTER_SRCS
-    benchmarkproxymodel.cpp
-    presenter_globals.cpp
-    chartpresenter.cpp
-    benchmarkdelegate.cpp
-    benchmarkpresenter.cpp
+    src/benchmarkproxymodel.cpp
+    src/presenter_globals.cpp
+    src/chartpresenter.cpp
+    src/benchmarkdelegate.cpp
+    src/benchmarkpresenter.cpp
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -12,7 +12,8 @@ add_library(presenter ${PRESENTER_SRCS})
 add_library(app::presenter ALIAS presenter)
 
 target_include_directories(presenter
-    PUBLIC ${PROJECT_SOURCE_DIR} app::model
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    PRIVATE app::model
 )
 
 target_link_libraries(presenter
