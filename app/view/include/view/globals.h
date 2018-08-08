@@ -3,6 +3,6 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(view);
+Q_DECLARE_LOGGING_CATEGORY(vw);
 
 #endif  // VIEW_GLOBALS_H

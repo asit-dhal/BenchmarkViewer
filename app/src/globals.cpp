@@ -22,7 +22,7 @@
 
 ========================================================================*/
 
-#include "globals.h"
+#include "app/globals.h"
 
-Q_LOGGING_CATEGORY(gui, "gui")
+Q_LOGGING_CATEGORY(mainui, "mainui")
 Q_LOGGING_CATEGORY(parser, "parser")

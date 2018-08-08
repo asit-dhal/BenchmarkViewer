@@ -1,11 +1,11 @@
 /*=========================================================================
 
-   Program: BenchmarkViewer
+   Program: QCommander
 
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -25,113 +25,31 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QLoggingCategory>
 #include <QMainWindow>
-#include <QMap>
-#include <QPoint>
-#include <QStack>
-#include <QtCharts/QChart>
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
-#include <QtCharts/QVXYModelMapper>
 
-QT_CHARTS_USE_NAMESPACE
-
-class QMenu;
 class QAction;
-class QListWidget;
-class BenchmarkModel;
-class QTableView;
-class BenchmarkView;
-class QLineEdit;
-class QPushButton;
-class BenchmarkDelegate;
-class BenchmarkProxyModel;
-class QItemSelectionModel;
-class QItemSelection;
-class BmColumns;
+
+namespace Ui {
+class MainWindow;
+}
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
  public:
-  MainWindow(QWidget* parent = 0);
+  explicit MainWindow(QWidget* parent = nullptr);
   ~MainWindow();
+  QAction* getOpenFileAction();
+  QAction* getRecentFilesAction();
+  QAction* getCloseFileAction();
+  QAction* getCloseAllFilesAction();
+  QAction* getExportChartAction();
+  QAction* getExitAction();
 
-  QAction* getOpenFileAction() const;
-  QList<QAction*> getOpenRecentFilesAction() const;
-  QList<QAction*> getCloseFileActions() const;
-  QAction* getCloseAllFilesAction() const;
-  QAction* getExportChart() const;
-  QAction* getExitAction() const;
-  QAction* getToogleSelectedFileWidget() const;
-  QList<QAction*> getShowColumns() const;
-  QAction* getAboutApp() const;
-
- signals:
-  void newFileSelected(QString);
-  void selectedFileDeleted(QString);
+  QAction* getAboutApp();
 
  private:
-  void createActions();
-  void createMenus();
-  void createWidgets();
-  void connectSignalsToSlots();
-  void updateRecentFileActions();
-  void updateCloseFileActions();
-
- public slots:
-  void onNewBenchmarks(QString filename, Benchmark benchmark);
-  void onToggleColumnAction();
-  void onUpdateColumnStatus();
-  void onOpenFile();
-  void onCloseFile(QString filename);
-  void onCloseAllFiles();
-  void onExportChart();
-  void onExit();
-  void onNewFileSelected(QString file);
-  void onSelectedFilesWidgetContextMenu(const QPoint& pos);
-  void onSelectedFileDeleted(QString file);
-  void onToogleSelectedFileWidget();
-  void onBenchmarkFilter(QString filter);
-  void onAboutApp();
-  void onSelectionChanged(const QItemSelection& selected,
-                          const QItemSelection& deselected);
-  void onPlotSelection();
-  void onPlotAllRows();
-  void onClearSelection();
-  void onClearAllRows();
-
- private:
-  QMenu* m_fileMenu;
-  QMenu* m_recentFileMenu;
-  QMenu* m_closeFileMenu;
-  QMenu* m_viewMenu;
-  QMenu* m_showColumnsSubMenu;
-  QMenu* m_helpMenu;
-
-  QAction* m_openFileAction;
-  QList<QAction*> m_openRecentFilesAction;
-  QList<QAction*> m_closeFileActions;
-  QAction* m_closeAllFilesAction;
-  QAction* m_exportChart;
-  QAction* m_exitAction;
-
-  QAction* m_toogleSelectedFileWidget;
-  QList<QAction*> m_showColumns;
-  QAction* m_aboutApp;
-
-  QStack<QString> m_files;
-  QListWidget* m_selectedFilesWidget;
-  BenchmarkProxyModel* m_proxyModel;
-  BenchmarkModel* m_benchmarkModel;
-  QItemSelectionModel* m_selectionModel;
-  BenchmarkView* m_benchmarkView;
-  BenchmarkDelegate* m_benchmarkDelegate;
-  QChart* m_chart;
-  ChartViewWidget* m_chartView;
-
-  QLineEdit* m_benchmarkNameFilter;
+  Ui::MainWindow* ui;
 };
 
 #endif  // MAINWINDOW_H

@@ -26,6 +26,7 @@
 #include <QLoggingCategory>
 #include "app/appconfig.h"
 #include "app/mainwindow.h"
+#include "app/mainwindowpresenter.h"
 
 int main(int argc, char* argv[]) {
   QApplication a(argc, argv);
@@ -33,6 +34,8 @@ int main(int argc, char* argv[]) {
   appconfig::loadAppSettings();
 
   MainWindow w;
+  MainWindowPresenter presenter(&w);
+  presenter.connectActionsToSlots();
 
   QLoggingCategory::setFilterRules(
       "*.debug=true\n"

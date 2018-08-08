@@ -39,6 +39,8 @@ Q_DECLARE_LOGGING_CATEGORY(chartView);
 
 QT_CHARTS_USE_NAMESPACE
 
+namespace view {
+
 class ChartViewWidget : public QWidget {
  public:
   ChartViewWidget(QWidget* parent = nullptr);
@@ -56,7 +58,8 @@ class ChartViewWidget : public QWidget {
   QChart* m_chart;
   QChartView* m_chartView;
   QBarSeries* m_series;
-
 };
+
+}  // namespace view
 
 #endif  // CHARTVIEWWIDGET_H

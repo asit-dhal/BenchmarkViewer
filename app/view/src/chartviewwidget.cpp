@@ -29,6 +29,8 @@
 
 Q_LOGGING_CATEGORY(chartView, "chartView");
 
+namespace view {
+
 ChartViewWidget::ChartViewWidget(QWidget* parent)
     : QWidget(parent), m_chartView(new QChartView) {
   init();
@@ -73,3 +75,5 @@ void ChartViewWidget::onSetMaxY(double maxY) {
     maxY = maxY + 10;
   m_chart->axisY()->setMax(maxY);
 }
+
+}  // namespace view

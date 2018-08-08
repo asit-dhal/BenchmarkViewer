@@ -6,17 +6,27 @@
 class MainWindow;
 
 class MainWindowPresenter : public QObject {
-public:
-    MainWindowPresenter(MainWindow *mainWindow, QObject *parent = nullptr);
+  Q_OBJECT
 
-private:
-    void connectActionsToSlots();
+ public:
+  MainWindowPresenter(MainWindow* mainWindow, QObject* parent = nullptr);
+  void connectActionsToSlots();
 
-private slots:
-    void onOpenFile();
+ private slots:
+  void onOpenFile();
+  void onRecentFiles();
+  void onCloseAllFiles();
+  void onCloseFile();
+  void onExportChart();
+  void onExit();
 
-private:
-    MainWindow *m_mainWindow;
+  void onAboutApp();
+
+ private:
+ private:
+  MainWindow* getParentWindow();
+
+  MainWindow* m_mainWindow;
 };
 
 #endif

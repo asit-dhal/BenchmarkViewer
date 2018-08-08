@@ -27,7 +27,7 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(gui);
+Q_DECLARE_LOGGING_CATEGORY(mainui);
 Q_DECLARE_LOGGING_CATEGORY(parser);
 
 #endif  // GLOBALS_H
