@@ -10,17 +10,22 @@ class MainWindowPresenter : public QObject {
 
  public:
   MainWindowPresenter(MainWindow* mainWindow, QObject* parent = nullptr);
+
+  void init();
   void connectActionsToSlots();
 
  private slots:
   void onOpenFile();
-  void onRecentFiles();
+  void onOpenRecentFile();
   void onCloseAllFiles();
   void onCloseFile();
   void onExportChart();
   void onExit();
 
   void onAboutApp();
+
+ signals:
+  void newFileSelected(QString file);
 
  private:
  private:

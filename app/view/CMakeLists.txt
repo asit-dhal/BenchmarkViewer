@@ -4,9 +4,13 @@ set(VIEW_SRCS
     src/globals.cpp
 )
 
+set(VIEW_MOC_HEADERS
+    include/view/benchmarkview.h
+    )
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_library(view ${VIEW_SRCS})
+add_library(view ${VIEW_SRCS} ${VIEW_MOC_HEADERS})
 add_library(app::view ALIAS view)
 
 target_include_directories(view

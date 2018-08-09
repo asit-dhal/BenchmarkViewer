@@ -15,8 +15,8 @@ MainWindowPresenter::MainWindowPresenter(MainWindow* mainWindow,
 void MainWindowPresenter::connectActionsToSlots() {
   connect(m_mainWindow->getOpenFileAction(), &QAction::triggered, this,
           &MainWindowPresenter::onOpenFile);
-  connect(m_mainWindow->getRecentFilesAction(), &QAction::triggered, this,
-          &MainWindowPresenter::onRecentFiles);
+  /*connect(m_mainWindow->getRecentFilesAction(), &QAction::triggered, this,
+          &MainWindowPresenter::onRecentFiles);*/
   connect(m_mainWindow->getCloseAllFilesAction(), &QAction::triggered, this,
           &MainWindowPresenter::onCloseAllFiles);
   connect(m_mainWindow->getCloseFileAction(), &QAction::triggered, this,
@@ -46,10 +46,17 @@ void MainWindowPresenter::onOpenFile() {
   for (auto file : files) {
     if (!file.isEmpty()) {
       appconfig::updateRecentFiles(file);
-      // m_mainWindow->updateRecentFileActions();
-      //      emit m_mainWindow->newFileSelected(file);
+      emit newFileSelected(file);
+
       //      updateLastOpenedFilePath(QFileInfo(file).path());
     }
+  }
+
+  auto recentFiles = appconfig::readRecentFiles();
+  getParentWindow()->updateRecentFileActions(recentFiles);
+  for (auto action : getParentWindow()->getOpenRecentFileActions()) {
+    connect(action, &QAction::triggered, this,
+            &MainWindowPresenter::onOpenRecentFile);
   }
 }
 
@@ -61,7 +68,7 @@ void MainWindowPresenter::onCloseFile() {
   qCDebug(mainui) << "SLOT=> " << Q_FUNC_INFO;
 }
 
-void MainWindowPresenter::onRecentFiles() {
+void MainWindowPresenter::onOpenRecentFile() {
   qCDebug(mainui) << "SLOT=> " << Q_FUNC_INFO;
 }
 
@@ -85,4 +92,12 @@ void MainWindowPresenter::onAboutApp() {
 
 MainWindow* MainWindowPresenter::getParentWindow() {
   return m_mainWindow;
+}
+
+void MainWindowPresenter::init() {
+  getParentWindow()->updateRecentFileActions(appconfig::readRecentFiles());
+  for (auto action : getParentWindow()->getOpenRecentFileActions()) {
+    connect(action, &QAction::triggered, this,
+            &MainWindowPresenter::onOpenRecentFile);
+  }
 }

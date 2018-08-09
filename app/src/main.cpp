@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
   MainWindow w;
   MainWindowPresenter presenter(&w);
   presenter.connectActionsToSlots();
+  presenter.init();
 
   QLoggingCategory::setFilterRules(
       "*.debug=true\n"

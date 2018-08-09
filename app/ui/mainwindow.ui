@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>601</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>601</width>
      <height>19</height>
     </rect>
    </property>
@@ -27,8 +27,14 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuRecent_Files">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+     <addaction name="actiondummy"/>
+    </widget>
     <addaction name="actionOpen_File_s"/>
-    <addaction name="actionRecent_Files"/>
+    <addaction name="menuRecent_Files"/>
     <addaction name="actionClose_File"/>
     <addaction name="actionClose_All_Files"/>
     <addaction name="separator"/>
@@ -54,11 +60,6 @@
   <action name="actionOpen_File_s">
    <property name="text">
     <string>Open File(s)</string>
-   </property>
-  </action>
-  <action name="actionRecent_Files">
-   <property name="text">
-    <string>Recent Files</string>
    </property>
   </action>
   <action name="actionClose_File">
@@ -89,6 +90,20 @@
   <action name="actionAbout_BenchmarkViewer">
    <property name="text">
     <string>About BenchmarkViewer</string>
+   </property>
+  </action>
+  <action name="actiondummy">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>dummy</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

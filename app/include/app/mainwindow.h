@@ -26,8 +26,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVector>
 
 class QAction;
+class QLineEdit;
+
+namespace view {
+class BenchmarkView;
+}
 
 namespace Ui {
 class MainWindow;
@@ -40,7 +46,7 @@ class MainWindow : public QMainWindow {
   explicit MainWindow(QWidget* parent = nullptr);
   ~MainWindow();
   QAction* getOpenFileAction();
-  QAction* getRecentFilesAction();
+  QVector<QAction*> getOpenRecentFileActions();
   QAction* getCloseFileAction();
   QAction* getCloseAllFilesAction();
   QAction* getExportChartAction();
@@ -48,8 +54,19 @@ class MainWindow : public QMainWindow {
 
   QAction* getAboutApp();
 
+  void updateRecentFileActions(QStringList recentFiles);
+
+ signals:
+
+ private:
+  void createTableWidget();
+  void createChartWidget();
+
  private:
   Ui::MainWindow* ui;
+  QLineEdit* m_filter;
+  view::BenchmarkView* m_benchmarkView;
+  QVector<QAction*> m_recentFileActions;
 };
 
 #endif  // MAINWINDOW_H
