@@ -18,6 +18,7 @@ platform:
 branches:
   only:
     - master
+    - mvp-redesign
 
 matrix:
   fast_finish: false
@@ -28,7 +29,7 @@ matrix:
 environment:
   matrix:
     - CMAKE_BUILD_SYS: True
-    - QMAKE_BUILD_SYS: True
+    - QMAKE_BUILD_SYS: False
 
 install:
     - ps: | 
