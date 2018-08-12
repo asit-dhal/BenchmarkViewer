@@ -56,6 +56,10 @@ QVector<QAction*> MainWindow::getOpenRecentFileActions() {
   return m_recentFileActions;
 }
 
+QVector<QAction*> MainWindow::getColumnVisibilityActions() {
+  return m_columnVisibilityActions;
+}
+
 QAction* MainWindow::getCloseFileAction() {
   return ui->actionClose_File;
 }
@@ -124,10 +128,7 @@ void MainWindow::createPresenter() {
 void MainWindow::createModels() {
   qCDebug(MAINUI_TAG);
   m_bmModel = new model::BenchmarkModel(this);
-  m_bmModel->addColumn(model::Measurement::Attributes::eCpuTime);
-  m_bmModel->addColumn(model::Measurement::Attributes::eRealTime);
-  m_bmModel->addColumn(model::Measurement::Attributes::eName);
-  m_bmModel->addColumn(model::Measurement::Attributes::eFileName);
+
   qCDebug(MAINUI_TAG) << "Creating Model Finished";
 }
 
@@ -137,9 +138,43 @@ void MainWindow::init() {
   m_benchmarkView->setBenchmarkModel(m_bmModel);
   m_presenter->init();
   m_presenter->setModel(m_bmModel);
+
+  foreach (QAction* act, m_columnVisibilityActions) {
+    auto attr = act->data().value<model::Measurement::Attributes>();
+    if (attr == model::Measurement::Attributes::eCpuTime ||
+        attr == model::Measurement::Attributes::eRealTime ||
+        attr == model::Measurement::Attributes::eName) {
+      qCDebug(MAINUI_TAG) << "Enabling default Col attributes";
+      act->trigger();
+    }
+  }
   qCDebug(MAINUI_TAG) << "Initialization Finished";
 }
 
 void MainWindow::closeEvent(QCloseEvent*) {
   ui->actionExit->trigger();
+}
+
+void MainWindow::updateViewColumnMenus(
+    QMap<model::Measurement::Attributes, bool> colVisibility) {
+  qDeleteAll(m_columnVisibilityActions);
+  m_columnVisibilityActions.clear();
+  auto colNames = model::Measurement::getAttributeNames();
+  for (auto it = colVisibility.begin(); it != colVisibility.end(); it++) {
+    qCDebug(MAINUI_TAG)
+        << QString("%1 => %2").arg(colNames[it.key()]).arg(it.value());
+  }
+
+  for (auto it = colVisibility.begin(); it != colVisibility.end(); it++) {
+    QAction* toggleVisibility = new QAction(colNames[it.key()], this);
+    toggleVisibility->setCheckable(true);
+    toggleVisibility->setVisible(true);
+    toggleVisibility->setChecked(it.value());
+    toggleVisibility->setData(QVariant::fromValue(it.key()));
+    m_columnVisibilityActions.append(toggleVisibility);
+  }
+
+  foreach (QAction* toggleVisibility, m_columnVisibilityActions) {
+    ui->menuColumns->addAction(toggleVisibility);
+  }
 }

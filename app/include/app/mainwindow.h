@@ -27,6 +27,7 @@
 
 #include <QMainWindow>
 #include <QVector>
+#include "model/measurement.h"
 
 class QAction;
 class QLineEdit;
@@ -55,6 +56,7 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   QAction* getOpenFileAction();
   QVector<QAction*> getOpenRecentFileActions();
+  QVector<QAction*> getColumnVisibilityActions();
   QAction* getCloseFileAction();
   QAction* getCloseAllFilesAction();
   QAction* getExportChartAction();
@@ -63,6 +65,8 @@ class MainWindow : public QMainWindow {
   QAction* getAboutApp();
 
   void updateRecentFileActions(QStringList recentFiles);
+  void updateViewColumnMenus(
+      QMap<model::Measurement::Attributes, bool> colVisibility);
 
  signals:
 
@@ -79,7 +83,7 @@ class MainWindow : public QMainWindow {
   MainWindowPresenter* m_presenter;
   view::BenchmarkView* m_benchmarkView;
   QVector<QAction*> m_recentFileActions;
-
+  QVector<QAction*> m_columnVisibilityActions;
   model::BenchmarkModel* m_bmModel;
 };
 

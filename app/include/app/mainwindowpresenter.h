@@ -30,11 +30,8 @@ class MainWindowPresenter : public QObject {
   void onCloseFile();
   void onExportChart();
   void onExit();
-
   void onAboutApp();
-
- signals:
-  void newFileSelected(QString file);
+  void onColumnChecked();
 
  private:
   void connectActionsToSlots();

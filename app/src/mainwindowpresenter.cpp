@@ -123,4 +123,38 @@ void MainWindowPresenter::init() {
     connect(action, &QAction::triggered, this,
             &MainWindowPresenter::onOpenRecentFile);
   }
+
+  QMap<model::Measurement::Attributes, bool> colVisibilities;
+  colVisibilities.insert(model::Measurement::Attributes::eName, false);
+  colVisibilities.insert(model::Measurement::Attributes::eFileName, false);
+  colVisibilities.insert(model::Measurement::Attributes::eIterations, false);
+  colVisibilities.insert(model::Measurement::Attributes::eRealTime, false);
+  colVisibilities.insert(model::Measurement::Attributes::eCpuTime, false);
+  colVisibilities.insert(model::Measurement::Attributes::eTimeUnit, false);
+  colVisibilities.insert(model::Measurement::Attributes::eBytesPerSecond,
+                         false);
+  colVisibilities.insert(model::Measurement::Attributes::eItemsPerSecond,
+                         false);
+  colVisibilities.insert(model::Measurement::Attributes::eLabel, false);
+  colVisibilities.insert(model::Measurement::Attributes::eErrorOccured, false);
+  colVisibilities.insert(model::Measurement::Attributes::eErrorMessage, false);
+  colVisibilities.insert(model::Measurement::Attributes::eIsSelected, false);
+  colVisibilities.insert(model::Measurement::Attributes::eId, false);
+
+  m_view->updateViewColumnMenus(colVisibilities);
+  for (auto action : m_view->getColumnVisibilityActions()) {
+    connect(action, &QAction::triggered, this,
+            &MainWindowPresenter::onColumnChecked);
+  }
+}
+
+void MainWindowPresenter::onColumnChecked() {
+  qCDebug(MAINUI_TAG) << "SLOT=> " << Q_FUNC_INFO;
+  QAction* act = qobject_cast<QAction*>(sender());
+  auto attribute = act->data().value<model::Measurement::Attributes>();
+  if (act->isChecked()) {
+    m_bmModel->addColumn(attribute);
+  } else {
+    m_bmModel->removeColumn(attribute);
+  }
 }
