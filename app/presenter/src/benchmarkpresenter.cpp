@@ -102,4 +102,9 @@ void BenchmarkPresenter::connectSignalsToSlots() {
           [&]() { emit m_view->clearAllRows(); });
 }
 
+void BenchmarkPresenter::setProxyFilter(QString filterText) {
+  QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
+  m_proxyModel->setFilterRegExp(regExp);
+}
+
 }  // namespace presenter

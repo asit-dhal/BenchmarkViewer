@@ -61,12 +61,15 @@ class MainWindow : public QMainWindow {
   QAction* getCloseAllFilesAction();
   QAction* getExportChartAction();
   QAction* getExitAction();
-
   QAction* getAboutApp();
+
+  QLineEdit* getBenchmarkFilterWidget();
 
   void updateRecentFileActions(QStringList recentFiles);
   void updateViewColumnMenus(
       QMap<model::Measurement::Attributes, bool> colVisibility);
+
+  view::BenchmarkView* getBenchmarkView() const;
 
  signals:
 

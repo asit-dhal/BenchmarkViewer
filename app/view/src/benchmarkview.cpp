@@ -55,6 +55,10 @@ void BenchmarkView::setBenchmarkModel(QAbstractItemModel* model) {
   m_presenter->setModel(model);
 }
 
+presenter::BenchmarkPresenter* BenchmarkView::getPresenter() {
+  return m_presenter;
+}
+
 QList<QAction*> BenchmarkView::getColumnShowHideActions() const {
   return m_columnShowHideActions;
 }

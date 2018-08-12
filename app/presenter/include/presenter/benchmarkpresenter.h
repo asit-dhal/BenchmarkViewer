@@ -20,6 +20,7 @@ class BenchmarkPresenter : public QObject {
                      QObject* parent = nullptr);
   void init();
   bool setModel(QAbstractItemModel* model);
+  void setProxyFilter(QString filterText);
 
  public slots:
   void onShowColumn(int colIdx);

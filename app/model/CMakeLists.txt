@@ -24,7 +24,6 @@
 
 set(MODEL_SRCS
     src/abstractparser.cpp
-    src/benchmark.cpp
     src/context.cpp
     src/csvparser.cpp
     src/jsonparser.cpp

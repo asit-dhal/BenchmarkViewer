@@ -27,7 +27,6 @@
 
 #include <QAbstractTableModel>
 #include <QLoggingCategory>
-#include "model/benchmark.h"
 #include "model/measurement.h"
 
 namespace model {

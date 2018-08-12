@@ -6,11 +6,14 @@
 #include "model/benchmarkmodel.h"
 #include "model/parserfactory.h"
 #include "presenter/benchmarkdelegate.h"
+#include "presenter/benchmarkpresenter.h"
 #include "presenter/benchmarkproxymodel.h"
+#include "view/benchmarkview.h"
 
 #include <QAction>
 #include <QApplication>
 #include <QFileDialog>
+#include <QLineEdit>
 #include <QMessageBox>
 
 MainWindowPresenter::MainWindowPresenter(MainWindow* view, QObject* parent)
@@ -32,6 +35,9 @@ void MainWindowPresenter::connectActionsToSlots() {
 
   connect(m_view->getAboutApp(), &QAction::triggered, this,
           &MainWindowPresenter::onAboutApp);
+
+  connect(m_view->getBenchmarkFilterWidget(), &QLineEdit::textChanged, this,
+          &MainWindowPresenter::onBenchmarkFilter);
 
   qCDebug(MAINUI_TAG) << "Connecting Signals to slots finished";
 }
@@ -157,4 +163,9 @@ void MainWindowPresenter::onColumnChecked() {
   } else {
     m_bmModel->removeColumn(attribute);
   }
+}
+
+void MainWindowPresenter::onBenchmarkFilter(QString filterStr) {
+  qCDebug(MAINUI_TAG) << "SLOT=> " << Q_FUNC_INFO;
+  m_view->getBenchmarkView()->getPresenter()->setProxyFilter(filterStr);
 }

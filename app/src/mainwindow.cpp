@@ -155,6 +155,10 @@ void MainWindow::closeEvent(QCloseEvent*) {
   ui->actionExit->trigger();
 }
 
+view::BenchmarkView* MainWindow::getBenchmarkView() const {
+  return m_benchmarkView;
+}
+
 void MainWindow::updateViewColumnMenus(
     QMap<model::Measurement::Attributes, bool> colVisibility) {
   qDeleteAll(m_columnVisibilityActions);
@@ -177,4 +181,8 @@ void MainWindow::updateViewColumnMenus(
   foreach (QAction* toggleVisibility, m_columnVisibilityActions) {
     ui->menuColumns->addAction(toggleVisibility);
   }
+}
+
+QLineEdit* MainWindow::getBenchmarkFilterWidget() {
+  return m_filter;
 }
