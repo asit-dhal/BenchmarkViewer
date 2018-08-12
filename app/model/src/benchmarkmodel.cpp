@@ -48,12 +48,14 @@ void BenchmarkModel::setColumnModel(ColumnModel* columnModel) {
 void BenchmarkModel::addMeasurements(Measurements mmts) {
   beginResetModel();
   m_mmts.append(mmts);
+  qCWarning(MODEL_TAG) << mmts.size() << "measurements added";
   endResetModel();
 }
 
 void BenchmarkModel::addMeasurement(Measurement mmt) {
   beginResetModel();
   m_mmts.append(mmt);
+  qCWarning(MODEL_TAG) << "one measurement added";
   endResetModel();
 }
 

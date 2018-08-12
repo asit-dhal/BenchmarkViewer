@@ -44,12 +44,14 @@ void MainWindowPresenter::setModel(model::BenchmarkModel* model) {
   auto jsonParser = model::ParserFactory::getParser(
       model::ParserFactory::ParserType::eJsonParser);
 
+  qCDebug(MAINUI_TAG) << "connecting CSV Parser signals";
   connect(csvParser.data(), &model::IAbstractParser::parsingFinished,
           [this](QString fileName, model::Measurements mmt) {
             qCDebug(MAINUI_TAG) << "CSV Parsing Finished: " << fileName;
             m_bmModel->addMeasurements(mmt);
           });
 
+  qCDebug(MAINUI_TAG) << "connecting JSON Parser signals";
   connect(jsonParser.data(), &model::IAbstractParser::parsingFinished,
           [this](QString fileName, model::Measurements mmt) {
             qCDebug(MAINUI_TAG) << "JSON Parsing Finished: " << fileName;
@@ -58,7 +60,7 @@ void MainWindowPresenter::setModel(model::BenchmarkModel* model) {
 }
 
 void MainWindowPresenter::onOpenFile() {
-  qCDebug(MAINUI_TAG()) << "SLOT=> " << Q_FUNC_INFO;
+  qCDebug(MAINUI_TAG) << "SLOT=> " << Q_FUNC_INFO;
   QString lastPath = appconfig::readLastOpenedFilePath();
   QStringList files =
       QFileDialog::getOpenFileNames(m_view, tr("Open Directory"), lastPath);

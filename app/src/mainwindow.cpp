@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
   createBenchmarkView();
+  createModels();
   createPresenter();
   qCDebug(MAINUI_TAG) << "Construction Finished";
 }
@@ -135,8 +136,8 @@ void MainWindow::createModels() {
 void MainWindow::init() {
   qCDebug(MAINUI_TAG);
   m_benchmarkView->init();
-  m_presenter->init();
   m_benchmarkView->setModel(m_bmModel);
-
+  m_presenter->init();
+  m_presenter->setModel(m_bmModel);
   qCDebug(MAINUI_TAG) << "Initialization Finished";
 }
