@@ -56,9 +56,9 @@ set_property(TARGET benchmarkViewer APPEND PROPERTY AUTOUIC_SEARCH_PATHS ${CMAKE
 
 target_include_directories(benchmarkViewer
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-    #PRIVATE app::model
-    #PRIVATE app::view
-    #PRIVATE app::presenter
+    PRIVATE app::model
+    PRIVATE app::view
+    PRIVATE app::presenter
 )
 
 target_link_libraries(benchmarkViewer

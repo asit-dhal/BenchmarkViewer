@@ -5,14 +5,23 @@
 
 class MainWindow;
 
+namespace model {
+class BenchmarkModel;
+class ColumnModel;
+}  // namespace model
+
+namespace presenter {
+class BenchmarkProxyModel;
+class BenchmarkDelegate;
+}  // namespace presenter
+
 class MainWindowPresenter : public QObject {
   Q_OBJECT
 
  public:
-  MainWindowPresenter(MainWindow* mainWindow, QObject* parent = nullptr);
-
+  MainWindowPresenter(MainWindow* view, QObject* parent = nullptr);
+  void setModel(model::BenchmarkModel* model);
   void init();
-  void connectActionsToSlots();
 
  private slots:
   void onOpenFile();
@@ -28,10 +37,11 @@ class MainWindowPresenter : public QObject {
   void newFileSelected(QString file);
 
  private:
- private:
-  MainWindow* getParentWindow();
+  void connectActionsToSlots();
 
-  MainWindow* m_mainWindow;
-};
+ private:
+  MainWindow* m_view;
+  model::BenchmarkModel* m_bmModel;
+};  // namespace modelclassMainWindowPresenter:publicQObject
 
 #endif

@@ -6,9 +6,14 @@ set(PRESENTER_SRCS
     src/benchmarkpresenter.cpp
 )
 
+set(MOC_HEADERS
+    include/presenter/benchmarkdelegate.h
+    include/presenter/benchmarkpresenter.h
+)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_library(presenter ${PRESENTER_SRCS})
+add_library(presenter ${PRESENTER_SRCS} ${MOC_HEADERS})
 add_library(app::presenter ALIAS presenter)
 
 target_include_directories(presenter

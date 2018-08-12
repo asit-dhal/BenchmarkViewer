@@ -36,8 +36,9 @@ namespace model {
 class BenchmarkModel : public QAbstractTableModel {
   Q_OBJECT
  public:
-  explicit BenchmarkModel(ColumnModel* columnModel, QObject* parent = nullptr);
-
+  explicit BenchmarkModel(ColumnModel* columnModel = nullptr,
+                          QObject* parent = nullptr);
+  void setColumnModel(ColumnModel* columnModel);
   void addMeasurements(Measurements mmts);
   void addMeasurement(Measurement mmt);
   void removeMeasurement(int id);

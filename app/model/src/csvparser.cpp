@@ -31,11 +31,11 @@
 namespace model {
 
 CsvParser::CsvParser(QObject* parent) : IAbstractParser(parent) {
-  qCDebug(model) << "Parser created";
+  qCDebug(MODEL_TAG) << "Parser created";
 }
 
 void CsvParser::parse(QString filename) {
-  qCDebug(model) << "Parsing started: " << filename;
+  qCDebug(MODEL_TAG) << "Parsing started: " << filename;
   QFile file;
   file.setFileName(filename);
   file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -54,7 +54,7 @@ void CsvParser::parse(QString filename) {
   }
 
   emit parsingFinished(filename, mmts);
-  qCDebug(model) << "Parsing finished: " << filename;
+  qCDebug(MODEL_TAG) << "Parsing finished: " << filename;
 }
 
 QList<QString> CsvParser::parseHeaders(QString header) {
@@ -74,7 +74,7 @@ Measurements CsvParser::parseBenchmarks(QStringList& data,
 
     Measurement mmt;
     for (auto i = 0; i < header.size(); i++) {
-      qCDebug(model) << "Data: " << fields;
+      qCDebug(MODEL_TAG) << "Data: " << fields;
       if (header.at(i).compare("name", Qt::CaseInsensitive) == 0) {
         QString name = fields.at(i);
         name.replace("'", "");
@@ -103,7 +103,7 @@ Measurements CsvParser::parseBenchmarks(QStringList& data,
                  0) {
         mmt.setErrorMessage(fields.at(i).trimmed());
       } else {
-        qCDebug(model) << "Error occured Unknown field: " << fields.at(i);
+        qCDebug(MODEL_TAG) << "Error occured Unknown field: " << fields.at(i);
       }
     }
     mmts.append(mmt);

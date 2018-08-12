@@ -24,5 +24,5 @@
 
 #include "app/globals.h"
 
-Q_LOGGING_CATEGORY(mainui, "mainui")
-Q_LOGGING_CATEGORY(parser, "parser")
+Q_LOGGING_CATEGORY(MAINUI_TAG, "mainui")
+Q_LOGGING_CATEGORY(PARSER_TAG, "parser")

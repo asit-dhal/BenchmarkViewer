@@ -25,6 +25,7 @@
 #include "view/benchmarkview.h"
 #include <QHeaderView>
 #include <QMenu>
+#include "presenter/benchmarkpresenter.h"
 #include "view/globals.h"
 
 namespace view {
@@ -41,6 +42,18 @@ BenchmarkView::BenchmarkView(QWidget* parent) : QTableView(parent) {
   m_selectAll = new QAction(tr("Select All"), this);
   m_clearSelection = new QAction(tr("Clear Selection"), this);
   m_clearAllRows = new QAction(tr("Clear All rows"), this);
+
+  m_presenter = new presenter::BenchmarkPresenter(this);
+}
+
+void BenchmarkView::init() {
+  qCDebug(VIEW_TAG) << "Initialization Finished";
+  m_presenter->init();
+}
+
+void BenchmarkView::setModel(QAbstractItemModel* model) {
+  QTableView::setModel(model);
+  m_presenter->setModel(model);
 }
 
 QList<QAction*> BenchmarkView::getColumnShowHideActions() const {

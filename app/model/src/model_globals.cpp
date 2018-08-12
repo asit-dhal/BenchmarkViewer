@@ -23,8 +23,6 @@
 ========================================================================*/
 #include "model/model_globals.h"
 
-namespace model {
-
 #include <QtCore/qglobal.h>
 
 #if defined(MODEL_LIBRARY)
@@ -33,6 +31,4 @@ namespace model {
 #define MODELSHARED_EXPORT Q_DECL_IMPORT
 #endif
 
-Q_LOGGING_CATEGORY(model, "model")
-
-}  // namespace model
+Q_LOGGING_CATEGORY(MODEL_TAG, "model")

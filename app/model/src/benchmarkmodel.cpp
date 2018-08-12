@@ -32,7 +32,18 @@
 namespace model {
 
 BenchmarkModel::BenchmarkModel(ColumnModel* columnModel, QObject* parent)
-    : QAbstractTableModel(parent), m_columnModel(columnModel) {}
+    : QAbstractTableModel(parent), m_columnModel(columnModel) {
+  if (!m_columnModel) {
+    qCWarning(MODEL_TAG) << "columnModel is null";
+  }
+}
+
+void BenchmarkModel::setColumnModel(ColumnModel* columnModel) {
+  if (m_columnModel) {
+    qCWarning(MODEL_TAG) << "columnModel will be reset";
+  }
+  m_columnModel = columnModel;
+}
 
 void BenchmarkModel::addMeasurements(Measurements mmts) {
   beginResetModel();
@@ -66,6 +77,10 @@ QVariant BenchmarkModel::headerData(int section,
   }
 
   if (orientation == Qt::Horizontal) {
+    if (!m_columnModel) {
+      qCWarning(MODEL_TAG) << "columnModel is null";
+      return QVariant();
+    }
     if (section >= m_columnModel->rowCount())
       return QVariant();
     return m_columnModel->data(createIndex(section, 0));
@@ -83,6 +98,10 @@ int BenchmarkModel::rowCount(const QModelIndex& parent) const {
 
 int BenchmarkModel::columnCount(const QModelIndex& parent) const {
   Q_UNUSED(parent);
+  if (!m_columnModel) {
+    qCWarning(MODEL_TAG) << "columnModel is null";
+    return 0;
+  }
   return m_columnModel->rowCount();
 }
 
@@ -94,6 +113,10 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
     return QVariant();
 
   if (role == Qt::DisplayRole) {
+    if (!m_columnModel) {
+      qCWarning(MODEL_TAG) << "columnModel is null";
+      return QVariant();
+    }
     auto colAttr =
         m_columnModel
             ->data(createIndex(index.column(), 0), ColumnModel::AttrRole)
@@ -136,6 +159,10 @@ bool BenchmarkModel::setData(const QModelIndex& index,
                              const QVariant& value,
                              int role) {
   if (index.isValid() && role == Qt::EditRole) {
+    if (!m_columnModel) {
+      qCWarning(MODEL_TAG) << "columnModel is null";
+      return false;
+    }
     auto row = index.row();
     auto colAttr =
         m_columnModel

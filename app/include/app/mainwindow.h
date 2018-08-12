@@ -35,6 +35,13 @@ namespace view {
 class BenchmarkView;
 }
 
+namespace model {
+class BenchmarkModel;
+class ColumnModel;
+}  // namespace model
+
+class MainWindowPresenter;
+
 namespace Ui {
 class MainWindow;
 }
@@ -44,6 +51,8 @@ class MainWindow : public QMainWindow {
 
  public:
   explicit MainWindow(QWidget* parent = nullptr);
+
+  void init();
   ~MainWindow();
   QAction* getOpenFileAction();
   QVector<QAction*> getOpenRecentFileActions();
@@ -59,14 +68,21 @@ class MainWindow : public QMainWindow {
  signals:
 
  private:
-  void createTableWidget();
-  void createChartWidget();
+  void createBenchmarkView();
+  void createChartView();
+  void createPresenter();
+
+  void createModels();
 
  private:
   Ui::MainWindow* ui;
   QLineEdit* m_filter;
+  MainWindowPresenter* m_presenter;
   view::BenchmarkView* m_benchmarkView;
   QVector<QAction*> m_recentFileActions;
+
+  model::BenchmarkModel* m_bmModel;
+  model::ColumnModel* m_colunModel;
 };
 
 #endif  // MAINWINDOW_H

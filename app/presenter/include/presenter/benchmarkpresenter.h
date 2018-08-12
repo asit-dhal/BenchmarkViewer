@@ -7,27 +7,38 @@ namespace view {
 class BenchmarkView;
 }
 
+class QAbstractItemModel;
+
 namespace presenter {
 
+class BenchmarkDelegate;
+
 class BenchmarkPresenter : public QObject {
-public:
-  BenchmarkPresenter(view::BenchmarkView *view, QObject *parent=nullptr);
+ public:
+  BenchmarkPresenter(view::BenchmarkView* view = nullptr,
+                     QObject* parent = nullptr);
+  void init();
+  bool setModel(QAbstractItemModel* model);
 
-public slots:
- void onShowColumn(int colIdx);
- void onHideColumn(int colIdx);
+ public slots:
+  void onShowColumn(int colIdx);
+  void onHideColumn(int colIdx);
 
-private slots:
+ private slots:
   void onContextMenuOnHeader(QPoint p);
   void onContextMenuOnBody(QPoint p);
   void onSlotMoveLast();
   void onSlotMoveFirst();
 
+ private:
+  void connectSignalsToSlots();
 
-private:
-    view::BenchmarkView *m_view;
+ private:
+  view::BenchmarkView* m_view;
+  QAbstractItemModel* m_model;
+  BenchmarkDelegate* m_delegate;
 };
 
-}
+}  // namespace presenter
 
 #endif

@@ -36,7 +36,15 @@ set(MODEL_SRCS
     src/columnmodel.cpp
 )
 
-add_library(model ${MODEL_SRCS})
+set(MOC_HEADERS
+    include/model/abstractparser.h
+    include/model/benchmarkmodel.h
+    include/model/columnmodel.h
+    include/model/csvparser.h
+    include/model/jsonparser.h
+)
+
+add_library(model ${MODEL_SRCS} ${MOC_HEADERS})
 add_library(app::model ALIAS model)
 
 target_include_directories(model

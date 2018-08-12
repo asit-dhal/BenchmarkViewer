@@ -24,7 +24,11 @@
 
 #include "app/mainwindow.h"
 #include "app/globals.h"
+#include "app/mainwindowpresenter.h"
 #include "app/ui_mainwindow.h"
+#include "model/benchmarkmodel.h"
+#include "model/columnmodel.h"
+#include "model/measurement.h"
 #include "view/benchmarkview.h"
 
 #include <QFileInfo>
@@ -35,7 +39,9 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  createTableWidget();
+  createBenchmarkView();
+  createPresenter();
+  qCDebug(MAINUI_TAG) << "Construction Finished";
 }
 
 MainWindow::~MainWindow() {
@@ -73,8 +79,8 @@ QAction* MainWindow::getAboutApp() {
 void MainWindow::updateRecentFileActions(QStringList recentFiles) {
   qDeleteAll(m_recentFileActions);
   m_recentFileActions.clear();
-  qCDebug(mainui) << "Recent Files: " << recentFiles.size() << "->"
-                  << recentFiles;
+  qCDebug(MAINUI_TAG) << "Recent Files: " << recentFiles.size() << "->"
+                      << recentFiles;
   int i = 1;
   foreach (QString recentFile, recentFiles) {
     if (recentFile.isEmpty())
@@ -92,16 +98,45 @@ void MainWindow::updateRecentFileActions(QStringList recentFiles) {
   }
 }
 
-void MainWindow::createTableWidget() {
-  QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
+void MainWindow::createBenchmarkView() {
+  qCDebug(MAINUI_TAG);
+  // QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
   m_filter = new QLineEdit(this);
   m_filter->setPlaceholderText(tr("Filter"));
   m_benchmarkView = new view::BenchmarkView(this);
 
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(m_filter);
-  // layout->addWidget(m_benchmarkView);
-  benckmarkSelectorGB->setLayout(layout);
+  layout->addWidget(m_benchmarkView);
+  // benckmarkSelectorGB->setLayout(layout);
 
-  ui->centralWidget->layout()->addWidget(m_benchmarkView);
+  // ui->
+  ui->centralWidget->setLayout(layout);
+  qCDebug(MAINUI_TAG) << "Creating BenchmarkView Finished";
+}
+
+void MainWindow::createPresenter() {
+  qCDebug(MAINUI_TAG);
+  m_presenter = new MainWindowPresenter(this);
+  qCDebug(MAINUI_TAG) << "Creating Presenter Finished";
+}
+
+void MainWindow::createModels() {
+  qCDebug(MAINUI_TAG);
+  m_colunModel = new model::ColumnModel(this);
+  m_colunModel->addColumn(model::Measurement::Attributes::eCpuTime);
+  m_colunModel->addColumn(model::Measurement::Attributes::eRealTime);
+  m_colunModel->addColumn(model::Measurement::Attributes::eName);
+
+  m_bmModel = new model::BenchmarkModel(m_colunModel, this);
+  qCDebug(MAINUI_TAG) << "Creating Model Finished";
+}
+
+void MainWindow::init() {
+  qCDebug(MAINUI_TAG);
+  m_benchmarkView->init();
+  m_presenter->init();
+  m_benchmarkView->setModel(m_bmModel);
+
+  qCDebug(MAINUI_TAG) << "Initialization Finished";
 }

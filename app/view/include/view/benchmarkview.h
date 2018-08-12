@@ -29,14 +29,25 @@
 
 class QHeaderView;
 
+namespace presenter {
+class BenchmarkPresenter;
+}
+
 namespace view {
 
+// View should do the following
+// - create visual components in the constructor
+// - create presenters in the constructor
+// - initialize
+// - set model
 class BenchmarkView : public QTableView {
   Q_OBJECT
 
  public:
   BenchmarkView(QWidget* parent = 0);
   ~BenchmarkView() = default;
+  void init();
+  void setModel(QAbstractItemModel* model);
 
   QHeaderView* getHeader();
 
@@ -67,6 +78,7 @@ class BenchmarkView : public QTableView {
   QAction* m_clearAllRows;
 
   QList<int> m_currentHiddenColumns;
+  presenter::BenchmarkPresenter* m_presenter;
 };
 
 }  // namespace view

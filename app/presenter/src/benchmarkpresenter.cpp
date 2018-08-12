@@ -2,6 +2,9 @@
 #include <QAction>
 #include <QHeaderView>
 #include <QMenu>
+#include "presenter/benchmarkdelegate.h"
+#include "presenter/benchmarkproxymodel.h"
+#include "presenter/presenter_globals.h"
 #include "view/benchmarkview.h"
 
 namespace presenter {
@@ -9,26 +12,20 @@ namespace presenter {
 BenchmarkPresenter::BenchmarkPresenter(view::BenchmarkView* view,
                                        QObject* parent)
     : QObject(parent), m_view(view) {
-  connect(m_view->getHeader(), &QHeaderView::customContextMenuRequested, this,
-          &BenchmarkPresenter::onContextMenuOnHeader);
-  connect(m_view, &view::BenchmarkView::customContextMenuRequested, this,
-          &BenchmarkPresenter::onContextMenuOnBody);
-  connect(m_view->getMoveLastAction(), &QAction::triggered, this,
-          &BenchmarkPresenter::onSlotMoveLast);
-  connect(m_view->getMoveFirstAction(), &QAction::triggered, this,
-          &BenchmarkPresenter::onSlotMoveFirst);
+  m_delegate = new BenchmarkDelegate(parent);
+}
 
-  connect(m_view->getSelect(), &QAction::triggered,
-          [&]() { emit m_view->select(); });
+void BenchmarkPresenter::init() {
+  if (m_view) {
+    connectSignalsToSlots();
+    m_view->setItemDelegate(m_delegate);
+  }
+  qCDebug(PRESENTER_TAG) << "Initialization Finished";
+}
 
-  connect(m_view->getSelectAll(), &QAction::triggered,
-          [&]() { emit m_view->selectAllRows(); });
-
-  connect(m_view->getClearSelection(), &QAction::triggered,
-          [&]() { emit m_view->clearSelection(); });
-
-  connect(m_view->getClearAllRows(), &QAction::triggered,
-          [&]() { emit m_view->clearAllRows(); });
+bool BenchmarkPresenter::setModel(QAbstractItemModel* model) {
+  m_model = model;
+  return true;
 }
 
 void BenchmarkPresenter::onContextMenuOnHeader(QPoint p) {
@@ -73,6 +70,29 @@ void BenchmarkPresenter::onShowColumn(int colIdx) {
 
 void BenchmarkPresenter::onHideColumn(int colIdx) {
   m_view->hideColumn(colIdx);
+}
+
+void BenchmarkPresenter::connectSignalsToSlots() {
+  connect(m_view->getHeader(), &QHeaderView::customContextMenuRequested, this,
+          &BenchmarkPresenter::onContextMenuOnHeader);
+  connect(m_view, &view::BenchmarkView::customContextMenuRequested, this,
+          &BenchmarkPresenter::onContextMenuOnBody);
+  connect(m_view->getMoveLastAction(), &QAction::triggered, this,
+          &BenchmarkPresenter::onSlotMoveLast);
+  connect(m_view->getMoveFirstAction(), &QAction::triggered, this,
+          &BenchmarkPresenter::onSlotMoveFirst);
+
+  connect(m_view->getSelect(), &QAction::triggered,
+          [&]() { emit m_view->select(); });
+
+  connect(m_view->getSelectAll(), &QAction::triggered,
+          [&]() { emit m_view->selectAllRows(); });
+
+  connect(m_view->getClearSelection(), &QAction::triggered,
+          [&]() { emit m_view->clearSelection(); });
+
+  connect(m_view->getClearAllRows(), &QAction::triggered,
+          [&]() { emit m_view->clearAllRows(); });
 }
 
 }  // namespace presenter

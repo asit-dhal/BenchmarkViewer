@@ -33,11 +33,11 @@
 namespace model {
 
 JsonParser::JsonParser(QObject* parent) : IAbstractParser(parent) {
-  qCDebug(model) << "Parser created";
+  qCDebug(MODEL_TAG) << "Parser created";
 }
 
 void JsonParser::parse(QString filename) {
-  qCDebug(model) << "Parsing started: " << filename;
+  qCDebug(MODEL_TAG) << "Parsing started: " << filename;
   QFile file;
   file.setFileName(filename);
   file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -51,7 +51,7 @@ void JsonParser::parse(QString filename) {
   // benchmark.setContext(parseContext(jsonObj));
   mmts = parseBenchmarks(jsonObj);
   emit parsingFinished(filename, mmts);
-  qCDebug(model) << "Parsing finished: " << filename;
+  qCDebug(MODEL_TAG) << "Parsing finished: " << filename;
 }
 
 // Context JsonParser::parseContext(const QJsonObject& json) {
@@ -118,10 +118,10 @@ QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json) {
       mmts.push_back(mmt);
     }
   } else {
-    qCCritical(model) << "No benchmark exists";
+    qCCritical(MODEL_TAG) << "No benchmark exists";
   }
 
-  qCDebug(model) << "No. of measurements: " << mmts.size();
+  qCDebug(MODEL_TAG) << "No. of measurements: " << mmts.size();
 
   return mmts;
 }
