@@ -37,7 +37,6 @@ class BenchmarkView;
 
 namespace model {
 class BenchmarkModel;
-class ColumnModel;
 }  // namespace model
 
 class MainWindowPresenter;
@@ -51,8 +50,8 @@ class MainWindow : public QMainWindow {
 
  public:
   explicit MainWindow(QWidget* parent = nullptr);
-
   void init();
+
   ~MainWindow();
   QAction* getOpenFileAction();
   QVector<QAction*> getOpenRecentFileActions();
@@ -71,8 +70,8 @@ class MainWindow : public QMainWindow {
   void createBenchmarkView();
   void createChartView();
   void createPresenter();
-
   void createModels();
+  void closeEvent(QCloseEvent*);
 
  private:
   Ui::MainWindow* ui;
@@ -82,7 +81,6 @@ class MainWindow : public QMainWindow {
   QVector<QAction*> m_recentFileActions;
 
   model::BenchmarkModel* m_bmModel;
-  model::ColumnModel* m_colunModel;
 };
 
 #endif  // MAINWINDOW_H

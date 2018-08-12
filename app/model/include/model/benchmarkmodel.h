@@ -27,7 +27,6 @@
 
 #include <QAbstractTableModel>
 #include <QLoggingCategory>
-#include "columnmodel.h"
 #include "model/benchmark.h"
 #include "model/measurement.h"
 
@@ -36,12 +35,14 @@ namespace model {
 class BenchmarkModel : public QAbstractTableModel {
   Q_OBJECT
  public:
-  explicit BenchmarkModel(ColumnModel* columnModel = nullptr,
-                          QObject* parent = nullptr);
-  void setColumnModel(ColumnModel* columnModel);
+  explicit BenchmarkModel(QObject* parent = nullptr);
   void addMeasurements(Measurements mmts);
   void addMeasurement(Measurement mmt);
   void removeMeasurement(int id);
+  void addColumn(Measurement::Attributes attr);
+  void removeColumn(Measurement::Attributes attr);
+
+  enum ColumnAttrRole { AttrRole = Qt::UserRole + 1 };
 
   QVariant headerData(int section,
                       Qt::Orientation orientation,
@@ -63,7 +64,7 @@ class BenchmarkModel : public QAbstractTableModel {
 
  private:
   Measurements m_mmts;
-  ColumnModel* m_columnModel;
+  QList<Measurement::Attributes> m_columns;
 };
 
 }  // namespace model

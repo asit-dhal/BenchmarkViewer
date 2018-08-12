@@ -13,18 +13,25 @@ BenchmarkPresenter::BenchmarkPresenter(view::BenchmarkView* view,
                                        QObject* parent)
     : QObject(parent), m_view(view) {
   m_delegate = new BenchmarkDelegate(parent);
+  m_view->setItemDelegate(m_delegate);
 }
 
 void BenchmarkPresenter::init() {
   if (m_view) {
     connectSignalsToSlots();
-    m_view->setItemDelegate(m_delegate);
   }
+  m_view->setEditTriggers(QAbstractItemView::CurrentChanged);
+  m_view->setSortingEnabled(true);
+  m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  m_view->sortByColumn(1, Qt::DescendingOrder);
   qCDebug(PRESENTER_TAG) << "Initialization Finished";
 }
 
 bool BenchmarkPresenter::setModel(QAbstractItemModel* model) {
   m_model = model;
+  m_proxyModel = new BenchmarkProxyModel(m_model);
+  m_proxyModel->setSourceModel(m_model);
+  m_view->setModel(m_proxyModel);
   return true;
 }
 

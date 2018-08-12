@@ -23,14 +23,13 @@
 ========================================================================*/
 
 #include "presenter/benchmarkproxymodel.h"
-#include "model/columnmodel.h"
+#include "model/benchmarkmodel.h"
 #include "model/measurement.h"
 
 namespace presenter {
 
-BenchmarkProxyModel::BenchmarkProxyModel(model::ColumnModel* columnModel,
-                                         QObject* parent)
-    : QSortFilterProxyModel(parent), m_columnModel(columnModel) {}
+BenchmarkProxyModel::BenchmarkProxyModel(QObject* parent)
+    : QSortFilterProxyModel(parent) {}
 
 bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
                                    const QModelIndex& right) const {
@@ -38,8 +37,8 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
   QVariant rightData = sourceModel()->data(right);
 
   auto colAttr =
-      m_columnModel
-          ->data(createIndex(left.column(), 0), model::ColumnModel::AttrRole)
+      sourceModel()
+          ->data(createIndex(left.column(), 0), model::BenchmarkModel::AttrRole)
           .value<model::Measurement::Attributes>();
 
   switch (colAttr) {

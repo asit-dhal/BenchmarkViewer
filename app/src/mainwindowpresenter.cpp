@@ -91,6 +91,10 @@ void MainWindowPresenter::onCloseFile() {
 
 void MainWindowPresenter::onOpenRecentFile() {
   qCDebug(MAINUI_TAG) << "SLOT=> " << Q_FUNC_INFO;
+  QAction* act = qobject_cast<QAction*>(sender());
+  QString file = act->data().toString();
+  model::ParserFactory::getParser(model::ParserFactory::ParserType::eJsonParser)
+      ->parse(file);
 }
 
 void MainWindowPresenter::onExportChart() {

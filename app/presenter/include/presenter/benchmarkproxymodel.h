@@ -28,25 +28,17 @@
 #include <QSortFilterProxyModel>
 #include <QString>
 
-namespace model {
-class ColumnModel;
-}
-
 namespace presenter {
 
 class BenchmarkProxyModel : public QSortFilterProxyModel {
  public:
-  BenchmarkProxyModel(model::ColumnModel* columnModel,
-                      QObject* parent = nullptr);
+  BenchmarkProxyModel(QObject* parent = nullptr);
 
  protected:
   bool lessThan(const QModelIndex& left,
                 const QModelIndex& right) const override;
   bool filterAcceptsRow(int sourceRow,
                         const QModelIndex& sourceParent) const override;
-
- private:
-  model::ColumnModel* m_columnModel;
 };
 
 }  // namespace presenter

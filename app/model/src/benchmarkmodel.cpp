@@ -31,19 +31,7 @@
 
 namespace model {
 
-BenchmarkModel::BenchmarkModel(ColumnModel* columnModel, QObject* parent)
-    : QAbstractTableModel(parent), m_columnModel(columnModel) {
-  if (!m_columnModel) {
-    qCWarning(MODEL_TAG) << "columnModel is null";
-  }
-}
-
-void BenchmarkModel::setColumnModel(ColumnModel* columnModel) {
-  if (m_columnModel) {
-    qCWarning(MODEL_TAG) << "columnModel will be reset";
-  }
-  m_columnModel = columnModel;
-}
+BenchmarkModel::BenchmarkModel(QObject* parent) : QAbstractTableModel(parent) {}
 
 void BenchmarkModel::addMeasurements(Measurements mmts) {
   beginResetModel();
@@ -71,6 +59,30 @@ void BenchmarkModel::removeMeasurement(int id) {
   endResetModel();
 }
 
+void BenchmarkModel::addColumn(Measurement::Attributes attr) {
+  auto names = Measurement::getAttributeNames();
+  if (m_columns.indexOf(attr) == -1) {
+    qCWarning(MODEL_TAG) << "Adding column: " << names[attr];
+    beginInsertColumns(QModelIndex(), m_columns.size(), m_columns.size() + 1);
+    m_columns.append(attr);
+    endInsertColumns();
+  } else {
+    qCWarning(MODEL_TAG) << "Column " << names[attr] << " is already present";
+  }
+}
+void BenchmarkModel::removeColumn(Measurement::Attributes attr) {
+  auto names = Measurement::getAttributeNames();
+  auto colIndex = m_columns.indexOf(attr);
+  if (colIndex != -1) {
+    qCWarning(MODEL_TAG) << "Removing column: " << names[attr];
+    beginRemoveColumns(QModelIndex(), colIndex, colIndex);
+    m_columns.removeOne(attr);
+    endRemoveColumns();
+  } else {
+    qCWarning(MODEL_TAG) << "Column " << names[attr] << " is notpresent";
+  }
+}
+
 QVariant BenchmarkModel::headerData(int section,
                                     Qt::Orientation orientation,
                                     int role) const {
@@ -78,14 +90,11 @@ QVariant BenchmarkModel::headerData(int section,
     return QVariant();
   }
 
+  auto names = Measurement::getAttributeNames();
   if (orientation == Qt::Horizontal) {
-    if (!m_columnModel) {
-      qCWarning(MODEL_TAG) << "columnModel is null";
+    if (section >= m_columns.size())
       return QVariant();
-    }
-    if (section >= m_columnModel->rowCount())
-      return QVariant();
-    return m_columnModel->data(createIndex(section, 0));
+    return names[m_columns.at(section)];
   } else if (orientation == Qt::Vertical) {
     return QString("%1").arg(section + 1);
   } else {
@@ -100,11 +109,7 @@ int BenchmarkModel::rowCount(const QModelIndex& parent) const {
 
 int BenchmarkModel::columnCount(const QModelIndex& parent) const {
   Q_UNUSED(parent);
-  if (!m_columnModel) {
-    qCWarning(MODEL_TAG) << "columnModel is null";
-    return 0;
-  }
-  return m_columnModel->rowCount();
+  return m_columns.size();
 }
 
 QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
@@ -115,14 +120,7 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
     return QVariant();
 
   if (role == Qt::DisplayRole) {
-    if (!m_columnModel) {
-      qCWarning(MODEL_TAG) << "columnModel is null";
-      return QVariant();
-    }
-    auto colAttr =
-        m_columnModel
-            ->data(createIndex(index.column(), 0), ColumnModel::AttrRole)
-            .value<Measurement::Attributes>();
+    auto colAttr = m_columns.at(index.column());
     switch (colAttr) {
       case Measurement::Attributes::eIsSelected:
         return m_mmts.at(index.row()).isSelected();
@@ -137,6 +135,10 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
       default:
         return QVariant();
     }
+  }
+
+  if (role == ColumnAttrRole::AttrRole) {
+    return QVariant::fromValue(m_columns.at(index.column()));
   }
 
   if (role == Qt::BackgroundColorRole) {
@@ -161,20 +163,13 @@ bool BenchmarkModel::setData(const QModelIndex& index,
                              const QVariant& value,
                              int role) {
   if (index.isValid() && role == Qt::EditRole) {
-    if (!m_columnModel) {
-      qCWarning(MODEL_TAG) << "columnModel is null";
-      return false;
-    }
     auto row = index.row();
-    auto colAttr =
-        m_columnModel
-            ->data(createIndex(index.column(), 0), ColumnModel::AttrRole)
-            .value<Measurement::Attributes>();
+    auto colAttr = m_columns.at(index.column());
     if (colAttr == Measurement::Attributes::eIsSelected &&
         m_mmts[row].isSelected() != value.toBool()) {
       m_mmts[row].setSelected(value.toBool());
       emit dataChanged(createIndex(index.row(), 0),
-                       createIndex(index.row(), m_columnModel->rowCount() - 1));
+                       createIndex(index.row(), m_columns.size() - 1));
 
       return true;
     }

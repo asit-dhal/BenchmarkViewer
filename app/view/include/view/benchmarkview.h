@@ -47,7 +47,7 @@ class BenchmarkView : public QTableView {
   BenchmarkView(QWidget* parent = 0);
   ~BenchmarkView() = default;
   void init();
-  void setModel(QAbstractItemModel* model);
+  void setBenchmarkModel(QAbstractItemModel* model);
 
   QHeaderView* getHeader();
 

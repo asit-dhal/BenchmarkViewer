@@ -12,6 +12,7 @@ class QAbstractItemModel;
 namespace presenter {
 
 class BenchmarkDelegate;
+class BenchmarkProxyModel;
 
 class BenchmarkPresenter : public QObject {
  public:
@@ -37,6 +38,7 @@ class BenchmarkPresenter : public QObject {
   view::BenchmarkView* m_view;
   QAbstractItemModel* m_model;
   BenchmarkDelegate* m_delegate;
+  BenchmarkProxyModel* m_proxyModel;
 };
 
 }  // namespace presenter

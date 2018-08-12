@@ -51,8 +51,7 @@ void BenchmarkView::init() {
   m_presenter->init();
 }
 
-void BenchmarkView::setModel(QAbstractItemModel* model) {
-  QTableView::setModel(model);
+void BenchmarkView::setBenchmarkModel(QAbstractItemModel* model) {
   m_presenter->setModel(model);
 }
 

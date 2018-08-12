@@ -27,7 +27,6 @@
 #include "app/mainwindowpresenter.h"
 #include "app/ui_mainwindow.h"
 #include "model/benchmarkmodel.h"
-#include "model/columnmodel.h"
 #include "model/measurement.h"
 #include "view/benchmarkview.h"
 
@@ -124,20 +123,23 @@ void MainWindow::createPresenter() {
 
 void MainWindow::createModels() {
   qCDebug(MAINUI_TAG);
-  m_colunModel = new model::ColumnModel(this);
-  m_colunModel->addColumn(model::Measurement::Attributes::eCpuTime);
-  m_colunModel->addColumn(model::Measurement::Attributes::eRealTime);
-  m_colunModel->addColumn(model::Measurement::Attributes::eName);
-
-  m_bmModel = new model::BenchmarkModel(m_colunModel, this);
+  m_bmModel = new model::BenchmarkModel(this);
+  m_bmModel->addColumn(model::Measurement::Attributes::eCpuTime);
+  m_bmModel->addColumn(model::Measurement::Attributes::eRealTime);
+  m_bmModel->addColumn(model::Measurement::Attributes::eName);
+  m_bmModel->addColumn(model::Measurement::Attributes::eFileName);
   qCDebug(MAINUI_TAG) << "Creating Model Finished";
 }
 
 void MainWindow::init() {
   qCDebug(MAINUI_TAG);
   m_benchmarkView->init();
-  m_benchmarkView->setModel(m_bmModel);
+  m_benchmarkView->setBenchmarkModel(m_bmModel);
   m_presenter->init();
   m_presenter->setModel(m_bmModel);
   qCDebug(MAINUI_TAG) << "Initialization Finished";
+}
+
+void MainWindow::closeEvent(QCloseEvent*) {
+  ui->actionExit->trigger();
 }

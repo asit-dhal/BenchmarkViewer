@@ -33,13 +33,11 @@ set(MODEL_SRCS
     src/model_globals.cpp
     src/helper.cpp
     src/benchmarkmodel.cpp
-    src/columnmodel.cpp
 )
 
 set(MOC_HEADERS
     include/model/abstractparser.h
     include/model/benchmarkmodel.h
-    include/model/columnmodel.h
     include/model/csvparser.h
     include/model/jsonparser.h
 )
