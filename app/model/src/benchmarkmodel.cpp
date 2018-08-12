@@ -61,10 +61,21 @@ void BenchmarkModel::removeMeasurement(int id) {
 
 void BenchmarkModel::addColumn(Measurement::Attributes attr) {
   auto names = Measurement::getAttributeNames();
+
   if (m_columns.indexOf(attr) == -1) {
     qCWarning(MODEL_TAG) << "Adding column: " << names[attr];
-    beginInsertColumns(QModelIndex(), m_columns.size(), m_columns.size() + 1);
+    bool isSelectedMissing =
+        (m_columns.indexOf(Measurement::Attributes::eIsSelected) == -1);
+    qCDebug(MODEL_TAG) << "isSelectedMissing= " << isSelectedMissing;
+    if (isSelectedMissing) {
+      beginInsertColumns(QModelIndex(), m_columns.size(), m_columns.size() + 2);
+      m_columns.append(Measurement::Attributes::eIsSelected);
+    } else {
+      beginInsertColumns(QModelIndex(), m_columns.size(), m_columns.size() + 1);
+    }
+
     m_columns.append(attr);
+
     endInsertColumns();
   } else {
     qCWarning(MODEL_TAG) << "Column " << names[attr] << " is already present";
@@ -73,9 +84,15 @@ void BenchmarkModel::addColumn(Measurement::Attributes attr) {
 void BenchmarkModel::removeColumn(Measurement::Attributes attr) {
   auto names = Measurement::getAttributeNames();
   auto colIndex = m_columns.indexOf(attr);
+
   if (colIndex != -1) {
     qCWarning(MODEL_TAG) << "Removing column: " << names[attr];
-    beginRemoveColumns(QModelIndex(), colIndex, colIndex);
+    if (m_columns.size() == 2) {
+      beginRemoveColumns(QModelIndex(), 0, 1);
+      m_columns.removeOne(Measurement::Attributes::eIsSelected);
+    } else {
+      beginRemoveColumns(QModelIndex(), colIndex, colIndex);
+    }
     m_columns.removeOne(attr);
     endRemoveColumns();
   } else {
@@ -90,9 +107,10 @@ QVariant BenchmarkModel::headerData(int section,
     return QVariant();
   }
 
+  qCWarning(MODEL_TAG) << "Section: " << section;
   auto names = Measurement::getAttributeNames();
   if (orientation == Qt::Horizontal) {
-    if (section >= m_columns.size())
+    if (section < 0 || section >= m_columns.size())
       return QVariant();
     return names[m_columns.at(section)];
   } else if (orientation == Qt::Vertical) {
@@ -126,6 +144,8 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
         return m_mmts.at(index.row()).isSelected();
       case Measurement::Attributes::eName:
         return m_mmts.at(index.row()).getName();
+      case Measurement::Attributes::eFileName:
+        return m_mmts.at(index.row()).getFileName();
       case Measurement::Attributes::eRealTime:
         return m_mmts.at(index.row()).getRealTime();
       case Measurement::Attributes::eCpuTime:

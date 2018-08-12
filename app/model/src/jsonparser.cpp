@@ -24,6 +24,7 @@
 
 #include "model/jsonparser.h"
 #include <QFile>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -49,45 +50,13 @@ void JsonParser::parse(QString filename) {
   QJsonDocument jsonDocument = QJsonDocument::fromJson(fileContent.toUtf8());
   QJsonObject jsonObj = jsonDocument.object();
   // benchmark.setContext(parseContext(jsonObj));
-  mmts = parseBenchmarks(jsonObj);
+  mmts = parseBenchmarks(jsonObj, QFileInfo(filename).fileName());
   emit parsingFinished(filename, mmts);
   qCDebug(MODEL_TAG) << "Parsing finished: " << filename;
 }
 
-// Context JsonParser::parseContext(const QJsonObject& json) {
-//  Context ctx;
-//  if (json.contains("context")) {
-//    QJsonObject ctxJObject = json["context"].toObject();
-//    if (ctxJObject.contains("date") && ctxJObject["date"].isString()) {
-//      auto timestampStr = ctxJObject["date"].toString();
-//      QDateTime timestamp = QDateTime::fromString(
-//          timestampStr, "yyyy-MM-dd HH:mm:ss");  // 2017-12-09 22:01:41
-//      ctx.setTimestamp(timestamp);
-//    }
-//    if (ctxJObject.contains("num_cpus") && ctxJObject["num_cpus"].isDouble())
-//    {
-//      ctx.setCpuCount(ctxJObject["num_cpus"].toInt());
-//    }
-//    if (ctxJObject.contains("mhz_per_cpu") &&
-//        ctxJObject["mhz_per_cpu"].isDouble()) {
-//      ctx.setCpuFrequency(ctxJObject["mhz_per_cpu"].toInt());
-//    }
-//    if (ctxJObject.contains("cpu_scaling_enabled") &&
-//        ctxJObject["cpu_scaling_enabled"].isBool()) {
-//      ctx.setCpuScalingEnabled(ctxJObject["cpu_scaling_enabled"].toBool());
-//    }
-//    if (ctxJObject.contains("library_build_type") &&
-//        ctxJObject["library_build_type"].isString()) {
-//      ctx.setLibraryBuildType(ctxJObject["library_build_type"].toString());
-//    }
-//  } else {
-//    qCCritical(model) << "No context exists";
-//  }
-//  qCDebug(model) << "Context: " << ctx;
-//  return ctx;
-//}
-
-QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json) {
+QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json,
+                                                 QString filename) {
   QVector<Measurement> mmts;
   if (json.contains("benchmarks") && json["benchmarks"].isArray()) {
     QJsonArray jsonArrayObject = json["benchmarks"].toArray();
@@ -114,6 +83,8 @@ QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json) {
       if (jsonObj.contains("time_unit") && jsonObj["time_unit"].isString()) {
         mmt.setTimeUnit(jsonObj["time_unit"].toString());
       }
+
+      mmt.setFileName(filename);
 
       mmts.push_back(mmt);
     }

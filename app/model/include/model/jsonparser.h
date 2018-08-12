@@ -37,8 +37,7 @@ class JsonParser : public IAbstractParser {
   void parse(QString filename) override;
 
  private:
-  // Context parseContext(const QJsonObject& json);
-  Measurements parseBenchmarks(const QJsonObject& json);
+  Measurements parseBenchmarks(const QJsonObject& json, QString filename);
 };
 
 }  // namespace model
