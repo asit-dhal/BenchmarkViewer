@@ -9,6 +9,7 @@ set(PRESENTER_SRCS
 set(MOC_HEADERS
     include/presenter/benchmarkdelegate.h
     include/presenter/benchmarkpresenter.h
+    include/presenter/chartpresenter.h
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

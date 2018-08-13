@@ -25,6 +25,9 @@
 #ifndef CHARTVIEWWIDGET_H
 #define CHARTVIEWWIDGET_H
 
+#include "model/benchmarkmodel.h"
+#include "presenter/chartpresenter.h"
+
 #include <QBarCategoryAxis>
 #include <QBarSet>
 #include <QLoggingCategory>
@@ -41,23 +44,16 @@ QT_CHARTS_USE_NAMESPACE
 
 namespace view {
 
-class ChartViewWidget : public QWidget {
+class ChartView : public QWidget {
  public:
-  ChartViewWidget(QWidget* parent = nullptr);
-
- public slots:
-  void onAddBarSet(QBarSet* barSet);
-  void onRemoveBarSet(QBarSet* barSet);
-  void onSetMaxY(double maxY);
+  ChartView(QWidget* parent = nullptr);
+  QChart* getChart() const;
+  void setModel(model::BenchmarkModel* model);
 
  private:
-  void init();
-
-  double m_maxY = 0;
-  QBarCategoryAxis* m_axis;
   QChart* m_chart;
   QChartView* m_chartView;
-  QBarSeries* m_series;
+  presenter::ChartPresenter* m_presenter;
 };
 
 }  // namespace view

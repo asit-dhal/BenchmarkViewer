@@ -22,7 +22,7 @@
 
 ========================================================================*/
 
-#include "view/chartviewwidget.h"
+#include "view/chartview.h"
 #include <QBarSet>
 #include <QHBoxLayout>
 #include "view/globals.h"
@@ -31,49 +31,26 @@ Q_LOGGING_CATEGORY(chartView, "chartView");
 
 namespace view {
 
-ChartViewWidget::ChartViewWidget(QWidget* parent)
+ChartView::ChartView(QWidget* parent)
     : QWidget(parent), m_chartView(new QChartView) {
-  init();
+  m_chart = new QChart;
+  m_chartView->setChart(m_chart);
+  m_chartView->setRenderHint(QPainter::Antialiasing);
+
+  m_presenter = new presenter::ChartPresenter(this);
+  m_presenter->init();
+
   QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_chartView);
   setLayout(mainLayout);
 }
 
-void ChartViewWidget::init() {
-  m_chart = new QChart;
-  m_series = new QBarSeries;
-  m_chart->addSeries(m_series);
-  m_chart->legend()->setVisible(true);
-  m_chart->legend()->setAlignment(Qt::AlignRight);
-  QStringList categories;
-  categories << "CPU Time"
-             << "Real Time";
-  m_axis = new QBarCategoryAxis();
-  m_axis->append(categories);
-  m_chart->createDefaultAxes();
-  m_chart->axisY()->setMin(0);
-  m_chart->setAxisX(m_axis, m_series);
-  m_chart->setAnimationOptions(QChart::AllAnimations);
-  m_chartView->setChart(m_chart);
-  m_chartView->setRenderHint(QPainter::Antialiasing);
+QChart* ChartView::getChart() const {
+  return m_chart;
 }
 
-void ChartViewWidget::onAddBarSet(QBarSet* barSet) {
-  qCDebug(chartView) << "Adding Barset: " << barSet->label();
-  m_series->append(barSet);
-}
-
-void ChartViewWidget::onRemoveBarSet(QBarSet* barSet) {
-  qCDebug(chartView) << "Removing Barset: " << barSet->label();
-  m_series->remove(barSet);
-}
-
-void ChartViewWidget::onSetMaxY(double maxY) {
-  if (maxY < 50)
-    maxY = 60;
-  else
-    maxY = maxY + 10;
-  m_chart->axisY()->setMax(maxY);
+void ChartView::setModel(model::BenchmarkModel* model) {
+  m_presenter->setModel(model);
 }
 
 }  // namespace view

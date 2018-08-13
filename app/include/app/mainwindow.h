@@ -34,7 +34,8 @@ class QLineEdit;
 
 namespace view {
 class BenchmarkView;
-}
+class ChartView;
+}  // namespace view
 
 namespace model {
 class BenchmarkModel;
@@ -85,6 +86,7 @@ class MainWindow : public QMainWindow {
   QLineEdit* m_filter;
   MainWindowPresenter* m_presenter;
   view::BenchmarkView* m_benchmarkView;
+  view::ChartView* m_chartView;
   QVector<QAction*> m_recentFileActions;
   QVector<QAction*> m_columnVisibilityActions;
   model::BenchmarkModel* m_bmModel;

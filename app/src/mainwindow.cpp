@@ -29,6 +29,7 @@
 #include "model/benchmarkmodel.h"
 #include "model/measurement.h"
 #include "view/benchmarkview.h"
+#include "view/chartview.h"
 
 #include <QFileInfo>
 #include <QGroupBox>
@@ -38,10 +39,23 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
+
   createBenchmarkView();
+  createChartView();
+
   createModels();
   createPresenter();
   qCDebug(MAINUI_TAG) << "Construction Finished";
+
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(m_filter);
+  layout->addWidget(m_benchmarkView);
+
+  QHBoxLayout* centralLayout = new QHBoxLayout;
+  centralLayout->addLayout(layout);
+  centralLayout->addWidget(m_chartView);
+
+  ui->centralWidget->setLayout(centralLayout);
 }
 
 MainWindow::~MainWindow() {
@@ -109,14 +123,18 @@ void MainWindow::createBenchmarkView() {
   m_filter->setPlaceholderText(tr("Filter"));
   m_benchmarkView = new view::BenchmarkView(this);
 
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(m_filter);
-  layout->addWidget(m_benchmarkView);
-  // benckmarkSelectorGB->setLayout(layout);
+  //  QVBoxLayout* layout = new QVBoxLayout;
+  //  layout->addWidget(m_filter);
+  //  layout->addWidget(m_benchmarkView);
+  //  // benckmarkSelectorGB->setLayout(layout);
 
-  // ui->
-  ui->centralWidget->setLayout(layout);
+  //  // ui->
+  //  ui->centralWidget->setLayout(layout);
   qCDebug(MAINUI_TAG) << "Creating BenchmarkView Finished";
+}
+
+void MainWindow::createChartView() {
+  m_chartView = new view::ChartView(this);
 }
 
 void MainWindow::createPresenter() {
@@ -138,6 +156,7 @@ void MainWindow::init() {
   m_benchmarkView->setBenchmarkModel(m_bmModel);
   m_presenter->init();
   m_presenter->setModel(m_bmModel);
+  m_chartView->setModel(m_bmModel);
 
   foreach (QAction* act, m_columnVisibilityActions) {
     auto attr = act->data().value<model::Measurement::Attributes>();

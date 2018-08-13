@@ -1,11 +1,12 @@
 set(VIEW_SRCS
     src/benchmarkview.cpp
-    src/chartviewwidget.cpp
+    src/chartview.cpp
     src/globals.cpp
 )
 
 set(VIEW_MOC_HEADERS
     include/view/benchmarkview.h
+    include/view/chartview.h
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

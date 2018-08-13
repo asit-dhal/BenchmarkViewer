@@ -191,6 +191,10 @@ bool BenchmarkModel::setData(const QModelIndex& index,
       emit dataChanged(createIndex(index.row(), 0),
                        createIndex(index.row(), m_columns.size() - 1));
 
+      if (m_mmts[row].isSelected())
+        emit measurementActive(m_mmts[row]);
+      else
+        emit measurementInactive(m_mmts[row]);
       return true;
     }
   }
