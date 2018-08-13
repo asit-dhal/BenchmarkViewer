@@ -47,15 +47,21 @@ MainWindow::MainWindow(QWidget* parent)
   createPresenter();
   qCDebug(MAINUI_TAG) << "Construction Finished";
 
+  QWidget* bmView = new QWidget;
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(m_filter);
   layout->addWidget(m_benchmarkView);
+  bmView->setLayout(layout);
 
-  QHBoxLayout* centralLayout = new QHBoxLayout;
-  centralLayout->addLayout(layout);
-  centralLayout->addWidget(m_chartView);
+  QSplitter* splitter = new QSplitter(this);
+  splitter->addWidget(bmView);
+  splitter->addWidget(m_chartView);
+  splitter->setStretchFactor(0, 1);
+  splitter->setStretchFactor(1, 2);
 
-  ui->centralWidget->setLayout(centralLayout);
+  QVBoxLayout* mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(splitter);
+  ui->centralWidget->setLayout(mainLayout);
 }
 
 MainWindow::~MainWindow() {
@@ -118,18 +124,9 @@ void MainWindow::updateRecentFileActions(QStringList recentFiles) {
 
 void MainWindow::createBenchmarkView() {
   qCDebug(MAINUI_TAG);
-  // QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
   m_filter = new QLineEdit(this);
   m_filter->setPlaceholderText(tr("Filter"));
   m_benchmarkView = new view::BenchmarkView(this);
-
-  //  QVBoxLayout* layout = new QVBoxLayout;
-  //  layout->addWidget(m_filter);
-  //  layout->addWidget(m_benchmarkView);
-  //  // benckmarkSelectorGB->setLayout(layout);
-
-  //  // ui->
-  //  ui->centralWidget->setLayout(layout);
   qCDebug(MAINUI_TAG) << "Creating BenchmarkView Finished";
 }
 
