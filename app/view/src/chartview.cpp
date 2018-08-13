@@ -25,6 +25,7 @@
 #include "view/chartview.h"
 #include <QBarSet>
 #include <QHBoxLayout>
+#include "model/measurement.h"
 #include "view/globals.h"
 
 Q_LOGGING_CATEGORY(chartView, "chartView");
@@ -39,6 +40,8 @@ ChartView::ChartView(QWidget* parent)
 
   m_presenter = new presenter::ChartPresenter(this);
   m_presenter->init();
+  m_presenter->onAddMeasurementAttr(model::Measurement::Attributes::eCpuTime);
+  m_presenter->onAddMeasurementAttr(model::Measurement::Attributes::eRealTime);
 
   QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_chartView);

@@ -4,12 +4,14 @@ set(PRESENTER_SRCS
     src/chartpresenter.cpp
     src/benchmarkdelegate.cpp
     src/benchmarkpresenter.cpp
+    src/chartproxymodel.cpp
 )
 
 set(MOC_HEADERS
     include/presenter/benchmarkdelegate.h
     include/presenter/benchmarkpresenter.h
     include/presenter/chartpresenter.h
+    include/presenter/chartproxymodel.h
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

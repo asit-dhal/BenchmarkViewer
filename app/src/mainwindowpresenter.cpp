@@ -141,11 +141,6 @@ void MainWindowPresenter::init() {
                          false);
   colVisibilities.insert(model::Measurement::Attributes::eItemsPerSecond,
                          false);
-  colVisibilities.insert(model::Measurement::Attributes::eLabel, false);
-  colVisibilities.insert(model::Measurement::Attributes::eErrorOccured, false);
-  colVisibilities.insert(model::Measurement::Attributes::eErrorMessage, false);
-  colVisibilities.insert(model::Measurement::Attributes::eIsSelected, false);
-  colVisibilities.insert(model::Measurement::Attributes::eId, false);
 
   m_view->updateViewColumnMenus(colVisibilities);
   for (auto action : m_view->getColumnVisibilityActions()) {
@@ -169,3 +164,5 @@ void MainWindowPresenter::onBenchmarkFilter(QString filterStr) {
   qCDebug(MAINUI_TAG) << "SLOT=> " << Q_FUNC_INFO;
   m_view->getBenchmarkView()->getPresenter()->setProxyFilter(filterStr);
 }
+
+void MainWindowPresenter::onColumnPlotStatusChecked() {}

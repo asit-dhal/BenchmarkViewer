@@ -171,6 +171,10 @@ void MainWindow::closeEvent(QCloseEvent*) {
   ui->actionExit->trigger();
 }
 
+QVector<QAction*> MainWindow::getColumnPlotStatusActions() const {
+  return m_columnPlotStatusActions;
+}
+
 view::BenchmarkView* MainWindow::getBenchmarkView() const {
   return m_benchmarkView;
 }
@@ -201,4 +205,28 @@ void MainWindow::updateViewColumnMenus(
 
 QLineEdit* MainWindow::getBenchmarkFilterWidget() {
   return m_filter;
+}
+
+void MainWindow::updateColumnPlotActions(
+    QMap<model::Measurement::Attributes, bool> colPlotStatus) {
+  qDeleteAll(m_columnPlotStatusActions);
+  m_columnPlotStatusActions.clear();
+  auto colNames = model::Measurement::getAttributeNames();
+  for (auto it = colPlotStatus.begin(); it != colPlotStatus.end(); it++) {
+    qCDebug(MAINUI_TAG)
+        << QString("%1 => %2").arg(colNames[it.key()]).arg(it.value());
+  }
+
+  for (auto it = colPlotStatus.begin(); it != colPlotStatus.end(); it++) {
+    QAction* toggleStatus = new QAction(colNames[it.key()], this);
+    toggleStatus->setCheckable(true);
+    toggleStatus->setVisible(true);
+    toggleStatus->setChecked(it.value());
+    toggleStatus->setData(QVariant::fromValue(it.key()));
+    m_columnPlotStatusActions.append(toggleStatus);
+  }
+
+  foreach (QAction* toggleVisibility, m_columnPlotStatusActions) {
+    ui->menuPlot->addAction(toggleVisibility);
+  }
 }

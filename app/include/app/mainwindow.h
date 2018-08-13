@@ -1,26 +1,11 @@
-/*=========================================================================
-
-   Program: QCommander
-
-   Copyright (c) 2018 Asit Dhal
-   All rights reserved.
-
-   QCommander is a free software; you can redistribute it and/or modify it.
-
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR
-   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-========================================================================*/
+/** @file mainwindow.h
+ *  @brief Header for MainWindow
+ *
+ *  This creates all the child View(Benchmark Table View
+ *  and Chart View. This also contains all actions for main window.
+ *
+ *  @author Asit Dhal (asit-dhal)
+ **/
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
@@ -69,8 +54,12 @@ class MainWindow : public QMainWindow {
   void updateRecentFileActions(QStringList recentFiles);
   void updateViewColumnMenus(
       QMap<model::Measurement::Attributes, bool> colVisibility);
+  void updateColumnPlotActions(
+      QMap<model::Measurement::Attributes, bool> colPlotStatus);
 
   view::BenchmarkView* getBenchmarkView() const;
+
+  QVector<QAction*> getColumnPlotStatusActions() const;
 
  signals:
 
@@ -89,6 +78,7 @@ class MainWindow : public QMainWindow {
   view::ChartView* m_chartView;
   QVector<QAction*> m_recentFileActions;
   QVector<QAction*> m_columnVisibilityActions;
+  QVector<QAction*> m_columnPlotStatusActions;
   model::BenchmarkModel* m_bmModel;
 };
 

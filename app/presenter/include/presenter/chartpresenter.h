@@ -23,6 +23,8 @@ class BenchmarkModel;
 
 namespace presenter {
 
+class ChartProxyModel;
+
 class ChartPresenter : public QObject {
   Q_OBJECT
 
@@ -30,12 +32,15 @@ class ChartPresenter : public QObject {
   ChartPresenter(view::ChartView* view, QObject* parent = nullptr);
   ~ChartPresenter() = default;
   void init();
+  void update();
   void setModel(model::BenchmarkModel* model);
   void connectSignalsToSlots();
 
  public slots:
   void onAddMeasurement(model::Measurement mmt);
   void onRemoveMeasurement(model::Measurement mmt);
+  void onAddMeasurementAttr(model::Measurement::Attributes attr);
+  void onRemoveMeasurementAttr(model::Measurement::Attributes attr);
 
  private:
   double calculateMaxY();
@@ -46,7 +51,9 @@ class ChartPresenter : public QObject {
   QBarSeries* m_series;
   view::ChartView* m_view;
   model::BenchmarkModel* m_model;
+  ChartProxyModel* m_proxyModel;
   QMap<int, QBarSet*> m_barSet;
+  QList<model::Measurement::Attributes> m_xAxisAttributes;
 };
 
 }  // namespace presenter

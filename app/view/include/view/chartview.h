@@ -32,6 +32,7 @@
 #include <QBarSet>
 #include <QLoggingCategory>
 #include <QMap>
+#include <QVXYModelMapper>
 #include <QtCharts/QBarSeries>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>

@@ -32,6 +32,7 @@ class MainWindowPresenter : public QObject {
   void onExit();
   void onAboutApp();
   void onColumnChecked();
+  void onColumnPlotStatusChecked();
   void onBenchmarkFilter(QString filterStr);
 
  private:

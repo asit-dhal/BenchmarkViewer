@@ -1,5 +1,6 @@
 #include "presenter/chartpresenter.h"
 #include "model/benchmarkmodel.h"
+#include "presenter/chartproxymodel.h"
 #include "view/chartview.h"
 
 namespace presenter {
@@ -14,19 +15,26 @@ void ChartPresenter::init() {
   m_view->getChart()->addSeries(m_series);
   m_view->getChart()->legend()->setVisible(true);
   m_view->getChart()->legend()->setAlignment(Qt::AlignRight);
+  m_view->getChart()->setAnimationOptions(QChart::AllAnimations);
 
+  update();
+}
+
+void ChartPresenter::update() {
   QStringList categories;
+
   categories << "CPU Time"
              << "Real Time";
   m_axis->append(categories);
   m_view->getChart()->createDefaultAxes();
   m_view->getChart()->axisY()->setMin(0);
   m_view->getChart()->setAxisX(m_axis, m_series);
-  m_view->getChart()->setAnimationOptions(QChart::AllAnimations);
-}
+}  // namespace presenter
 
 void ChartPresenter::setModel(model::BenchmarkModel* model) {
   m_model = model;
+  m_proxyModel = new ChartProxyModel(this);
+  m_proxyModel->setSourceModel(m_model);
   connectSignalsToSlots();
 }
 
@@ -53,6 +61,19 @@ void ChartPresenter::onRemoveMeasurement(model::Measurement mmt) {
   m_series->remove(set);
   m_barSet.remove(mmt.getId());
   m_view->getChart()->axisY()->setMax(calculateMaxY());
+}
+
+void ChartPresenter::onAddMeasurementAttr(model::Measurement::Attributes attr) {
+  if (m_xAxisAttributes.indexOf(attr) == -1) {
+    m_xAxisAttributes.append(attr);
+  }
+}
+
+void ChartPresenter::onRemoveMeasurementAttr(
+    model::Measurement::Attributes attr) {
+  if (m_xAxisAttributes.indexOf(attr) != -1) {
+    m_xAxisAttributes.removeOne(attr);
+  }
 }
 
 double ChartPresenter::calculateMaxY() {

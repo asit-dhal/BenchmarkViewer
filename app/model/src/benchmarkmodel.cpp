@@ -152,6 +152,13 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
         return m_mmts.at(index.row()).getCpuTime();
       case Measurement::Attributes::eTimeUnit:
         return m_mmts.at(index.row()).getTimeUnit();
+      case Measurement::Attributes::eIterations:
+        return m_mmts.at(index.row()).getIterations();
+      case Measurement::Attributes::eItemsPerSecond:
+        return m_mmts.at(index.row()).getItemsPerSecond();
+      case Measurement::Attributes::eBytesPerSecond:
+        return m_mmts.at(index.row()).getBytesPerSecond();
+
       default:
         return QVariant();
     }
