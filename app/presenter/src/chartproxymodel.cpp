@@ -1,4 +1,5 @@
 #include "presenter/chartproxymodel.h"
+#include "presenter/presenter_globals.h"
 
 namespace presenter {
 
@@ -18,10 +19,11 @@ bool ChartProxyModel::filterAcceptsColumn(
     int sourceColumn,
     const QModelIndex& sourceParent) const {
   Q_UNUSED(sourceParent)
+  qCDebug(PRESENTER_TAG) << "called";
   if (sourceColumn == 2 || sourceColumn == 3)
-    return false;
+    return true;
 
-  return true;
+  return false;
 }
 
 }  // namespace presenter

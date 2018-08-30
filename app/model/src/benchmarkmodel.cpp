@@ -49,8 +49,21 @@ void BenchmarkModel::addMeasurement(Measurement mmt) {
 
 void BenchmarkModel::removeMeasurement(int id) {
   beginResetModel();
-  for (auto itr = m_mmts.begin(); itr != m_mmts.end(); itr++) {
+  for (auto itr = m_mmts.begin(); itr != m_mmts.end();) {
     if (itr->getId() == id) {
+      itr = m_mmts.erase(itr);
+    } else {
+      ++itr;
+    }
+  }
+  endResetModel();
+}
+
+void BenchmarkModel::removeMeasurementByFile(QString filename) {
+  beginResetModel();
+  for (auto itr = m_mmts.begin(); itr != m_mmts.end();) {
+    qCDebug(MODEL_TAG) << "mmt file name: " << itr->getFileName();
+    if (itr->getFileName() == QFileInfo(filename).fileName()) {
       itr = m_mmts.erase(itr);
     } else {
       ++itr;

@@ -50,7 +50,7 @@ void updateRecentFiles(QString fileName) {
     recentFiles.removeOne(fileName);
   }
   recentFiles.push_front(fileName);
-  if (recentFiles.size() > 3)
+  if (recentFiles.size() > 5)
     recentFiles.pop_back();
   appSettings.setValue("files", recentFiles.join(" "));
   appSettings.endGroup();

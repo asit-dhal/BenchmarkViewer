@@ -84,6 +84,13 @@ class Measurement {
     eId,
   };
 
+  enum class PlotableAttributes : int {
+    eRealTime,
+    eCpuTime,
+    eBytesPerSecond,
+    eItemsPerSecond,
+  };
+
   static QMap<Attributes, QString> getAttributeNames();
 
   bool isSelected() const;

@@ -25,8 +25,6 @@ void MainWindowPresenter::connectActionsToSlots() {
           &MainWindowPresenter::onOpenFile);
   connect(m_view->getCloseAllFilesAction(), &QAction::triggered, this,
           &MainWindowPresenter::onCloseAllFiles);
-  connect(m_view->getCloseFileAction(), &QAction::triggered, this,
-          &MainWindowPresenter::onCloseFile);
   connect(m_view->getExportChartAction(), &QAction::triggered, this,
           &MainWindowPresenter::onExportChart);
 
@@ -76,6 +74,7 @@ void MainWindowPresenter::onOpenFile() {
       model::ParserFactory::getParser(
           model::ParserFactory::ParserType::eJsonParser)
           ->parse(file);
+      m_openedFiles.append(file);
     }
   }
 
@@ -85,14 +84,35 @@ void MainWindowPresenter::onOpenFile() {
     connect(action, &QAction::triggered, this,
             &MainWindowPresenter::onOpenRecentFile);
   }
+
+  m_view->updateOpenFileActions(m_openedFiles);
+  for (auto action : m_view->getCloseFileActions())
+    connect(action, &QAction::triggered, this,
+            &MainWindowPresenter::onCloseFile);
 }
 
 void MainWindowPresenter::onCloseAllFiles() {
   qCDebug(MAINUI_TAG) << "SLOT=> " << Q_FUNC_INFO;
+  for (auto filename : m_openedFiles) {
+    m_bmModel->removeMeasurementByFile(filename);
+  }
+  m_openedFiles.clear();
+  m_view->updateOpenFileActions(m_openedFiles);
 }
 
 void MainWindowPresenter::onCloseFile() {
   qCDebug(MAINUI_TAG) << "SLOT=> " << Q_FUNC_INFO;
+  QAction* act = qobject_cast<QAction*>(sender());
+  QString file = act->data().toString();
+  qCDebug(MAINUI_TAG) << "File to be closed: " << file;
+  if (!file.isEmpty()) {
+    m_bmModel->removeMeasurementByFile(file);
+    m_openedFiles.removeOne(file);
+    m_view->updateOpenFileActions(m_openedFiles);
+    for (auto action : m_view->getCloseFileActions())
+      connect(action, &QAction::triggered, this,
+              &MainWindowPresenter::onCloseFile);
+  }
 }
 
 void MainWindowPresenter::onOpenRecentFile() {
@@ -101,6 +121,20 @@ void MainWindowPresenter::onOpenRecentFile() {
   QString file = act->data().toString();
   model::ParserFactory::getParser(model::ParserFactory::ParserType::eJsonParser)
       ->parse(file);
+  m_openedFiles.append(file);
+
+  appconfig::updateRecentFiles(file);
+  auto recentFiles = appconfig::readRecentFiles();
+  m_view->updateRecentFileActions(recentFiles);
+  for (auto action : m_view->getOpenRecentFileActions()) {
+    connect(action, &QAction::triggered, this,
+            &MainWindowPresenter::onOpenRecentFile);
+  }
+
+  m_view->updateOpenFileActions(m_openedFiles);
+  for (auto action : m_view->getCloseFileActions())
+    connect(action, &QAction::triggered, this,
+            &MainWindowPresenter::onCloseFile);
 }
 
 void MainWindowPresenter::onExportChart() {
@@ -146,6 +180,20 @@ void MainWindowPresenter::init() {
   for (auto action : m_view->getColumnVisibilityActions()) {
     connect(action, &QAction::triggered, this,
             &MainWindowPresenter::onColumnChecked);
+  }
+
+  QMap<model::Measurement::Attributes, bool> colPlotVisibilities;
+  colPlotVisibilities.insert(model::Measurement::Attributes::eRealTime, false);
+  colPlotVisibilities.insert(model::Measurement::Attributes::eCpuTime, false);
+  colPlotVisibilities.insert(model::Measurement::Attributes::eItemsPerSecond,
+                             false);
+  colPlotVisibilities.insert(model::Measurement::Attributes::eBytesPerSecond,
+                             false);
+
+  m_view->updateColumnPlotActions(colPlotVisibilities);
+  for (auto action : m_view->getColumnPlotStatusActions()) {
+    connect(action, &QAction::triggered, this,
+            &MainWindowPresenter::onColumnPlotStatusChecked);
   }
 }
 

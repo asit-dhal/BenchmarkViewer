@@ -42,8 +42,9 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   QAction* getOpenFileAction();
   QVector<QAction*> getOpenRecentFileActions();
+  QVector<QAction*> getCloseFileActions();
   QVector<QAction*> getColumnVisibilityActions();
-  QAction* getCloseFileAction();
+  QVector<QAction*> getColumnPlotStatusActions();
   QAction* getCloseAllFilesAction();
   QAction* getExportChartAction();
   QAction* getExitAction();
@@ -52,14 +53,13 @@ class MainWindow : public QMainWindow {
   QLineEdit* getBenchmarkFilterWidget();
 
   void updateRecentFileActions(QStringList recentFiles);
+  void updateOpenFileActions(QStringList openFiles);
   void updateViewColumnMenus(
       QMap<model::Measurement::Attributes, bool> colVisibility);
   void updateColumnPlotActions(
       QMap<model::Measurement::Attributes, bool> colPlotStatus);
 
   view::BenchmarkView* getBenchmarkView() const;
-
-  QVector<QAction*> getColumnPlotStatusActions() const;
 
  signals:
 
@@ -77,6 +77,7 @@ class MainWindow : public QMainWindow {
   view::BenchmarkView* m_benchmarkView;
   view::ChartView* m_chartView;
   QVector<QAction*> m_recentFileActions;
+  QVector<QAction*> m_openFileActions;
   QVector<QAction*> m_columnVisibilityActions;
   QVector<QAction*> m_columnPlotStatusActions;
   model::BenchmarkModel* m_bmModel;

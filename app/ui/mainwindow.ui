@@ -33,9 +33,15 @@
      </property>
      <addaction name="actiondummy"/>
     </widget>
+    <widget class="QMenu" name="menuClose_File">
+     <property name="title">
+      <string>Close File</string>
+     </property>
+     <addaction name="actionactionDummy"/>
+    </widget>
     <addaction name="actionOpen_File_s"/>
     <addaction name="menuRecent_Files"/>
-    <addaction name="actionClose_File"/>
+    <addaction name="menuClose_File"/>
     <addaction name="actionClose_All_Files"/>
     <addaction name="separator"/>
     <addaction name="actionExport_Chart"/>
@@ -73,11 +79,6 @@
   <action name="actionOpen_File_s">
    <property name="text">
     <string>Open File(s)</string>
-   </property>
-  </action>
-  <action name="actionClose_File">
-   <property name="text">
-    <string>Close File</string>
    </property>
   </action>
   <action name="actionClose_All_Files">
@@ -133,6 +134,14 @@
     <bool>false</bool>
    </property>
    <property name="iconVisibleInMenu">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionactionDummy">
+   <property name="text">
+    <string>actionDummy</string>
+   </property>
+   <property name="visible">
     <bool>false</bool>
    </property>
   </action>

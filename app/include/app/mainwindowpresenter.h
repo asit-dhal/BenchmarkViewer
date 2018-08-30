@@ -41,6 +41,7 @@ class MainWindowPresenter : public QObject {
  private:
   MainWindow* m_view;
   model::BenchmarkModel* m_bmModel;
+  QStringList m_openedFiles;
 };  // namespace modelclassMainWindowPresenter:publicQObject
 
 #endif

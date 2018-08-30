@@ -76,12 +76,12 @@ QVector<QAction*> MainWindow::getOpenRecentFileActions() {
   return m_recentFileActions;
 }
 
-QVector<QAction*> MainWindow::getColumnVisibilityActions() {
-  return m_columnVisibilityActions;
+QVector<QAction*> MainWindow::getCloseFileActions() {
+  return m_openFileActions;
 }
 
-QAction* MainWindow::getCloseFileAction() {
-  return ui->actionClose_File;
+QVector<QAction*> MainWindow::getColumnVisibilityActions() {
+  return m_columnVisibilityActions;
 }
 
 QAction* MainWindow::getCloseAllFilesAction() {
@@ -119,6 +119,28 @@ void MainWindow::updateRecentFileActions(QStringList recentFiles) {
 
   foreach (QAction* recentFileAction, m_recentFileActions) {
     ui->menuRecent_Files->addAction(recentFileAction);
+  }
+}
+
+void MainWindow::updateOpenFileActions(QStringList openFiles) {
+  qDeleteAll(m_openFileActions);
+  m_openFileActions.clear();
+  qCDebug(MAINUI_TAG) << "Open Files: " << openFiles.size() << "->"
+                      << openFiles;
+  int i = 1;
+  foreach (QString openFile, openFiles) {
+    if (openFile.isEmpty())
+      continue;
+    QString text = tr("&%1 %2").arg(i).arg(QFileInfo(openFile).fileName());
+    QAction* openFileAction = new QAction(text, this);
+    openFileAction->setData(openFile);
+    openFileAction->setVisible(true);
+    i++;
+    m_openFileActions.append(openFileAction);
+  }
+
+  foreach (QAction* openFileAction, m_openFileActions) {
+    ui->menuClose_File->addAction(openFileAction);
   }
 }
 
@@ -171,7 +193,7 @@ void MainWindow::closeEvent(QCloseEvent*) {
   ui->actionExit->trigger();
 }
 
-QVector<QAction*> MainWindow::getColumnPlotStatusActions() const {
+QVector<QAction*> MainWindow::getColumnPlotStatusActions() {
   return m_columnPlotStatusActions;
 }
 

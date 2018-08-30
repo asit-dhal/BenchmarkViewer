@@ -35,13 +35,14 @@ namespace view {
 ChartView::ChartView(QWidget* parent)
     : QWidget(parent), m_chartView(new QChartView) {
   m_chart = new QChart;
+  m_chart->setAnimationOptions(QChart::AllAnimations);
   m_chartView->setChart(m_chart);
   m_chartView->setRenderHint(QPainter::Antialiasing);
 
   m_presenter = new presenter::ChartPresenter(this);
-  m_presenter->init();
-  m_presenter->onAddMeasurementAttr(model::Measurement::Attributes::eCpuTime);
-  m_presenter->onAddMeasurementAttr(model::Measurement::Attributes::eRealTime);
+
+  // m_presenter->onAddMeasurementAttr(model::Measurement::Attributes::eCpuTime);
+  // m_presenter->onAddMeasurementAttr(model::Measurement::Attributes::eRealTime);
 
   QHBoxLayout* mainLayout = new QHBoxLayout;
   mainLayout->addWidget(m_chartView);
@@ -54,6 +55,7 @@ QChart* ChartView::getChart() const {
 
 void ChartView::setModel(model::BenchmarkModel* model) {
   m_presenter->setModel(model);
+  m_presenter->init();
 }
 
 }  // namespace view

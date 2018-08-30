@@ -9,6 +9,7 @@
 #include <QtCharts/QBarSeries>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
+#include <QtCharts/QVBarModelMapper>
 #include <QtCharts/QVXYModelMapper>
 
 QT_CHARTS_USE_NAMESPACE
@@ -54,6 +55,7 @@ class ChartPresenter : public QObject {
   ChartProxyModel* m_proxyModel;
   QMap<int, QBarSet*> m_barSet;
   QList<model::Measurement::Attributes> m_xAxisAttributes;
+  QVBarModelMapper* m_modelMapper;
 };
 
 }  // namespace presenter

@@ -9,13 +9,22 @@ ChartPresenter::ChartPresenter(view::ChartView* view, QObject* parent)
     : QObject(parent), m_view(view) {
   m_series = new QBarSeries;
   m_axis = new QBarCategoryAxis();
+  m_modelMapper = new QVBarModelMapper(this);
 }
 
 void ChartPresenter::init() {
-  m_view->getChart()->addSeries(m_series);
-  m_view->getChart()->legend()->setVisible(true);
-  m_view->getChart()->legend()->setAlignment(Qt::AlignRight);
-  m_view->getChart()->setAnimationOptions(QChart::AllAnimations);
+  m_modelMapper->setFirstBarSetColumn(0);
+  m_modelMapper->setLastBarSetColumn(1);
+  // m_modelMapper->setFirstRow();
+  // m_modelMapper->setRowCount(count);
+
+  m_modelMapper->setSeries(m_series);
+  m_modelMapper->setModel(m_proxyModel);
+
+  // m_view->getChart()->addSeries(m_series);
+  // m_view->getChart()->legend()->setVisible(true);
+  // m_view->getChart()->legend()->setAlignment(Qt::AlignRight);
+  // m_view->getChart()->setAnimationOptions(QChart::AllAnimations);
 
   update();
 }
@@ -27,7 +36,7 @@ void ChartPresenter::update() {
              << "Real Time";
   m_axis->append(categories);
   m_view->getChart()->createDefaultAxes();
-  m_view->getChart()->axisY()->setMin(0);
+  // m_view->getChart()->axisY()->setMin(0);
   m_view->getChart()->setAxisX(m_axis, m_series);
 }  // namespace presenter
 
@@ -35,7 +44,7 @@ void ChartPresenter::setModel(model::BenchmarkModel* model) {
   m_model = model;
   m_proxyModel = new ChartProxyModel(this);
   m_proxyModel->setSourceModel(m_model);
-  connectSignalsToSlots();
+  // connectSignalsToSlots();
 }
 
 void ChartPresenter::connectSignalsToSlots() {

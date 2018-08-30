@@ -38,6 +38,7 @@ class BenchmarkModel : public QAbstractTableModel {
   void addMeasurements(Measurements mmts);
   void addMeasurement(Measurement mmt);
   void removeMeasurement(int id);
+  void removeMeasurementByFile(QString filename);
   void addColumn(Measurement::Attributes attr);
   void removeColumn(Measurement::Attributes attr);
 
