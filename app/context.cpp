@@ -24,51 +24,62 @@
 
 #include "context.h"
 
-QDateTime Context::getTimestamp() const {
-  return timestamp;
+QDateTime Context::getTimestamp() const
+{
+	return timestamp;
 }
 
-void Context::setTimestamp(const QDateTime& value) {
-  timestamp = value;
+void Context::setTimestamp(const QDateTime& value)
+{
+	timestamp = value;
 }
 
-int Context::getCpuFrequency() const {
-  return cpuFrequency;
+int Context::getCpuFrequency() const
+{
+	return cpuFrequency;
 }
 
-void Context::setCpuFrequency(int value) {
-  cpuFrequency = value;
+void Context::setCpuFrequency(int value) 
+{
+	cpuFrequency = value;
 }
 
-bool Context::getCpuScalingEnabled() const {
-  return cpuScalingEnabled;
+bool Context::getCpuScalingEnabled() const 
+{
+	return cpuScalingEnabled;
 }
 
-void Context::setCpuScalingEnabled(bool value) {
-  cpuScalingEnabled = value;
+void Context::setCpuScalingEnabled(bool value)
+{
+	cpuScalingEnabled = value;
 }
 
-QString Context::getLibraryBuildType() const {
-  return libraryBuildType;
+QString Context::getLibraryBuildType() const
+{
+	return libraryBuildType;
 }
 
-void Context::setLibraryBuildType(QString value) {
-  libraryBuildType = value;
+void Context::setLibraryBuildType(QString value)
+{
+	libraryBuildType = value;
 }
 
-int Context::getCpuCount() const {
-  return cpuCount;
+int Context::getCpuCount() const
+{
+	return cpuCount;
 }
 
-void Context::setCpuCount(int value) {
-  cpuCount = value;
+void Context::setCpuCount(int value)
+{
+	cpuCount = value;
 }
 
-QDebug operator<<(QDebug d, const Context& ctx) {
-  d << "timestamp: " << ctx.getTimestamp()
-    << " cpu_count: " << ctx.getCpuCount()
-    << " cpu_frequency: " << ctx.getCpuFrequency()
-    << " cpu_scaling_enabled: " << ctx.getCpuScalingEnabled()
-    << " library_build_type: " << ctx.getLibraryBuildType();
-  return d;
+QDebug operator<<(QDebug d, const Context& ctx) 
+{
+	d << "timestamp: " << ctx.getTimestamp()
+		<< " cpu_count: " << ctx.getCpuCount()
+		<< " cpu_frequency: " << ctx.getCpuFrequency()
+		<< " cpu_scaling_enabled: " << ctx.getCpuScalingEnabled()
+		<< " library_build_type: " << ctx.getLibraryBuildType();
+	return d;
 }

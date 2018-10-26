@@ -30,61 +30,68 @@
 Q_LOGGING_CATEGORY(chartView, "chartView");
 
 ChartViewWidget::ChartViewWidget(QWidget* parent)
-    : QWidget(parent), m_chartView(new QChartView) {
-  init();
-  QHBoxLayout* mainLayout = new QHBoxLayout;
-  mainLayout->addWidget(m_chartView);
-  setLayout(mainLayout);
+    : QWidget(parent), m_chartView(new QChartView)
+{
+	init();
+	QHBoxLayout* mainLayout = new QHBoxLayout;
+	mainLayout->addWidget(m_chartView);
+	setLayout(mainLayout);
 }
 
-void ChartViewWidget::init() {
-  m_chart = new QChart;
-  m_series = new QBarSeries;
-  m_chart->addSeries(m_series);
-  m_chart->legend()->setVisible(true);
-  m_chart->legend()->setAlignment(Qt::AlignRight);
-  QStringList categories;
-  categories << "CPU Time"
-             << "Real Time";
-  m_axis = new QBarCategoryAxis();
-  m_axis->append(categories);
-  m_chart->createDefaultAxes();
-  m_chart->axisY()->setMin(0);
-  m_chart->setAxisX(m_axis, m_series);
-  m_chart->setAnimationOptions(QChart::AllAnimations);
-  m_chartView->setChart(m_chart);
-  m_chartView->setRenderHint(QPainter::Antialiasing);
+void ChartViewWidget::init() 
+{
+	m_chart = new QChart;
+	m_series = new QBarSeries;
+	m_chart->addSeries(m_series);
+	m_chart->legend()->setVisible(true);
+    m_chart->legend()->setAlignment(Qt::AlignRight);
+    QStringList categories;
+	categories << "CPU Time" << "Real Time";
+	m_axis = new QBarCategoryAxis();
+	m_axis->append(categories);
+	m_chart->createDefaultAxes();
+	m_chart->axisY()->setMin(0);
+	m_chart->setAxisX(m_axis, m_series);
+	m_chart->setAnimationOptions(QChart::AllAnimations);
+	m_chartView->setChart(m_chart);
+	m_chartView->setRenderHint(QPainter::Antialiasing);
 }
 
-void ChartViewWidget::onAddMeasurement(Measurement mmt) {
-  qCDebug(chartView) << "New Measurement: " << mmt;
-  QString name = mmt.getName();
-  double cpuTime = mmt.getCpuTime();
-  double realTime = mmt.getRealTime();
-  QBarSet* set = new QBarSet(name);
-  *set << cpuTime << realTime;
-  m_barSet[mmt.getId()] = set;
-  m_series->append(set);
-  m_chart->axisY()->setMax(calculateMaxY() + 10);
+void ChartViewWidget::onAddMeasurement(Measurement mmt) 
+{
+	qCDebug(chartView) << "New Measurement: " << mmt;
+	QString name = mmt.getName();
+	double cpuTime = mmt.getCpuTime();
+	double realTime = mmt.getRealTime();
+	QBarSet* set = new QBarSet(name);
+	*set << cpuTime << realTime;
+	m_barSet[mmt.getId()] = set;
+	m_series->append(set);
+	m_chart->axisY()->setMax(calculateMaxY() + 10);
 }
 
-double ChartViewWidget::calculateMaxY() {
-  double maxY = 50;
-  foreach (QBarSet* barSet, m_barSet.values()) {
-    if (barSet->at(0) > maxY) {
-      maxY = barSet->at(0);
-    }
-    if (barSet->at(1) > maxY) {
-      maxY = barSet->at(1);
-    }
-  }
-  return maxY;
+double ChartViewWidget::calculateMaxY() 
+{
+	double maxY = 50;
+	foreach (QBarSet* barSet, m_barSet.values())
+	{
+		if (barSet->at(0) > maxY)
+		{
+			maxY = barSet->at(0);
+		}
+		if (barSet->at(1) > maxY)
+		{
+			maxY = barSet->at(1);
+		}
+	}
+	return maxY;
 }
 
-void ChartViewWidget::onRemoveMeasurement(Measurement mmt) {
-  qCDebug(chartView) << "Removed Measurement: " << mmt;
-  QBarSet* set = m_barSet[mmt.getId()];
-  m_series->remove(set);
-  m_barSet.remove(mmt.getId());
-  m_chart->axisY()->setMax(calculateMaxY());
+void ChartViewWidget::onRemoveMeasurement(Measurement mmt) 
+{
+	qCDebug(chartView) << "Removed Measurement: " << mmt;
+	QBarSet* set = m_barSet[mmt.getId()];
+	m_series->remove(set);
+	m_barSet.remove(mmt.getId());
+	m_chart->axisY()->setMax(calculateMaxY());
 }

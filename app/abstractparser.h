@@ -29,14 +29,15 @@
 #include <QVector>
 #include "benchmark.h"
 
-class AbstractParser : public QObject {
-  Q_OBJECT
+class AbstractParser : public QObject
+{
+	Q_OBJECT
  public:
-  AbstractParser(QObject* parent = nullptr);
-  virtual void parse(QString filename) = 0;
+	AbstractParser(QObject* parent = nullptr);
+	virtual void parse(QString filename) = 0;
  signals:
-  void parsingStatus(QString statusMsg);
-  void parsingFinished(QString fileName, Benchmark benchmark);
+	void parsingStatus(QString statusMsg);
+	void parsingFinished(QString fileName, Benchmark benchmark);
 };
 
 #endif  // ABSTRACTPARSER_H

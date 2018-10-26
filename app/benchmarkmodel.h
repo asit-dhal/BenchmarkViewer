@@ -33,41 +33,38 @@
 
 Q_DECLARE_LOGGING_CATEGORY(benchmarkModel);
 
-struct BenchmarkViewUnit {
-  Measurement measurement;
-  QString filename;
-  bool isSelected{false};
+struct BenchmarkViewUnit 
+{
+	Measurement measurement;
+	QString filename;
+	bool isSelected{false};
 };
 
 class BmColumns;
 
-class BenchmarkModel : public QAbstractTableModel {
-  Q_OBJECT
+class BenchmarkModel : public QAbstractTableModel 
+{
+	Q_OBJECT
  public:
-  explicit BenchmarkModel(BmColumns* bmColumns, QObject* parent = nullptr);
-  void addBenchmark(QString filename, Benchmark benchmarks);
-  void removeBenchmark(QString filename);
-  QVariant headerData(int section,
-                      Qt::Orientation orientation,
-                      int role = Qt::DisplayRole) const override;
+	explicit BenchmarkModel(BmColumns* bmColumns, QObject* parent = nullptr);
+	void addBenchmark(QString filename, Benchmark benchmarks);
+	void removeBenchmark(QString filename);
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-  int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-  int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-  QVariant data(const QModelIndex& index,
-                int role = Qt::DisplayRole) const override;
-  Qt::ItemFlags flags(const QModelIndex& index) const override;
-  bool setData(const QModelIndex& index,
-               const QVariant& value,
-               int role = Qt::EditRole) override;
+	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+	Qt::ItemFlags flags(const QModelIndex& index) const override;
+	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
  signals:
-  void measurementActive(Measurement);
-  void measurementInactive(Measurement);
+	void measurementActive(Measurement);
+	void measurementInactive(Measurement);
 
  private:
-  QList<BenchmarkViewUnit> m_benchmarks;
-  BmColumns* m_bmColumns;
+	QList<BenchmarkViewUnit> m_benchmarks;
+	BmColumns* m_bmColumns;
 };
 
 #endif  // BENCHMARKMODEL_H

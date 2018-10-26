@@ -24,47 +24,53 @@
 
 #include "appconfig.h"
 
-void loadAppSettings() {
-  QSettings::setDefaultFormat(QSettings::IniFormat);
+void loadAppSettings() 
+{
+	QSettings::setDefaultFormat(QSettings::IniFormat);
 }
 
-QStringList readRecentFiles() {
-  QSettings appSettings;
-  appSettings.beginGroup("recent-files");
-  QString temp = appSettings.value("files").toString();
-  QStringList recentFiles;
-  recentFiles << temp.split(" ");
-  appSettings.endGroup();
-  return recentFiles;
+QStringList readRecentFiles()
+{
+	QSettings appSettings;
+	appSettings.beginGroup("recent-files");
+	QString temp = appSettings.value("files").toString();
+	QStringList recentFiles;
+	recentFiles << temp.split(" ");
+	appSettings.endGroup();
+	return recentFiles;
 }
 
-void updateRecentFiles(QString fileName) {
-  QSettings appSettings;
-  appSettings.beginGroup("recent-files");
-  QString temp = appSettings.value("files").toString();
-  QStringList recentFiles;
-  recentFiles << temp.split(" ");
-  if (recentFiles.contains(fileName)) {
-    recentFiles.removeOne(fileName);
-  }
-  recentFiles.push_front(fileName);
-  if (recentFiles.size() > 5)
-    recentFiles.pop_back();
-  appSettings.setValue("files", recentFiles.join(" "));
-  appSettings.endGroup();
+void updateRecentFiles(QString fileName) 
+{
+	QSettings appSettings;
+	appSettings.beginGroup("recent-files");
+	QString temp = appSettings.value("files").toString();
+	QStringList recentFiles;
+	recentFiles << temp.split(" ");
+	if (recentFiles.contains(fileName)) 
+	{
+		recentFiles.removeOne(fileName);
+	}
+	recentFiles.push_front(fileName);
+	if (recentFiles.size() > 5)
+		recentFiles.pop_back();
+	appSettings.setValue("files", recentFiles.join(" "));
+	appSettings.endGroup();
 }
 
-QString readLastOpenedFilePath() {
-  QSettings appSettings;
-  appSettings.beginGroup("last-opened-file-path");
-  QString temp = appSettings.value("path").toString();
-  appSettings.endGroup();
-  return temp.trimmed();
+QString readLastOpenedFilePath() 
+{
+	QSettings appSettings;
+	appSettings.beginGroup("last-opened-file-path");
+	QString temp = appSettings.value("path").toString();
+	appSettings.endGroup();
+	return temp.trimmed();
 }
 
-void updateLastOpenedFilePath(QString path) {
-  QSettings appSettings;
-  appSettings.beginGroup("last-opened-file-path");
-  appSettings.setValue("path", path);
-  appSettings.endGroup();
+void updateLastOpenedFilePath(QString path) 
+{
+	QSettings appSettings;
+	appSettings.beginGroup("last-opened-file-path");
+	appSettings.setValue("path", path);
+	appSettings.endGroup();
 }

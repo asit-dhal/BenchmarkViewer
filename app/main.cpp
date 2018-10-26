@@ -27,18 +27,19 @@
 #include "appconfig.h"
 #include "mainwindow.h"
 
-int main(int argc, char* argv[]) {
-  QApplication a(argc, argv);
+int main(int argc, char* argv[]) 
+{
+	QApplication a(argc, argv);
 
-  loadAppSettings();
+	loadAppSettings();
 
-  MainWindow w;
+	MainWindow w;
 
-  QLoggingCategory::setFilterRules(
+	QLoggingCategory::setFilterRules(
       "*.debug=true\n"
       "qt.*.debug=false\n");
 
-  w.show();
+	w.show();
 
   return a.exec();
 }

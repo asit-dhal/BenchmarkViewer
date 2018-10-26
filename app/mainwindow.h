@@ -55,80 +55,80 @@ class QItemSelection;
 class BmColumns;
 
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+	Q_OBJECT
 
  public:
-  MainWindow(QWidget* parent = 0);
-  ~MainWindow();
+	MainWindow(QWidget* parent = 0);
+	~MainWindow();
 
  signals:
-  void newFileSelected(QString);
-  void selectedFileDeleted(QString);
+	void newFileSelected(QString);
+	void selectedFileDeleted(QString);
 
  private:
-  void createActions();
-  void createMenus();
-  void createWidgets();
-  void connectSignalsToSlots();
-  void updateRecentFileActions();
-  void updateCloseFileActions();
+	void createActions();
+	void createMenus();
+	void createWidgets();
+	void connectSignalsToSlots();
+	void updateRecentFileActions();
+	void updateCloseFileActions();
 
  public slots:
-  void onNewBenchmarks(QString filename, Benchmark benchmark);
-  void onToggleColumnAction();
-  void onUpdateColumnStatus();
+	void onNewBenchmarks(QString filename, Benchmark benchmark);
+	void onToggleColumnAction();
+	void onUpdateColumnStatus();
 
  private slots:
-  void onOpenFile();
-  void onCloseFile(QString filename);
-  void onCloseAllFiles();
-  void onExportChart();
-  void onExit();
-  void onNewFileSelected(QString file);
-  void onSelectedFilesWidgetContextMenu(const QPoint& pos);
-  void onSelectedFileDeleted(QString file);
-  void onToogleSelectedFileWidget();
-  void onBenchmarkFilter(QString filter);
-  void onAboutApp();
-  void onSelectionChanged(const QItemSelection& selected,
+	void onOpenFile();
+	void onCloseFile(QString filename);
+	void onCloseAllFiles();
+	void onExportChart();
+	void onExit();
+	void onNewFileSelected(QString file);
+	void onSelectedFilesWidgetContextMenu(const QPoint& pos);
+	void onSelectedFileDeleted(QString file);
+	void onToogleSelectedFileWidget();
+	void onBenchmarkFilter(QString filter);
+	void onAboutApp();
+	void onSelectionChanged(const QItemSelection& selected,
                           const QItemSelection& deselected);
-  void onPlotSelection();
-  void onPlotAllRows();
-  void onClearSelection();
-  void onClearAllRows();
+	void onPlotSelection();
+	void onPlotAllRows();
+	void onClearSelection();
+	void onClearAllRows();
 
  private:
-  QMenu* m_fileMenu;
-  QMenu* m_recentFileMenu;
-  QMenu* m_closeFileMenu;
-  QMenu* m_viewMenu;
-  QMenu* m_showColumnsSubMenu;
-  QMenu* m_helpMenu;
+	QMenu* m_fileMenu;
+	QMenu* m_recentFileMenu;
+	QMenu* m_closeFileMenu;
+	QMenu* m_viewMenu;
+	QMenu* m_showColumnsSubMenu;
+	QMenu* m_helpMenu;
 
-  QAction* m_openFileAction;
-  QList<QAction*> m_openRecentFilesAction;
-  QList<QAction*> m_closeFileActions;
-  QAction* m_closeAllFilesAction;
-  QAction* m_exportChart;
-  QAction* m_exitAction;
+	QAction* m_openFileAction;
+	QList<QAction*> m_openRecentFilesAction;
+	QList<QAction*> m_closeFileActions;
+	QAction* m_closeAllFilesAction;
+	QAction* m_exportChart;
+	QAction* m_exitAction;
 
-  QAction* m_toogleSelectedFileWidget;
-  QList<QAction*> m_showColumns;
-  QAction* m_aboutApp;
+	QAction* m_toogleSelectedFileWidget;
+	QList<QAction*> m_showColumns;
+	QAction* m_aboutApp;
 
-  QStack<QString> m_files;
-  QListWidget* m_selectedFilesWidget;
-  BenchmarkProxyModel* m_proxyModel;
-  BenchmarkModel* m_benchmarkModel;
-  QItemSelectionModel* m_selectionModel;
-  BenchmarkView* m_benchmarkView;
-  BenchmarkDelegate* m_benchmarkDelegate;
-  BmColumns* m_bmColumns;
-  AbstractParser* m_parser;
-  QChart* m_chart;
-  ChartViewWidget* m_chartView;
+	QStack<QString> m_files;
+	QListWidget* m_selectedFilesWidget;
+	BenchmarkProxyModel* m_proxyModel;
+	BenchmarkModel* m_benchmarkModel;
+	QItemSelectionModel* m_selectionModel;
+	BenchmarkView* m_benchmarkView;
+	BenchmarkDelegate* m_benchmarkDelegate;
+	BmColumns* m_bmColumns;
+	AbstractParser* m_parser;
+	QChart* m_chart;
+	ChartViewWidget* m_chartView;
 
-  QLineEdit* m_benchmarkNameFilter;
+	QLineEdit* m_benchmarkNameFilter;
 };
 
 #endif  // MAINWINDOW_H

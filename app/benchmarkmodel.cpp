@@ -33,152 +33,185 @@ Q_LOGGING_CATEGORY(benchmarkModel, "benchmarkModel")
 BenchmarkModel::BenchmarkModel(BmColumns* bmColumns, QObject* parent)
     : QAbstractTableModel(parent), m_bmColumns(bmColumns) {}
 
-void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark) {
-  auto mmt = benchmark.getMeasurements();
-  qCDebug(benchmarkModel) << "Adding benchmark file: " << filename;
-  beginResetModel();
-  for (auto itr = mmt.begin(); itr != mmt.end(); itr++) {
-    BenchmarkViewUnit unit;
-    unit.filename = filename;
-    unit.measurement = *itr;
-    m_benchmarks.append(unit);
-  }
-  endResetModel();
+void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark)
+{
+	auto mmt = benchmark.getMeasurements();
+	qCDebug(benchmarkModel) << "Adding benchmark file: " << filename;
+	beginResetModel();
+	for (auto itr = mmt.begin(); itr != mmt.end(); itr++)
+	{
+		BenchmarkViewUnit unit;
+		unit.filename = filename;
+		unit.measurement = *itr;
+		m_benchmarks.append(unit);
+	}
+	
+	endResetModel();
 }
 
-void BenchmarkModel::removeBenchmark(QString filename) {
-  QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
-  qCDebug(benchmarkModel) << "Removing benchmark file: " << filename;
+void BenchmarkModel::removeBenchmark(QString filename) 
+{
+	QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
+	qCDebug(benchmarkModel) << "Removing benchmark file: " << filename;
 
-  beginResetModel();
-  while (itr != m_benchmarks.end()) {
-    if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) {
-      if (itr->isSelected) {
-        emit measurementInactive(itr->measurement);
-      }
-      itr = m_benchmarks.erase(itr);
-    } else {
-      ++itr;
-    }
-  }
-  endResetModel();
+	beginResetModel();
+	while (itr != m_benchmarks.end()) 
+	{
+		if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) 
+		{
+			if (itr->isSelected) 
+			{
+				emit measurementInactive(itr->measurement);
+			}
+			itr = m_benchmarks.erase(itr);
+		}
+		else
+		{
+			++itr;
+		}
+	}
+	endResetModel();
 
-  qCDebug(benchmarkModel) << "All benchmarks removed from the file: "
+	qCDebug(benchmarkModel) << "All benchmarks removed from the file: "
                           << filename;
 }
 
 QVariant BenchmarkModel::headerData(int section,
                                     Qt::Orientation orientation,
-                                    int role) const {
-  if (role != Qt::DisplayRole) {
-    return QVariant();
-  }
+                                    int role) const
+{
+	if (role != Qt::DisplayRole) 
+	{
+		return QVariant();
+	}
 
-  if (orientation == Qt::Horizontal) {
-    BmColumns::Columns cols = m_bmColumns->indexToColumns(section);
-    if (cols != BmColumns::Columns::INVALID) {
-      return m_bmColumns->columnNameToString(cols);
-    } else {
-      return QVariant();
-    }
-  } else if (orientation == Qt::Vertical) {
-    return QString("%1").arg(section + 1);
-  } else {
-    return QVariant();
-  }
+	if (orientation == Qt::Horizontal) 
+	{
+		BmColumns::Columns cols = m_bmColumns->indexToColumns(section);
+		if (cols != BmColumns::Columns::INVALID) 
+		{
+			return m_bmColumns->columnNameToString(cols);
+		} 
+		else 
+		{
+			return QVariant();
+		}
+	}
+	else if (orientation == Qt::Vertical) 
+	{
+		return QString("%1").arg(section + 1);
+	}
+	else
+	{
+		return QVariant();
+	}
 }
 
-int BenchmarkModel::rowCount(const QModelIndex& parent) const {
-  Q_UNUSED(parent);
-  return m_benchmarks.size();
+int BenchmarkModel::rowCount(const QModelIndex& parent) const
+{
+	Q_UNUSED(parent);
+	return m_benchmarks.size();
 }
 
-int BenchmarkModel::columnCount(const QModelIndex& parent) const {
-  Q_UNUSED(parent);
-  return m_bmColumns->getColumnCount();
+int BenchmarkModel::columnCount(const QModelIndex& parent) const 
+{
+	Q_UNUSED(parent);
+	return m_bmColumns->getColumnCount();
 }
 
-QVariant BenchmarkModel::data(const QModelIndex& index, int role) const {
-  if (!index.isValid())
-    return QVariant();
+QVariant BenchmarkModel::data(const QModelIndex& index, int role) const 
+{
+	if (!index.isValid())
+		return QVariant();
 
-  if (index.row() >= m_benchmarks.size() || index.row() < 0)
-    return QVariant();
+	if (index.row() >= m_benchmarks.size() || index.row() < 0)
+		return QVariant();
 
-  if (role == Qt::DisplayRole) {
-    BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-    BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
-    switch (cols) {
-      case BmColumns::Columns::STATUS:
-        return viewunit.isSelected;
-      case BmColumns::Columns::NAME:
-        return viewunit.measurement.getName();
-      case BmColumns::Columns::ITERATIONS:
-        return viewunit.measurement.getIterations();
-      case BmColumns::Columns::REAL_TIME:
-        return viewunit.measurement.getRealTime();
-      case BmColumns::Columns::CPU_TIME:
-        return viewunit.measurement.getCpuTime();
-      case BmColumns::Columns::TIME_UNIT:
-        return viewunit.measurement.getTimeUnit();
-      case BmColumns::Columns::FILENAME:
-        return QFileInfo(viewunit.filename).fileName();
-      default:
-        return QVariant();
-    }
-  }
+	if (role == Qt::DisplayRole)
+	{
+		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+		BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
+		switch (cols)
+		{
+		case BmColumns::Columns::STATUS:
+			return viewunit.isSelected;
+		case BmColumns::Columns::NAME:
+			return viewunit.measurement.getName();
+		case BmColumns::Columns::ITERATIONS:
+			return viewunit.measurement.getIterations();
+		case BmColumns::Columns::REAL_TIME:
+			return viewunit.measurement.getRealTime();
+		case BmColumns::Columns::CPU_TIME:
+			return viewunit.measurement.getCpuTime();
+		case BmColumns::Columns::TIME_UNIT:
+			return viewunit.measurement.getTimeUnit();
+		case BmColumns::Columns::FILENAME:
+			return QFileInfo(viewunit.filename).fileName();
+		default:
+			return QVariant();
+		}
+	}
 
-  if (role == Qt::ToolTipRole) {
-    BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-    BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
-    switch (cols) {
-      case BmColumns::Columns::FILENAME:
-        return viewunit.filename;
-      default:
-        return QVariant();
-    }
-  }
+	if (role == Qt::ToolTipRole)
+	{
+		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+		BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
+		switch (cols)
+		{
+		case BmColumns::Columns::FILENAME:
+			return viewunit.filename;
+		default:
+			return QVariant();
+		}
+	}
 
-  if (role == Qt::BackgroundColorRole) {
-    BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-    if (viewunit.isSelected) {
-      return QColor(Qt::lightGray);
-    } else {
-      return QColor(Qt::white);
-    }
-  }
+	if (role == Qt::BackgroundColorRole) 
+	{
+		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+		if (viewunit.isSelected)
+		{
+			return QColor(Qt::lightGray);
+		}
+		else 
+		{
+			return QColor(Qt::white);
+		}
+	}
 
-  return QVariant();
+	return QVariant();
 }
 
-Qt::ItemFlags BenchmarkModel::flags(const QModelIndex& index) const {
-  if (!index.isValid())
-    return Qt::ItemIsEnabled;
+Qt::ItemFlags BenchmarkModel::flags(const QModelIndex& index) const
+{
+	if (!index.isValid())
+		return Qt::ItemIsEnabled;
 
-  return QAbstractItemModel::flags(index);
+	return QAbstractItemModel::flags(index);
 }
 
-bool BenchmarkModel::setData(const QModelIndex& index,
-                             const QVariant& value,
-                             int role) {
-  if (index.isValid() && role == Qt::EditRole) {
-    auto row = index.row();
-    BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
-    if (cols == BmColumns::Columns::STATUS &&
-        m_benchmarks[row].isSelected != value.toBool()) {
-      m_benchmarks[row].isSelected = value.toBool();
-      emit dataChanged(
-          createIndex(index.row(), 0),
-          createIndex(index.row(), m_bmColumns->getColumnCount() - 1));
+bool BenchmarkModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+	if (index.isValid() && role == Qt::EditRole)
+	{
+		auto row = index.row();
+		BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
+		if (cols == BmColumns::Columns::STATUS &&
+			m_benchmarks[row].isSelected != value.toBool())
+		{
+			m_benchmarks[row].isSelected = value.toBool();
+			emit dataChanged(createIndex(index.row(), 0), createIndex(index.row(), m_bmColumns->getColumnCount() - 1));
 
-      if (m_benchmarks[row].isSelected) {
-        emit measurementActive(m_benchmarks[row].measurement);
-      } else {
-        emit measurementInactive(m_benchmarks[row].measurement);
-      }
+			if (m_benchmarks[row].isSelected)
+			{
+				emit measurementActive(m_benchmarks[row].measurement);
+			} 
+			else
+			{
+				emit measurementInactive(m_benchmarks[row].measurement);
+			}
 
-      return true;
-    }
-  }
-  return false;
+			return true;
+		}
+	}
+	return false;
 }

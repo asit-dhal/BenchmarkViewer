@@ -25,113 +25,136 @@
 #include "measurement.h"
 #include "helper.h"
 
-Measurement::Measurement() noexcept {
-  m_id = Helper::getUniqueMeasurementId();
-  m_name = "";
-  m_iterations = 0;
-  m_realTime = 0;
-  m_cpuTime = 0;
-  m_timeUnit = "";
-  m_bytesPerSecond = 0;
-  m_itemsPerSecond = 0;
-  m_label = "";
-  m_errorOccured = false;
-  m_errorMessage = "";
+Measurement::Measurement() noexcept 
+{
+	m_id = Helper::getUniqueMeasurementId();
+	m_name = "";
+	m_iterations = 0;
+	m_realTime = 0;
+	m_cpuTime = 0;
+	m_timeUnit = "";
+	m_bytesPerSecond = 0;
+	m_itemsPerSecond = 0;
+	m_label = "";
+	m_errorOccured = false;
+	m_errorMessage = "";
 }
 
-QString Measurement::getName() const {
-  return m_name;
+QString Measurement::getName() const
+{
+	return m_name;
 }
 
-void Measurement::setName(const QString& value) {
-  m_name = value;
+void Measurement::setName(const QString& value)
+{
+	m_name = value;
 }
 
-quint64 Measurement::getIterations() const {
-  return m_iterations;
+quint64 Measurement::getIterations() const 
+{
+	return m_iterations;
 }
 
-void Measurement::setIterations(quint64 value) {
-  m_iterations = value;
+void Measurement::setIterations(quint64 value)
+{
+	m_iterations = value;
 }
 
-quint64 Measurement::getRealTime() const {
-  return m_realTime;
+quint64 Measurement::getRealTime() const
+{
+	return m_realTime;
 }
 
-void Measurement::setRealTime(quint64 value) {
-  m_realTime = value;
+void Measurement::setRealTime(quint64 value)
+{
+	m_realTime = value;
 }
 
-quint64 Measurement::getCpuTime() const {
-  return m_cpuTime;
+quint64 Measurement::getCpuTime() const 
+{
+	return m_cpuTime;
 }
 
-void Measurement::setCpuTime(quint64 value) {
-  m_cpuTime = value;
+void Measurement::setCpuTime(quint64 value) 
+{
+	m_cpuTime = value;
 }
 
-QString Measurement::getTimeUnit() const {
-  return m_timeUnit;
+QString Measurement::getTimeUnit() const 
+{
+	return m_timeUnit;
 }
 
-void Measurement::setTimeUnit(const QString& value) {
-  m_timeUnit = value;
+void Measurement::setTimeUnit(const QString& value) 
+{
+	m_timeUnit = value;
 }
 
-int Measurement::getId() const {
-  return m_id;
+int Measurement::getId() const 
+{
+	return m_id;
 }
 
-quint64 Measurement::getBytesPerSecond() const {
-  return m_bytesPerSecond;
+quint64 Measurement::getBytesPerSecond() const 
+{
+	return m_bytesPerSecond;
 }
 
-void Measurement::setBytesPerSecond(const quint64& bytesPerSecond) {
-  m_bytesPerSecond = bytesPerSecond;
+void Measurement::setBytesPerSecond(const quint64& bytesPerSecond) 
+{
+	m_bytesPerSecond = bytesPerSecond;
 }
 
-quint64 Measurement::getItemsPerSecond() const {
-  return m_itemsPerSecond;
+quint64 Measurement::getItemsPerSecond() const 
+{
+	return m_itemsPerSecond;
 }
 
-void Measurement::setItemsPerSecond(const quint64& itemsPerSecond) {
-  m_itemsPerSecond = itemsPerSecond;
+void Measurement::setItemsPerSecond(const quint64& itemsPerSecond) 
+{
+	m_itemsPerSecond = itemsPerSecond;
 }
 
-QString Measurement::getLabel() const {
-  return m_label;
+QString Measurement::getLabel() const 
+{
+	return m_label;
 }
 
-void Measurement::setLabel(const QString& label) {
-  m_label = label;
+void Measurement::setLabel(const QString& label) 
+{
+	m_label = label;
 }
 
-bool Measurement::getErrorOccured() const {
-  return m_errorOccured;
+bool Measurement::getErrorOccured() const 
+{
+	return m_errorOccured;
 }
 
-void Measurement::setErrorOccured(bool errorOccured) {
-  m_errorOccured = errorOccured;
+void Measurement::setErrorOccured(bool errorOccured) 
+{
+	 m_errorOccured = errorOccured;
 }
 
-QString Measurement::getErrorMessage() const {
-  return m_errorMessage;
+QString Measurement::getErrorMessage() const 
+{
+	return m_errorMessage;
 }
 
-void Measurement::setErrorMessage(const QString& errorMessage) {
-  m_errorMessage = errorMessage;
+void Measurement::setErrorMessage(const QString& errorMessage) 
+{
+	m_errorMessage = errorMessage;
 }
 
-QDebug operator<<(QDebug d, const Measurement& mmt) {
-  d << "id: " << mmt.getId() << "name: " << mmt.getName()
-    << " iterations: " << mmt.getIterations()
-    << " real_time: " << mmt.getRealTime() << " cpu_time: " << mmt.getCpuTime()
-    << " time_unit: " << mmt.getTimeUnit();
-  d << " bytes_per_second: " << mmt.getBytesPerSecond()
-    << " items_per_second: " << mmt.getItemsPerSecond()
-    << " label: " << mmt.getLabel()
-    << " error_occured: " << mmt.getErrorOccured()
-    << " error_message: " << mmt.getErrorMessage();
-  return d;
+QDebug operator<<(QDebug d, const Measurement& mmt) 
+{
+	d << "id: " << mmt.getId() << "name: " << mmt.getName()
+		<< " iterations: " << mmt.getIterations()
+		<< " real_time: " << mmt.getRealTime() << " cpu_time: " << mmt.getCpuTime()
+		<< " time_unit: " << mmt.getTimeUnit();
+	d << " bytes_per_second: " << mmt.getBytesPerSecond()
+		<< " items_per_second: " << mmt.getItemsPerSecond()
+		<< " label: " << mmt.getLabel()
+		<< " error_occured: " << mmt.getErrorOccured()
+		<< " error_message: " << mmt.getErrorMessage();
+	return d;
 }

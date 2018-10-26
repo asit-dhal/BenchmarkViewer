@@ -25,7 +25,8 @@
 #include "helper.h"
 
 int Helper::m_measurementId = 0;
-int Helper::getUniqueMeasurementId() {
-  m_measurementId++;
-  return m_measurementId;
+int Helper::getUniqueMeasurementId()
+{
+	m_measurementId++;
+	return m_measurementId;
 }

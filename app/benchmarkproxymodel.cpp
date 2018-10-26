@@ -30,37 +30,36 @@ Q_LOGGING_CATEGORY(proxyModel, "proxyModel")
 BenchmarkProxyModel::BenchmarkProxyModel(BmColumns* bmColumns, QObject* parent)
     : QSortFilterProxyModel(parent), m_bmColumns(bmColumns) {}
 
-bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
-                                   const QModelIndex& right) const {
-  QVariant leftData = sourceModel()->data(left);
-  QVariant rightData = sourceModel()->data(right);
+bool BenchmarkProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
+{
+	QVariant leftData = sourceModel()->data(left);
+	QVariant rightData = sourceModel()->data(right);
 
-  switch (m_bmColumns->indexToColumns(left.column())) {
-    case BmColumns::Columns::STATUS:
-      return leftData.toBool();
+	switch (m_bmColumns->indexToColumns(left.column()))
+	{
+	case BmColumns::Columns::STATUS:
+		return leftData.toBool();
     case BmColumns::Columns::ITERATIONS:
     case BmColumns::Columns::REAL_TIME:
     case BmColumns::Columns::CPU_TIME:
-      return leftData.toDouble() < rightData.toDouble();
+		return leftData.toDouble() < rightData.toDouble();
     case BmColumns::Columns::NAME:
     case BmColumns::Columns::FILENAME:
     default:
-      return QString::localeAwareCompare(leftData.toString(),
-                                         rightData.toString()) < 0;
-  }
+		return QString::localeAwareCompare(leftData.toString(), rightData.toString()) < 0;
+	}
 }
 
-bool BenchmarkProxyModel::filterAcceptsRow(
-    int sourceRow,
-    const QModelIndex& sourceParent) const {
-  QModelIndex nameIndex = sourceModel()->index(
-      sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::NAME),
-      sourceParent);
+bool BenchmarkProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
+{
+	QModelIndex nameIndex = sourceModel()->index(sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::NAME), sourceParent);
 
-  if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(
-          filterRegExp())) {
-    return true;
-  } else {
-    return false;
-  }
+	if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(filterRegExp()))
+	{
+		return true;
+	}
+	else 
+	{
+		return false;
+	}
 }
