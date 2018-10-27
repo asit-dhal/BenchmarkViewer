@@ -25,19 +25,37 @@
 #ifndef ABSTRACTPARSER_H
 #define ABSTRACTPARSER_H
 
-#include <QObject>
-#include <QVector>
+#include <QString>
+#include <memory>
+#include <QList>
 #include "benchmark.h"
 
-class AbstractParser : public QObject
+class IAbstractParser
 {
-	Q_OBJECT
  public:
-	AbstractParser(QObject* parent = nullptr);
+	virtual ~IAbstractParser() = default;
 	virtual void parse(QString filename) = 0;
- signals:
-	void parsingStatus(QString statusMsg);
-	void parsingFinished(QString fileName, Benchmark benchmark);
+	virtual Benchmark getBenchmark() const = 0;
 };
+
+
+enum class ParserType
+{
+	eUnknown,
+	eGoogleBenchmarkCsv,
+	eGoogleBenchmarkJson,
+};
+
+class ParserFactory
+{
+public:
+	static std::unique_ptr<IAbstractParser> getParser(ParserType parserType);
+};
+
+Q_DECLARE_METATYPE(ParserType);
+
+QDebug operator<<(QDebug d, const ParserType& type);
+
+
 
 #endif  // ABSTRACTPARSER_H

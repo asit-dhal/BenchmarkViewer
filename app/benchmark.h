@@ -29,21 +29,24 @@
 #include "context.h"
 #include "measurement.h"
 
-class Benchmark {
+class Benchmark
+{
  public:
-  Benchmark();
+	Benchmark();
 
-  Context getContext() const;
-  void setContext(const Context& value);
+	Context getContext() const;
+	void setContext(const Context& value);
 
-  QVector<Measurement> getMeasurements() const;
-  void addMeasurement(const Measurement& _mmt);
-  void setMeasurements(const QVector<Measurement>& value);
+	QVector<Measurement> getMeasurements() const;
+	void addMeasurement(const Measurement& _mmt);
+	void setMeasurements(const QVector<Measurement>& value);
 
  private:
-  Context m_context;
-  QVector<Measurement> m_measurements;
+	Context m_context;
+	QVector<Measurement> m_measurements;
 };
+
+Q_DECLARE_METATYPE(Benchmark);
 
 QDebug operator<<(QDebug d, const Benchmark& bmk);
 

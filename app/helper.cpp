@@ -23,10 +23,28 @@
 ========================================================================*/
 
 #include "helper.h"
+#include <QFileInfo>
 
 int Helper::m_measurementId = 0;
 int Helper::getUniqueMeasurementId()
 {
 	m_measurementId++;
 	return m_measurementId;
+}
+
+ParserType Helper::getParserTypeFromFilename(QString filename)
+{
+	QFileInfo fi(filename);
+	if (fi.suffix().compare("json", Qt::CaseInsensitive) == 0)
+	{
+		return ParserType::eGoogleBenchmarkJson;
+	}
+	else if (fi.suffix().compare("csv", Qt::CaseInsensitive) == 0)
+	{
+		return ParserType::eGoogleBenchmarkCsv;
+	}
+	else
+	{
+		return ParserType::eUnknown;
+	}
 }

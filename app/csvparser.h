@@ -25,20 +25,18 @@
 #ifndef CSVPARSER_H
 #define CSVPARSER_H
 
-#include <QList>
-#include <QObject>
 #include "abstractparser.h"
 
-class CsvParser : public AbstractParser {
-  Q_OBJECT
-
+class CsvParser : public IAbstractParser {
  public:
-  explicit CsvParser(QObject* parent = nullptr);
-  void parse(QString filename) override;
+	CsvParser() = default;
+	void parse(QString filename) override;
+	Benchmark getBenchmark() const override;
 
  private:
-  QList<Measurement> parseBenchmarks(QStringList& data, QStringList& header);
-  QList<QString> parseHeaders(QString header);
+	QStringList parseHeaders(QString header);
+	QList<Measurement> parseBenchmarks(QStringList& data, QStringList& header);
+	Benchmark m_benchmark;
 };
 
 #endif  // CSVPARSER_H

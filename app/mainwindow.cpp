@@ -48,10 +48,15 @@
 #include "bmcolumns.h"
 #include "csvparser.h"
 #include "globals.h"
+#include "helper.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
+	qRegisterMetaType<ParserType>("ParserType");
+	qRegisterMetaType<Benchmark>("Benchmark");
+
 	m_bmColumns = new BmColumns(this);
+	m_worker.moveToThread(&m_workerThread);
 	createActions();
 	createMenus();
 	createWidgets();
@@ -59,6 +64,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 	updateRecentFileActions();
 	updateCloseFileActions();
 	showMaximized();
+
+	m_workerThread.start();
 }
 
 MainWindow::~MainWindow() {}
@@ -128,7 +135,7 @@ void MainWindow::updateRecentFileActions()
 		connect(recentFileAction, &QAction::triggered, [ this, _recentFile = recentFile ]() {
               updateRecentFiles(_recentFile);
               updateRecentFileActions();
-              emit newFileSelected(_recentFile);
+              emit newFileSelected(Helper::getParserTypeFromFilename(_recentFile), _recentFile);
             });
 		i++;
 		m_openRecentFilesAction.append(recentFileAction);
@@ -206,7 +213,7 @@ void MainWindow::onOpenFile()
 		{
 			updateRecentFiles(file);
 			updateRecentFileActions();
-			emit newFileSelected(file);
+			emit newFileSelected(Helper::getParserTypeFromFilename(file), file);
 			updateLastOpenedFilePath(QFileInfo(file).path());
 		}
 	}
@@ -285,32 +292,6 @@ void MainWindow::createWidgets() {
 	m_benchmarkView->setSelectionModel(m_selectionModel);
 }
 
-void MainWindow::onNewFileSelected(QString file)
-{
-	m_files.push(file);
-	m_selectedFilesWidget->addItem(file);
-	QFileInfo fi(file);
-	if (fi.suffix().compare("json", Qt::CaseInsensitive) == 0)
-	{
-		qCDebug(gui) << "JSON File";
-		m_parser = new JsonParser(this);
-	}
-	else if (fi.suffix().compare("csv", Qt::CaseInsensitive) == 0)
-	{
-		qCDebug(gui) << "CSV File";
-		m_parser = new CsvParser(this);
-	}
-	else 
-	{
-		qCDebug(gui) << "Invalid file: " << file;
-	}
-	// to be multithreaded
-	connect(m_parser, SIGNAL(parsingFinished(QString, Benchmark)), this,
-          SLOT(onNewBenchmarks(QString, Benchmark)));
-	m_parser->parse(file);
-	m_parser->deleteLater();
-}
-
 void MainWindow::onSelectedFileDeleted(QString file) 
 {
 	m_files.removeOne(file);
@@ -321,9 +302,13 @@ void MainWindow::onSelectedFileDeleted(QString file)
 void MainWindow::connectSignalsToSlots() 
 {
 	qCDebug(gui) << "Connecting Signals to Slots";
-	connect(this, SIGNAL(newFileSelected(QString)), this, SLOT(onNewFileSelected(QString)));
+	connect(QCoreApplication::instance(), &QApplication::aboutToQuit, 
+		[&]() { m_workerThread.quit();
+				m_workerThread.wait(); });
+	connect(this, &MainWindow::newFileSelected, &m_worker, &Worker::parse);
+	connect(&m_worker, &Worker::parsingFinished, this, &MainWindow::onNewBenchmarks);
 
-	connect(this, &MainWindow::newFileSelected, this, [this](QString) { updateCloseFileActions(); });
+	connect(this, &MainWindow::newFileSelected, this, [this](ParserType, QString) { updateCloseFileActions(); });
 	connect(this, SIGNAL(selectedFileDeleted(QString)), this, SLOT(onSelectedFileDeleted(QString)));
 
 	connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this, SLOT(onBenchmarkFilter(QString)));

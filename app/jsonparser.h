@@ -26,19 +26,18 @@
 #define PARSER_H
 
 #include <QJsonObject>
-#include <QObject>
-#include <QVector>
 #include "abstractparser.h"
 
-class JsonParser : public AbstractParser {
-  Q_OBJECT
+class JsonParser : public IAbstractParser
+{
  public:
-  JsonParser(QObject* parent = nullptr);
-  void parse(QString filename) override;
+	void parse(QString filename) override;
+	Benchmark getBenchmark() const override;
 
  private:
-  Context parseContext(const QJsonObject& json);
-  QVector<Measurement> parseBenchmarks(const QJsonObject& json);
+	Context parseContext(const QJsonObject& json);
+	QVector<Measurement> parseBenchmarks(const QJsonObject& json);
+	Benchmark m_benchmark;
 };
 
 #endif  // PARSER_H

@@ -23,4 +23,26 @@
 ========================================================================*/
 #include "abstractparser.h"
 
-AbstractParser::AbstractParser(QObject* parent) : QObject(parent) {}
+#include "csvparser.h"
+#include "jsonparser.h"
+
+std::unique_ptr<IAbstractParser> ParserFactory::getParser(ParserType parserType)
+{
+	switch (parserType)
+	{
+	case ParserType::eGoogleBenchmarkCsv:
+		return std::make_unique<CsvParser>();
+	case ParserType::eGoogleBenchmarkJson:
+		return std::make_unique<JsonParser>();
+	}
+}
+
+QDebug operator<<(QDebug d, const ParserType& type)
+{
+	switch (type)
+	{
+	case ParserType::eGoogleBenchmarkCsv: d << "GoogleBenchmarkCsv";
+	case ParserType::eGoogleBenchmarkJson: d << "GoogleBenchmarkJson";
+	}
+	return d;
+}

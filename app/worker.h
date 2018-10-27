@@ -5,7 +5,7 @@
    Copyright (c) 2018 Asit Dhal
    All rights reserved.
 
-   BenchmarkViewer is a free software; you can redistribute it and/or modify it.
+   QCommander is a free software; you can redistribute it and/or modify it.
 
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -22,18 +22,21 @@
 
 ========================================================================*/
 
-#ifndef HELPER_H
-#define HELPER_H
+#pragma once
+
+#include <QObject>
+#include <QThread>
 #include "abstractparser.h"
-#include <QString>
 
-class Helper {
- public:
-  static int getUniqueMeasurementId();
-  static ParserType getParserTypeFromFilename(QString filename);
+class Worker: public QObject
+{
+	Q_OBJECT
+	
+public:
+	
+public slots:
+	void parse(ParserType parserType, QString filename);
 
- private:
-  static int m_measurementId;
+signals:
+	void parsingFinished(QString filename, Benchmark bm);
 };
-
-#endif  // HELPER_H

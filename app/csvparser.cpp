@@ -28,11 +28,8 @@
 #include <QVector>
 #include "globals.h"
 
-CsvParser::CsvParser(QObject* parent) : AbstractParser(parent) {}
-
 void CsvParser::parse(QString filename)
 {
-	emit parsingStatus(QString("Parsing started: ") + filename);
 	qCDebug(parser) << "Parsing started: " << filename;
 	QFile file;
 	file.setFileName(filename);
@@ -44,16 +41,12 @@ void CsvParser::parse(QString filename)
 
 	QStringList headerFields = parseHeaders(lines.at(0));
 	lines.pop_front();
-	QList<Measurement> mmts = parseBenchmarks(lines, headerFields);
-	Benchmark benchmark;
-	benchmark.setMeasurements(mmts.toVector());
-
-	emit parsingFinished(filename, benchmark);
-	emit parsingStatus(QString("Parsing finished: ") + filename);
+	auto mmts = parseBenchmarks(lines, headerFields);
+	m_benchmark.setMeasurements(mmts.toVector());
 	qCDebug(parser) << "Parsing finished: " << filename;
 }
 
-QList<QString> CsvParser::parseHeaders(QString header)
+QStringList CsvParser::parseHeaders(QString header)
 {
 	QStringList fields = header.split(",", QString::KeepEmptyParts);
 	QList<QString> headerFields;
@@ -126,4 +119,9 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data, QStringList& he
 		mmts.append(mmt);
 	}
   return mmts;
+}
+
+Benchmark CsvParser::getBenchmark() const
+{
+	return m_benchmark;
 }

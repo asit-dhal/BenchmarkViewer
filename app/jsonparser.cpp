@@ -23,18 +23,15 @@
 ========================================================================*/
 
 #include "jsonparser.h"
+#include "globals.h"
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
-#include "globals.h"
-
-JsonParser::JsonParser(QObject* parent) : AbstractParser(parent) {}
 
 void JsonParser::parse(QString filename)
 {
-	emit parsingStatus(QString("Parsing started: ") + filename);
 	qCDebug(parser) << "Parsing started: " << filename;
 	QFile file;
 	file.setFileName(filename);
@@ -42,14 +39,10 @@ void JsonParser::parse(QString filename)
 	QString fileContent = file.readAll();
 	file.close();
 
-	Benchmark benchmark;
-
 	QJsonDocument jsonDocument = QJsonDocument::fromJson(fileContent.toUtf8());
 	QJsonObject jsonObj = jsonDocument.object();
-	benchmark.setContext(parseContext(jsonObj));
-	benchmark.setMeasurements(parseBenchmarks(jsonObj));
-	emit parsingFinished(filename, benchmark);
-	emit parsingStatus(QString("Parsing finished: ") + filename);
+	m_benchmark.setContext(parseContext(jsonObj));
+	m_benchmark.setMeasurements(parseBenchmarks(jsonObj));
 	qCDebug(parser) << "Parsing finished: " << filename;
 }
 
@@ -137,4 +130,9 @@ QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json)
 	qCDebug(parser) << "No. of measurements: " << mmts.size();
 
 	return mmts;
+}
+
+Benchmark JsonParser::getBenchmark() const
+{
+	return m_benchmark;
 }
