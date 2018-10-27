@@ -80,11 +80,12 @@ void MainWindow::createActions() {
 	m_closeAllFilesAction->setStatusTip(tr("Close All Files "));
 	connect(m_closeAllFilesAction, &QAction::triggered, this, &MainWindow::onCloseAllFiles);
 
-	m_exportChart = new QAction(tr("Export Chart as png"), this);
+	m_exportChart = new QAction(tr("Export Chart"), this);
 	connect(m_exportChart, &QAction::triggered, this, &MainWindow::onExportChart);
 
 	m_exitAction = new QAction(tr("E&xit"), this);
 	m_exitAction->setStatusTip(tr("Exit"));
+	m_exitAction->setShortcuts(QKeySequence::Quit);
 	connect(m_exitAction, &QAction::triggered, this, &MainWindow::onExit);
 
 	m_toogleSelectedFileWidget = new QAction(tr("Toggle selected file widget"), this);
@@ -236,7 +237,7 @@ void MainWindow::onCloseAllFiles()
 void MainWindow::onExportChart() 
 {
 	QPixmap pixmap = m_chartView->grab();
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Chart as png"), "", tr("images (*.png);;All Files (*)"));
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Chart"), "", tr("png file (*.png)"));
 	if (!fileName.isEmpty())
 		pixmap.save(fileName, "PNG");
 }
@@ -372,9 +373,8 @@ void MainWindow::onBenchmarkFilter(QString filterText)
 
 void MainWindow::onAboutApp() 
 {
-	QString text = QString::fromUtf8(
-      "Benchmark Viewer to plot google microbenchmark data \n\u00A9 2018"
-      " Asit Dhal");
+	QString text = QString(
+      "Benchmark Viewer to plot google microbenchmark data ") +  QChar(0x00A9) + QString(" 2018 Asit Dhal");
 
 	QMessageBox::about(this, tr("About BenchmarkViewer"), text);
 }
