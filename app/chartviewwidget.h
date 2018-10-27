@@ -41,14 +41,19 @@ Q_DECLARE_LOGGING_CATEGORY(chartView);
 QT_CHARTS_USE_NAMESPACE
 
 class ChartViewWidget : public QWidget {
+	Q_OBJECT
  public:
   ChartViewWidget(QWidget* parent = nullptr);
+
+signals:
+	void measurementColorChanged(int, QString);
 
  public slots:
   void onAddMeasurement(Measurement mmt);
   void onRemoveMeasurement(Measurement mmt);
-
- private:
+ 
+ 
+private:
   void init();
   double calculateMaxY();
 

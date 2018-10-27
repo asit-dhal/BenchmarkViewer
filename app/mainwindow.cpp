@@ -324,6 +324,10 @@ void MainWindow::connectSignalsToSlots()
 
 	connect(m_bmColumns, &BmColumns::showColumn, [this]() { onUpdateColumnStatus(); });
 	connect(m_bmColumns, &BmColumns::hideColumn, [this]() { onUpdateColumnStatus(); });
+
+	connect(m_chartView, &ChartViewWidget::measurementColorChanged, [&](int id, QString color) {
+		m_benchmarkModel->setMeasurementColor(id, color);
+	});
 }
 
 void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos)

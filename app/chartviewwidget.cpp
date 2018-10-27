@@ -68,6 +68,8 @@ void ChartViewWidget::onAddMeasurement(Measurement mmt)
 	m_barSet[mmt.getId()] = set;
 	m_series->append(set);
 	m_chart->axisY()->setMax(calculateMaxY() + 10);
+	QString hexColor = "#" + QString::number(set->brush().color().rgb(), 16).right(6).toUpper();
+	emit measurementColorChanged(mmt.getId(), hexColor);
 }
 
 double ChartViewWidget::calculateMaxY() 

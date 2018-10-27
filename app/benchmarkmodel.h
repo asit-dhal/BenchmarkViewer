@@ -37,6 +37,7 @@ struct BenchmarkViewUnit
 {
 	Measurement measurement;
 	QString filename;
+	QString hexColor{ "#000000" };
 	bool isSelected{false};
 };
 
@@ -49,6 +50,7 @@ class BenchmarkModel : public QAbstractTableModel
 	explicit BenchmarkModel(BmColumns* bmColumns, QObject* parent = nullptr);
 	void addBenchmark(QString filename, Benchmark benchmarks);
 	void removeBenchmark(QString filename);
+	void setMeasurementColor(int id, QString color);
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -61,6 +63,7 @@ class BenchmarkModel : public QAbstractTableModel
  signals:
 	void measurementActive(Measurement);
 	void measurementInactive(Measurement);
+
 
  private:
 	QList<BenchmarkViewUnit> m_benchmarks;

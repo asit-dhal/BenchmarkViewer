@@ -76,6 +76,19 @@ void BenchmarkModel::removeBenchmark(QString filename)
                           << filename;
 }
 
+void BenchmarkModel::setMeasurementColor(int id, QString color)
+{
+	qCDebug(benchmarkModel) << "Setting Measurement id=" << id << " color=" << color;
+	for (auto rowIndex = 0; rowIndex < rowCount(); rowIndex++)
+	{
+		if (m_benchmarks[rowIndex].measurement.getId() == id)
+		{
+			setData(createIndex(rowIndex, columnCount()), QVariant::fromValue(color), Qt::BackgroundColorRole);
+			break;
+		}
+	}
+}
+
 QVariant BenchmarkModel::headerData(int section,
                                     Qt::Orientation orientation,
                                     int role) const
@@ -170,7 +183,15 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const
 		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
 		if (viewunit.isSelected)
 		{
-			return QColor(Qt::lightGray);
+			if (viewunit.hexColor == "#000000")
+			{
+				return QColor(Qt::lightGray);
+			}
+			else
+			{
+				return QColor(viewunit.hexColor);
+			}
+			
 		}
 		else 
 		{
@@ -191,27 +212,36 @@ Qt::ItemFlags BenchmarkModel::flags(const QModelIndex& index) const
 
 bool BenchmarkModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-	if (index.isValid() && role == Qt::EditRole)
+	if (index.isValid())
 	{
 		auto row = index.row();
-		BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
-		if (cols == BmColumns::Columns::STATUS &&
-			m_benchmarks[row].isSelected != value.toBool())
+		if (role == Qt::EditRole)
 		{
-			m_benchmarks[row].isSelected = value.toBool();
-			emit dataChanged(createIndex(index.row(), 0), createIndex(index.row(), m_bmColumns->getColumnCount() - 1));
+			BmColumns::Columns cols = m_bmColumns->indexToColumns(index.column());
+			if (cols == BmColumns::Columns::STATUS &&
+				m_benchmarks[row].isSelected != value.toBool())
+			{
+				m_benchmarks[row].isSelected = value.toBool();
+				emit dataChanged(createIndex(index.row(), 0), createIndex(index.row(), m_bmColumns->getColumnCount() - 1));
 
-			if (m_benchmarks[row].isSelected)
-			{
-				emit measurementActive(m_benchmarks[row].measurement);
-			} 
-			else
-			{
-				emit measurementInactive(m_benchmarks[row].measurement);
+				if (m_benchmarks[row].isSelected)
+				{
+					emit measurementActive(m_benchmarks[row].measurement);
+				}
+				else
+				{
+					emit measurementInactive(m_benchmarks[row].measurement);
+				}
+
+				return true;
 			}
-
+		}
+		else if (role == Qt::BackgroundColorRole)
+		{
+			m_benchmarks[row].hexColor = value.toString();
 			return true;
 		}
 	}
+
 	return false;
 }
