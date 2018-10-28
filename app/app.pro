@@ -49,7 +49,8 @@ SOURCES += \
     jsonparser.cpp \
     csvparser.cpp \
     abstractparser.cpp \
-    worker.cpp
+    worker.cpp \
+    mainwindow_presenter.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -68,7 +69,8 @@ HEADERS += \
     abstractparser.h \
     jsonparser.h \
     csvparser.h \
-    worker.h
+    worker.h \
+    mainwindow_presenter.h
 
 DISTFILES += \
     appconfig.ini \
