@@ -60,33 +60,50 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 	createActions();
 	createMenus();
 	createWidgets();
-	connectSignalsToSlots();
-	updateRecentFileActions();
-	updateCloseFileActions();
+
 	showMaximized();
+
+	m_mainWindowPresenter = new MainWindowPresenter(this, this);
+	connectSignalsToSlots();
 
 	m_workerThread.start();
 }
 
 MainWindow::~MainWindow() {}
 
+QAction* MainWindow::getOpenFileAction()
+{
+	return m_openFileAction;
+}
+
+QAction* MainWindow::getCloseAllFilesAction()
+{
+	return m_closeAllFilesAction;
+}
+
+QAction* MainWindow::getExportChartAction()
+{
+	return m_exportChart;
+}
+
+QAction* MainWindow::getExitAction()
+{
+	return m_exitAction;
+}
+
 void MainWindow::createActions() {
 	qCDebug(gui) << "Creating Actions";
 	m_openFileAction = new QAction(tr("&Open File(s)"), this);
 	m_openFileAction->setShortcuts(QKeySequence::Open);
-	connect(m_openFileAction, &QAction::triggered, this, &MainWindow::onOpenFile);
 
 	m_closeAllFilesAction = new QAction(tr("Close All files"), this);
 	m_closeAllFilesAction->setStatusTip(tr("Close All Files "));
-	connect(m_closeAllFilesAction, &QAction::triggered, this, &MainWindow::onCloseAllFiles);
 
 	m_exportChart = new QAction(tr("Export Chart"), this);
-	connect(m_exportChart, &QAction::triggered, this, &MainWindow::onExportChart);
 
 	m_exitAction = new QAction(tr("E&xit"), this);
 	m_exitAction->setStatusTip(tr("Exit"));
 	m_exitAction->setShortcuts(QKeySequence::Quit);
-	connect(m_exitAction, &QAction::triggered, this, &MainWindow::onExit);
 
 	m_toogleSelectedFileWidget = new QAction(tr("Toggle selected file widget"), this);
 	m_toogleSelectedFileWidget->setStatusTip(tr("Toggle selected file widget"));
@@ -117,30 +134,12 @@ void MainWindow::createActions() {
 	connect(m_aboutApp, &QAction::triggered, this, &MainWindow::onAboutApp);
 }
 
-void MainWindow::updateRecentFileActions()
+void MainWindow::updateRecentFileActions(QList<QAction*> recentFileActions)
 {
 	qDeleteAll(m_openRecentFilesAction);
 	m_openRecentFilesAction.clear();
 
-	QStringList recentFiles = readRecentFiles();
-	qCDebug(gui) << "Recent Files: " << recentFiles.size() << "->" << recentFiles;
-	int i = 1;
-	foreach (QString recentFile, recentFiles) 
-	{
-		if (recentFile.isEmpty())
-			continue;
-		QString text = tr("&%1 %2").arg(i).arg(QFileInfo(recentFile).fileName());
-		QAction* recentFileAction = new QAction(text, this);
-		recentFileAction->setData(recentFile);
-		recentFileAction->setVisible(true);
-		connect(recentFileAction, &QAction::triggered, [ this, _recentFile = recentFile ]() {
-              updateRecentFiles(_recentFile);
-              updateRecentFileActions();
-              emit newFileSelected(Helper::getParserTypeFromFilename(_recentFile), _recentFile);
-            });
-		i++;
-		m_openRecentFilesAction.append(recentFileAction);
-	}
+	m_openRecentFilesAction.append(recentFileActions);
 
 	foreach (QAction* recentFileAction, m_openRecentFilesAction)
 	{
@@ -148,27 +147,12 @@ void MainWindow::updateRecentFileActions()
 	}
 }
 
-void MainWindow::updateCloseFileActions() 
+void MainWindow::updateCloseFileActions(QList<QAction*> closeFileActions)
 {
 	qDeleteAll(m_closeFileActions);
 	m_closeFileActions.clear();
 
-	int i = 1;
-	foreach (QString openedFile, m_files)
-	{
-		if (openedFile.isEmpty())
-			continue;
-		QString text = tr("&%1 %2").arg(i).arg(QFileInfo(openedFile).fileName());
-		QAction* closeFileAction = new QAction(text, this);
-		closeFileAction->setData(openedFile);
-		closeFileAction->setVisible(true);
-		connect(closeFileAction, &QAction::triggered,
-            [ this, _closeFile = openedFile ]() {
-				emit selectedFileDeleted(_closeFile);
-            });
-		i++;
-		m_closeFileActions.append(closeFileAction);
-	}
+	m_closeFileActions.append(closeFileActions);
 
 	foreach (QAction* closeFileAction, m_closeFileActions)
 	{
@@ -202,49 +186,6 @@ void MainWindow::onSelectionChanged(const QItemSelection& selected, const QItemS
 	// At this moment, we don't do anything
 	Q_UNUSED(selected);
 	Q_UNUSED(deselected);
-}
-
-void MainWindow::onOpenFile() 
-{
-	QString lastPath = readLastOpenedFilePath();
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Directory"), lastPath);
-	for (auto file : files)
-	{
-		if (!file.isEmpty())
-		{
-			updateRecentFiles(file);
-			updateRecentFileActions();
-			emit newFileSelected(Helper::getParserTypeFromFilename(file), file);
-			updateLastOpenedFilePath(QFileInfo(file).path());
-		}
-	}
-}
-
-void MainWindow::onCloseFile(QString filename) 
-{
-	onSelectedFileDeleted(filename);
-	qCDebug(gui) << "closing file";
-}
-
-void MainWindow::onCloseAllFiles() 
-{
-	for (auto file : m_files) 
-	{
-		onSelectedFileDeleted(file);
-	}
-}
-
-void MainWindow::onExportChart() 
-{
-	QPixmap pixmap = m_chartView->grab();
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Chart"), "", tr("png file (*.png)"));
-	if (!fileName.isEmpty())
-		pixmap.save(fileName, "PNG");
-}
-
-void MainWindow::onExit() {
-	qCDebug(gui) << "closing application";
-	QApplication::quit();
 }
 
 void MainWindow::createWidgets() {
@@ -295,7 +236,6 @@ void MainWindow::createWidgets() {
 
 void MainWindow::onSelectedFileDeleted(QString file) 
 {
-	m_files.removeOne(file);
 	m_benchmarkModel->removeBenchmark(file);
 	m_benchmarkView->resizeColumnsToContents();
 }
@@ -306,10 +246,11 @@ void MainWindow::connectSignalsToSlots()
 	connect(QCoreApplication::instance(), &QApplication::aboutToQuit, 
 		[&]() { m_workerThread.quit();
 				m_workerThread.wait(); });
-	connect(this, &MainWindow::newFileSelected, &m_worker, &Worker::parse);
+
+	connect(m_mainWindowPresenter, &MainWindowPresenter::newFileSelected, &m_worker, &Worker::parse);
+	connect(m_mainWindowPresenter, &MainWindowPresenter::fileRemoved, this, &MainWindow::selectedFileDeleted);
 	connect(&m_worker, &Worker::parsingFinished, this, &MainWindow::onNewBenchmarks);
 
-	connect(this, &MainWindow::newFileSelected, this, [this](ParserType, QString) { updateCloseFileActions(); });
 	connect(this, SIGNAL(selectedFileDeleted(QString)), this, SLOT(onSelectedFileDeleted(QString)));
 
 	connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this, SLOT(onBenchmarkFilter(QString)));

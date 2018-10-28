@@ -41,6 +41,7 @@ set(SRCS
     helper.cpp
     main.cpp
     mainwindow.cpp
+    mainwindow_presenter.cpp
     measurement.cpp
     abstractparser.cpp
     jsonparser.cpp

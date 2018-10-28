@@ -38,6 +38,7 @@
 #include "benchmark.h"
 #include "chartviewwidget.h"
 #include "worker.h"
+#include "mainwindow_presenter.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -61,6 +62,8 @@ class MainWindow : public QMainWindow {
  public:
 	MainWindow(QWidget* parent = 0);
 	~MainWindow();
+	void updateRecentFileActions(QList<QAction*> recentFileActions);
+	void updateCloseFileActions(QList<QAction*> closeFileActions);
 
  signals:
 	void newFileSelected(ParserType, QString);
@@ -71,8 +74,8 @@ class MainWindow : public QMainWindow {
 	void createMenus();
 	void createWidgets();
 	void connectSignalsToSlots();
-	void updateRecentFileActions();
-	void updateCloseFileActions();
+
+
 
  public slots:
 	void onNewBenchmarks(QString filename, Benchmark benchmark);
@@ -80,11 +83,6 @@ class MainWindow : public QMainWindow {
 	void onUpdateColumnStatus();
 
  private slots:
-	void onOpenFile();
-	void onCloseFile(QString filename);
-	void onCloseAllFiles();
-	void onExportChart();
-	void onExit();
 	void onSelectedFilesWidgetContextMenu(const QPoint& pos);
 	void onSelectedFileDeleted(QString file);
 	void onToogleSelectedFileWidget();
@@ -96,6 +94,12 @@ class MainWindow : public QMainWindow {
 	void onPlotAllRows();
 	void onClearSelection();
 	void onClearAllRows();
+
+public:
+	QAction* getOpenFileAction();
+	QAction* getCloseAllFilesAction();
+	QAction* getExportChartAction();
+	QAction* getExitAction();
 
  private:
 	QMenu* m_fileMenu;
@@ -130,6 +134,8 @@ class MainWindow : public QMainWindow {
 	Worker m_worker;
 	QThread m_workerThread;
 	QLineEdit* m_benchmarkNameFilter;
+
+	MainWindowPresenter *m_mainWindowPresenter;
 };
 
 #endif  // MAINWINDOW_H
