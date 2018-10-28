@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 	loadAppSettings();
 
 	MainWindow w;
-
+	
 	QLoggingCategory::setFilterRules(
       "*.debug=true\n"
       "qt.*.debug=false\n");

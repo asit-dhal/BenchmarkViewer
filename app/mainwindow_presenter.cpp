@@ -3,20 +3,32 @@
 #include "appconfig.h"
 #include "globals.h"
 #include "helper.h"
+#include "benchmarkmodel.h"
 
 MainWindowPresenter::MainWindowPresenter(MainWindow* mainWindow, QObject* parent): QObject(parent), m_view(mainWindow)
 {
-	connectSignalsToSlots();
+	m_worker.moveToThread(&m_workerThread);
+	m_workerThread.start();
+	
+	connect(QCoreApplication::instance(), &QApplication::aboutToQuit,
+		[&]() { m_workerThread.quit();
+				m_workerThread.wait(); });
 
+	connectSignalsToSlots();
 	updateRecentFilesActions();
 }
 
 void MainWindowPresenter::connectSignalsToSlots()
 {
+	connect(this, &MainWindowPresenter::newFileSelected, &m_worker, &Worker::parse);
+	connect(&m_worker, &Worker::parsingFinished, this, &MainWindowPresenter::onNewBenchmark);
+	connect(this, &MainWindowPresenter::fileRemoved, this, &MainWindowPresenter::onRemoveBenchmark);
+
 	connect(m_view->getOpenFileAction(), &QAction::triggered, this, &MainWindowPresenter::onOpenFileTriggered);
 	connect(m_view->getCloseAllFilesAction(), &QAction::triggered, this, &MainWindowPresenter::onCloseAllFilesTriggered);
 	connect(m_view->getExportChartAction(), &QAction::triggered, this, &MainWindowPresenter::onExportChartTriggered);
 	connect(m_view->getExitAction(), &QAction::triggered, this, &MainWindowPresenter::onExitTriggered);
+	connect(m_view->getAboutBenchmarkAppAction(), &QAction::triggered, this, &MainWindowPresenter::onAboutAppTriggered);
 }
 
 void MainWindowPresenter::onOpenFileTriggered()
@@ -51,6 +63,27 @@ void MainWindowPresenter::onExitTriggered()
 	qCDebug(gui) << "closing application";
 	QApplication::quit();
 }
+
+void MainWindowPresenter::onAboutAppTriggered()
+{
+	QString text = QString(
+		"Benchmark Viewer to plot google microbenchmark data ") + QChar(0x00A9) + QString(" 2018 Asit Dhal");
+
+	QMessageBox::about(m_view, tr("About BenchmarkViewer"), text);
+}
+
+void MainWindowPresenter::onNewBenchmark(QString filename, Benchmark benchmark)
+{
+	m_view->getBenchmarkModel()->addBenchmark(filename, benchmark);
+	//m_benchmarkView->resizeColumnsToContents();
+}
+
+void MainWindowPresenter::onRemoveBenchmark(QString filename)
+{
+	m_view->getBenchmarkModel()->removeBenchmark(filename);
+	//m_benchmarkView->resizeColumnsToContents();
+}
+
 
 void MainWindowPresenter::openFile(QString filename)
 {

@@ -74,20 +74,17 @@ class MainWindow : public QMainWindow {
 	void createMenus();
 	void createWidgets();
 	void connectSignalsToSlots();
-
+	void init();
 
 
  public slots:
-	void onNewBenchmarks(QString filename, Benchmark benchmark);
 	void onToggleColumnAction();
 	void onUpdateColumnStatus();
 
  private slots:
 	void onSelectedFilesWidgetContextMenu(const QPoint& pos);
-	void onSelectedFileDeleted(QString file);
 	void onToogleSelectedFileWidget();
 	void onBenchmarkFilter(QString filter);
-	void onAboutApp();
 	void onSelectionChanged(const QItemSelection& selected,
                           const QItemSelection& deselected);
 	void onPlotSelection();
@@ -100,6 +97,10 @@ public:
 	QAction* getCloseAllFilesAction();
 	QAction* getExportChartAction();
 	QAction* getExitAction();
+	QAction* getAboutBenchmarkAppAction();
+
+	BenchmarkModel* getBenchmarkModel();
+	BenchmarkProxyModel* getBenchmarkProxyModel();
 
  private:
 	QMenu* m_fileMenu;
@@ -131,8 +132,7 @@ public:
 	IAbstractParser* m_parser;
 	QChart* m_chart;
 	ChartViewWidget* m_chartView;
-	Worker m_worker;
-	QThread m_workerThread;
+	
 	QLineEdit* m_benchmarkNameFilter;
 
 	MainWindowPresenter *m_mainWindowPresenter;

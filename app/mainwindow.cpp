@@ -52,24 +52,28 @@
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
-	qRegisterMetaType<ParserType>("ParserType");
-	qRegisterMetaType<Benchmark>("Benchmark");
-
-	m_bmColumns = new BmColumns(this);
-	m_worker.moveToThread(&m_workerThread);
+	init();
 	createActions();
 	createMenus();
 	createWidgets();
-
 	showMaximized();
 
 	m_mainWindowPresenter = new MainWindowPresenter(this, this);
 	connectSignalsToSlots();
-
-	m_workerThread.start();
 }
 
 MainWindow::~MainWindow() {}
+
+void MainWindow::init()
+{
+	qRegisterMetaType<ParserType>("ParserType");
+	qRegisterMetaType<Benchmark>("Benchmark");
+
+	m_bmColumns = new BmColumns(this);
+	m_benchmarkModel = new BenchmarkModel(m_bmColumns, this);
+	m_proxyModel = new BenchmarkProxyModel(m_bmColumns, this);
+
+}
 
 QAction* MainWindow::getOpenFileAction()
 {
@@ -89,6 +93,21 @@ QAction* MainWindow::getExportChartAction()
 QAction* MainWindow::getExitAction()
 {
 	return m_exitAction;
+}
+
+QAction* MainWindow::getAboutBenchmarkAppAction()
+{
+	return m_aboutApp;
+}
+
+BenchmarkModel* MainWindow::getBenchmarkModel()
+{
+	return m_benchmarkModel;
+}
+
+BenchmarkProxyModel* MainWindow::getBenchmarkProxyModel()
+{
+	return m_proxyModel;
 }
 
 void MainWindow::createActions() {
@@ -131,7 +150,6 @@ void MainWindow::createActions() {
 
 	m_aboutApp = new QAction(tr("About BenchmarkViewer"), this);
 	m_aboutApp->setStatusTip(tr("About BenchmarkViewer"));
-	connect(m_aboutApp, &QAction::triggered, this, &MainWindow::onAboutApp);
 }
 
 void MainWindow::updateRecentFileActions(QList<QAction*> recentFileActions)
@@ -197,8 +215,6 @@ void MainWindow::createWidgets() {
 	QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
 	m_benchmarkNameFilter = new QLineEdit(this);
 	m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
-	m_benchmarkModel = new BenchmarkModel(m_bmColumns, this);
-	m_proxyModel = new BenchmarkProxyModel(m_bmColumns, this);
 	m_benchmarkView = new BenchmarkView(m_bmColumns, this);
 	m_benchmarkDelegate = new BenchmarkDelegate(this);
 
@@ -234,25 +250,10 @@ void MainWindow::createWidgets() {
 	m_benchmarkView->setSelectionModel(m_selectionModel);
 }
 
-void MainWindow::onSelectedFileDeleted(QString file) 
-{
-	m_benchmarkModel->removeBenchmark(file);
-	m_benchmarkView->resizeColumnsToContents();
-}
-
 void MainWindow::connectSignalsToSlots() 
 {
 	qCDebug(gui) << "Connecting Signals to Slots";
-	connect(QCoreApplication::instance(), &QApplication::aboutToQuit, 
-		[&]() { m_workerThread.quit();
-				m_workerThread.wait(); });
-
-	connect(m_mainWindowPresenter, &MainWindowPresenter::newFileSelected, &m_worker, &Worker::parse);
-	connect(m_mainWindowPresenter, &MainWindowPresenter::fileRemoved, this, &MainWindow::selectedFileDeleted);
-	connect(&m_worker, &Worker::parsingFinished, this, &MainWindow::onNewBenchmarks);
-
-	connect(this, SIGNAL(selectedFileDeleted(QString)), this, SLOT(onSelectedFileDeleted(QString)));
-
+	
 	connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this, SLOT(onBenchmarkFilter(QString)));
 
 	connect(m_benchmarkModel, &BenchmarkModel::measurementActive, m_chartView, &ChartViewWidget::onAddMeasurement);
@@ -287,12 +288,6 @@ void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos)
 	contextMenu.exec(globalPos);
 }
 
-void MainWindow::onNewBenchmarks(QString filename, Benchmark benchmark)
-{
-	m_benchmarkModel->addBenchmark(filename, benchmark);
-	m_benchmarkView->resizeColumnsToContents();
-}
-
 void MainWindow::onToogleSelectedFileWidget() 
 {
 	if (m_selectedFilesWidget->isVisible())
@@ -310,14 +305,6 @@ void MainWindow::onBenchmarkFilter(QString filterText)
 	qCDebug(gui) << "Benchmark filter: " << filterText;
 	QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
 	m_proxyModel->setFilterRegExp(regExp);
-}
-
-void MainWindow::onAboutApp() 
-{
-	QString text = QString(
-      "Benchmark Viewer to plot google microbenchmark data ") +  QChar(0x00A9) + QString(" 2018 Asit Dhal");
-
-	QMessageBox::about(this, tr("About BenchmarkViewer"), text);
 }
 
 void MainWindow::onToggleColumnAction()
