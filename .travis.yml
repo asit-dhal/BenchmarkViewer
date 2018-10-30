@@ -5,9 +5,9 @@ language: cpp
 sudo: required
 dist: trusty
 
-compiler:
-  - gcc
-  - clang
+#compiler:
+#  - gcc
+#  - clang
 
 configuration:
   - Release
