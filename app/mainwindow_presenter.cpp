@@ -52,11 +52,11 @@ void MainWindowPresenter::onCloseAllFilesTriggered()
 
 void MainWindowPresenter::onExportChartTriggered()
 {
-	//QPixmap pixmap = m_chartView->grab();
-	QString fileName = QFileDialog::getSaveFileName(m_view, tr("Save Chart"), "", tr("png file (*.png)"));
-	// delegate grab view  to chart
-	//if (!fileName.isEmpty())
-	//	pixmap.save(fileName, "PNG");
+	QString filename = QFileDialog::getSaveFileName(m_view, tr("Save Chart"), "", tr("png file (*.png)"));
+	if (!m_view->getChartViewWidget()->exportChart(filename))
+	{
+		qCCritical(gui) << "Export failed";
+	}
 }
 
 void MainWindowPresenter::onExitTriggered()

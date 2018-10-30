@@ -43,7 +43,8 @@ QT_CHARTS_USE_NAMESPACE
 class ChartViewWidget : public QWidget {
 	Q_OBJECT
  public:
-  ChartViewWidget(QWidget* parent = nullptr);
+	ChartViewWidget(QWidget* parent = nullptr);
+	bool exportChart(QString filename);
 
 signals:
 	void measurementColorChanged(int, QString);

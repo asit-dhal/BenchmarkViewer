@@ -38,6 +38,16 @@ ChartViewWidget::ChartViewWidget(QWidget* parent)
 	setLayout(mainLayout);
 }
 
+bool ChartViewWidget::exportChart(QString filename)
+{
+	QPixmap pixmap = grab();
+	if (!filename.isEmpty())
+	{
+		return pixmap.save(filename, "PNG");
+	}
+	return false;
+}
+
 void ChartViewWidget::init() 
 {
 	m_chart = new QChart;

@@ -168,6 +168,11 @@ void MainWindow::setViewColumnActions(QList<QAction*> viewColumnActions)
 	m_showColumnsSubMenu->addActions(m_showColumns);
 }
 
+ChartViewWidget* MainWindow::getChartViewWidget()
+{
+	return m_chartView;
+}
+
 void MainWindow::createMenus() 
 {
 	qCDebug(gui) << "Creating Menus";

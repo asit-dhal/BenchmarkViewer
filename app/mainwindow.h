@@ -64,6 +64,7 @@ class MainWindow : public QMainWindow {
 	void setRecentFileActions(QList<QAction*> recentFileActions);
 	void setCloseFileActions(QList<QAction*> closeFileActions);
 	void setViewColumnActions(QList<QAction*> viewColumnActions);
+	ChartViewWidget* getChartViewWidget();
 
  signals:
 	void newFileSelected(ParserType, QString);
