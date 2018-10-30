@@ -23,28 +23,29 @@
 ========================================================================*/
 
 #include "benchmarkproxymodel.h"
-#include "bmcolumns.h"
+#include "benchmarkmodel.h"
 
 Q_LOGGING_CATEGORY(proxyModel, "proxyModel")
 
-BenchmarkProxyModel::BenchmarkProxyModel(BmColumns* bmColumns, QObject* parent)
-    : QSortFilterProxyModel(parent), m_bmColumns(bmColumns) {}
+BenchmarkProxyModel::BenchmarkProxyModel(/*BmColumns* bmColumns, */QObject* parent)
+    : QSortFilterProxyModel(parent)/*, m_bmColumns(bmColumns)*/ {}
 
 bool BenchmarkProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
 	QVariant leftData = sourceModel()->data(left);
 	QVariant rightData = sourceModel()->data(right);
 
-	switch (m_bmColumns->indexToColumns(left.column()))
+	using Columns = BenchmarkModel::Columns;
+	switch (static_cast<Columns>(left.column()))
 	{
-	case BmColumns::Columns::STATUS:
+	case Columns::eStatus:
 		return leftData.toBool();
-    case BmColumns::Columns::ITERATIONS:
-    case BmColumns::Columns::REAL_TIME:
-    case BmColumns::Columns::CPU_TIME:
+    case Columns::eIterations:
+    case Columns::eRealTime:
+    case Columns::eCpuTime:
 		return leftData.toDouble() < rightData.toDouble();
-    case BmColumns::Columns::NAME:
-    case BmColumns::Columns::FILENAME:
+    case Columns::eName:
+    case Columns::eFilename:
     default:
 		return QString::localeAwareCompare(leftData.toString(), rightData.toString()) < 0;
 	}
@@ -52,7 +53,7 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left, const QModelIndex& r
 
 bool BenchmarkProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
-	QModelIndex nameIndex = sourceModel()->index(sourceRow, m_bmColumns->columnNameToIndex(BmColumns::Columns::NAME), sourceParent);
+	QModelIndex nameIndex = sourceModel()->index(sourceRow, static_cast<int>(BenchmarkModel::Columns::eName), sourceParent);
 
 	if (sourceModel()->data(nameIndex).toString().toLower().trimmed().contains(filterRegExp()))
 	{

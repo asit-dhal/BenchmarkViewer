@@ -45,7 +45,6 @@
 #include "benchmarkmodel.h"
 #include "benchmarkproxymodel.h"
 #include "benchmarkview.h"
-#include "bmcolumns.h"
 #include "csvparser.h"
 #include "globals.h"
 #include "helper.h"
@@ -69,9 +68,8 @@ void MainWindow::init()
 	qRegisterMetaType<ParserType>("ParserType");
 	qRegisterMetaType<Benchmark>("Benchmark");
 
-	m_bmColumns = new BmColumns(this);
-	m_benchmarkModel = new BenchmarkModel(m_bmColumns, this);
-	m_proxyModel = new BenchmarkProxyModel(m_bmColumns, this);
+	m_benchmarkModel = new BenchmarkModel(this);
+	m_proxyModel = new BenchmarkProxyModel(this);
 
 }
 
@@ -98,6 +96,11 @@ QAction* MainWindow::getExitAction()
 QAction* MainWindow::getAboutBenchmarkAppAction()
 {
 	return m_aboutApp;
+}
+
+QList<QAction*> MainWindow::getViewColumnActions()
+{
+	return m_showColumns;
 }
 
 BenchmarkModel* MainWindow::getBenchmarkModel()
@@ -129,30 +132,11 @@ void MainWindow::createActions() {
 	m_toogleSelectedFileWidget->setCheckable(true);
 	connect(m_toogleSelectedFileWidget, &QAction::triggered, this, &MainWindow::onToogleSelectedFileWidget);
 
-	for (auto i = 0; i < m_bmColumns->getColumnCount(); i++)
-	{
-		auto col = m_bmColumns->indexToColumns(i);
-		QAction* showColumn = new QAction(m_bmColumns->columnNameToString(col), this);
-		showColumn->setCheckable(true);
-		showColumn->setChecked(!m_bmColumns->isColumnHidden(col));
-		connect(showColumn, &QAction::triggered, this, [=]() {
-			if (m_bmColumns->isColumnHidden(col))
-			{
-				emit m_bmColumns->showColumn(col);
-			} 
-			else 
-			{
-				emit m_bmColumns->hideColumn(col);
-			}
-		});
-		m_showColumns.append(showColumn);
-	}
-
 	m_aboutApp = new QAction(tr("About BenchmarkViewer"), this);
 	m_aboutApp->setStatusTip(tr("About BenchmarkViewer"));
 }
 
-void MainWindow::updateRecentFileActions(QList<QAction*> recentFileActions)
+void MainWindow::setRecentFileActions(QList<QAction*> recentFileActions)
 {
 	qDeleteAll(m_openRecentFilesAction);
 	m_openRecentFilesAction.clear();
@@ -165,7 +149,7 @@ void MainWindow::updateRecentFileActions(QList<QAction*> recentFileActions)
 	}
 }
 
-void MainWindow::updateCloseFileActions(QList<QAction*> closeFileActions)
+void MainWindow::setCloseFileActions(QList<QAction*> closeFileActions)
 {
 	qDeleteAll(m_closeFileActions);
 	m_closeFileActions.clear();
@@ -176,6 +160,12 @@ void MainWindow::updateCloseFileActions(QList<QAction*> closeFileActions)
 	{
 		m_closeFileMenu->addAction(closeFileAction);
 	}
+}
+
+void MainWindow::setViewColumnActions(QList<QAction*> viewColumnActions)
+{
+	m_showColumns = viewColumnActions;
+	m_showColumnsSubMenu->addActions(m_showColumns);
 }
 
 void MainWindow::createMenus() 
@@ -193,7 +183,6 @@ void MainWindow::createMenus()
 	m_viewMenu = menuBar()->addMenu(tr("&View"));
 	m_viewMenu->addAction(m_toogleSelectedFileWidget);
 	m_showColumnsSubMenu = m_viewMenu->addMenu(tr("Columns"));
-	m_showColumnsSubMenu->addActions(m_showColumns);
 
 	m_helpMenu = menuBar()->addMenu(tr("&Help"));
 	m_helpMenu->addAction(m_aboutApp);
@@ -215,10 +204,11 @@ void MainWindow::createWidgets() {
 	QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
 	m_benchmarkNameFilter = new QLineEdit(this);
 	m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
-	m_benchmarkView = new BenchmarkView(m_bmColumns, this);
+	m_benchmarkView = new BenchmarkView(this);
 	m_benchmarkDelegate = new BenchmarkDelegate(this);
 
 	m_proxyModel->setSourceModel(m_benchmarkModel);
+	m_benchmarkView->seBenchmarkColumnAttributes(m_benchmarkModel); // strongly coupled
 	m_benchmarkView->setModel(m_proxyModel);
 	m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
 	m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
@@ -265,9 +255,6 @@ void MainWindow::connectSignalsToSlots()
 	connect(m_benchmarkView, &BenchmarkView::clearSelection, this, &MainWindow::onClearSelection);
 	connect(m_benchmarkView, &BenchmarkView::clearAllRows, this, &MainWindow::onClearAllRows);
 
-	connect(m_bmColumns, &BmColumns::showColumn, [this]() { onUpdateColumnStatus(); });
-	connect(m_bmColumns, &BmColumns::hideColumn, [this]() { onUpdateColumnStatus(); });
-
 	connect(m_chartView, &ChartViewWidget::measurementColorChanged, [&](int id, QString color) {
 		m_benchmarkModel->setMeasurementColor(id, color);
 	});
@@ -309,21 +296,21 @@ void MainWindow::onBenchmarkFilter(QString filterText)
 
 void MainWindow::onToggleColumnAction()
 {
-	QAction* act = qobject_cast<QAction*>(sender());
-	BmColumns::Columns col = act->data().value<BmColumns::Columns>();
-	if (m_bmColumns->isColumnHidden(col))
-		emit m_bmColumns->showColumn(col);
-	else
-		emit m_bmColumns->hideColumn(col);
+	//QAction* act = qobject_cast<QAction*>(sender());
+	//BmColumns::Columns col = act->data().value<BmColumns::Columns>();
+	//if (m_bmColumns->isColumnHidden(col))
+	//	emit m_bmColumns->showColumn(col);
+	//else
+	//	emit m_bmColumns->hideColumn(col);
 }
 
 void MainWindow::onUpdateColumnStatus() 
 {
-	for (auto i = 0; i < m_bmColumns->getColumnCount(); i++)
-	{
-		auto col = m_bmColumns->indexToColumns(i);
-		m_showColumns.at(i)->setChecked(!m_bmColumns->isColumnHidden(col));
-	}
+	//for (auto i = 0; i < m_bmColumns->getColumnCount(); i++)
+	//{
+	//	auto col = m_bmColumns->indexToColumns(i);
+	//	m_showColumns.at(i)->setChecked(!m_bmColumns->isColumnHidden(col));
+	//}
 }
 
 void MainWindow::onPlotSelection() 

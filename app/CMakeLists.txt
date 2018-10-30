@@ -47,7 +47,6 @@ set(SRCS
     jsonparser.cpp
     csvparser.cpp
     globals.cpp
-    bmcolumns.cpp
     worker.cpp
 )
 

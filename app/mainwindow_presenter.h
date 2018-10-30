@@ -32,6 +32,7 @@ private:
 	void connectSignalsToSlots();
 	void updateRecentFilesActions();
 	void updateCloseFileActions();
+	void updateViewColumnActions();
 	void openFile(QString filename);
 	void closeFile(QString filename);
 

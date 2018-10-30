@@ -28,6 +28,7 @@
 #include <QAbstractTableModel>
 #include <QList>
 #include <QLoggingCategory>
+#include <QMap>
 #include "benchmark.h"
 #include "measurement.h"
 
@@ -41,13 +42,25 @@ struct BenchmarkViewUnit
 	bool isSelected{false};
 };
 
-class BmColumns;
-
 class BenchmarkModel : public QAbstractTableModel 
 {
 	Q_OBJECT
  public:
-	explicit BenchmarkModel(BmColumns* bmColumns, QObject* parent = nullptr);
+	 enum class Columns : int
+	 {
+		 eInvalid = 100,
+		 eStatus = 0,
+		 eName,
+		 eIterations,
+		 eRealTime,
+		 eCpuTime,
+		 eTimeUnit,
+		 eFilename
+	 };
+
+	 static const int COLUMN_COUNT;
+
+	explicit BenchmarkModel(/*BmColumns* bmColumns, */QObject* parent = nullptr);
 	void addBenchmark(QString filename, Benchmark benchmarks);
 	void removeBenchmark(QString filename);
 	void setMeasurementColor(int id, QString color);
@@ -59,15 +72,21 @@ class BenchmarkModel : public QAbstractTableModel
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
 	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+	bool getColumnVisibility(Columns col);
+	void setColumnVisibility(Columns col, bool visibility);
 
  signals:
 	void measurementActive(Measurement);
 	void measurementInactive(Measurement);
-
+	void columnVisibilityChanged(Columns, bool);
 
  private:
+	 void initializeMetaData();
 	QList<BenchmarkViewUnit> m_benchmarks;
-	BmColumns* m_bmColumns;
+	QMap<Columns, bool> m_columnsVisibility;
 };
+
+QString toString(BenchmarkModel::Columns col);
+
 
 #endif  // BENCHMARKMODEL_H

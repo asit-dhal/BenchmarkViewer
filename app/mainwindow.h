@@ -54,7 +54,6 @@ class BenchmarkDelegate;
 class BenchmarkProxyModel;
 class QItemSelectionModel;
 class QItemSelection;
-class BmColumns;
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -62,8 +61,9 @@ class MainWindow : public QMainWindow {
  public:
 	MainWindow(QWidget* parent = 0);
 	~MainWindow();
-	void updateRecentFileActions(QList<QAction*> recentFileActions);
-	void updateCloseFileActions(QList<QAction*> closeFileActions);
+	void setRecentFileActions(QList<QAction*> recentFileActions);
+	void setCloseFileActions(QList<QAction*> closeFileActions);
+	void setViewColumnActions(QList<QAction*> viewColumnActions);
 
  signals:
 	void newFileSelected(ParserType, QString);
@@ -99,6 +99,8 @@ public:
 	QAction* getExitAction();
 	QAction* getAboutBenchmarkAppAction();
 
+	QList<QAction*> getViewColumnActions();
+
 	BenchmarkModel* getBenchmarkModel();
 	BenchmarkProxyModel* getBenchmarkProxyModel();
 
@@ -128,7 +130,7 @@ public:
 	QItemSelectionModel* m_selectionModel;
 	BenchmarkView* m_benchmarkView;
 	BenchmarkDelegate* m_benchmarkDelegate;
-	BmColumns* m_bmColumns;
+	
 	IAbstractParser* m_parser;
 	QChart* m_chart;
 	ChartViewWidget* m_chartView;

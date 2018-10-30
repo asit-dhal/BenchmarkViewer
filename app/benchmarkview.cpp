@@ -27,8 +27,8 @@
 #include <QMenu>
 #include "globals.h"
 
-BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
-    : QTableView(parent), m_bmColumns(bmColumns) 
+BenchmarkView::BenchmarkView(QWidget* parent)
+    : QTableView(parent) 
 {
 	m_header = horizontalHeader();
 	m_header->setSectionsMovable(true);
@@ -37,26 +37,7 @@ BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
 
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onContextMenuOnBody(const QPoint&)));
-
-	for (auto i = 0; i < m_bmColumns->getColumnCount(); i++)
-	{
-		auto col = m_bmColumns->indexToColumns(i);
-		QAction* showHideColumn = new QAction(m_bmColumns->columnNameToString(col), this);
-		showHideColumn->setCheckable(true);
-		showHideColumn->setChecked(!m_bmColumns->isColumnHidden(col));
-		connect(showHideColumn, &QAction::triggered, this, [=]() {
-				if (m_bmColumns->isColumnHidden(col))
-				{
-					emit m_bmColumns->showColumn(col);
-				}
-				else 
-				{
-					emit m_bmColumns->hideColumn(col);
-				}
-			});
-		m_columnShowHideActions.append(showHideColumn);
-	}
-
+	
 	m_moveLastAction = new QAction("MoveLast", this);
 	connect(m_moveLastAction, SIGNAL(triggered(bool)), this, SLOT(onSlotMoveLast()));
 	m_moveFirstAction = new QAction("MoveFirst", this);
@@ -71,10 +52,27 @@ BenchmarkView::BenchmarkView(BmColumns* bmColumns, QWidget* parent)
 	m_clearAllRows = new QAction(tr("Clear All rows"), this);
 	connect(m_clearAllRows, &QAction::triggered, [&]() { emit this->clearAllRows(); });
 
-	qCDebug(gui) << "signal[BmColumns::hideColumn] -> slot[BenchmarkView::onHideColumn]";
-	connect(m_bmColumns, &BmColumns::hideColumn, this, &BenchmarkView::onHideColumn);
-	qCDebug(gui) << "signal[BmColumns::showColumn] -> slot[BenchmarkView::onShowColumn]";
-	connect(m_bmColumns, &BmColumns::showColumn, this, &BenchmarkView::onShowColumn);
+}
+
+void BenchmarkView::seBenchmarkColumnAttributes(BenchmarkModel *bmModel)
+{
+	for (auto i = 0; i < BenchmarkModel::COLUMN_COUNT; i++)
+	{
+		auto col = static_cast<BenchmarkModel::Columns>(i);
+		QAction* showHideColumn = new QAction(toString(col), this);
+		showHideColumn->setCheckable(true);
+		showHideColumn->setChecked(bmModel->getColumnVisibility(col));
+		connect(showHideColumn, &QAction::triggered, this, [=, _col=col]() {
+				bmModel->setColumnVisibility(_col, !bmModel->getColumnVisibility(_col));
+		});
+		m_columnShowHideActions.append(showHideColumn);
+	}
+
+	connect(bmModel, &BenchmarkModel::columnVisibilityChanged,
+		[&](BenchmarkModel::Columns col, bool visibility) {
+				qCDebug(gui) << "col visibility changed: " << toString(col) << " visibility: " << visibility;
+				(visibility == true) ? onShowColumn(col) : onHideColumn(col);
+		});
 }
 
 void BenchmarkView::onContextMenuOnHeader(QPoint p)
@@ -120,25 +118,14 @@ void BenchmarkView::onSlotMoveFirst()
 	m_header->moveSection(from, 0);
 }
 
-void BenchmarkView::onShowColumn(BmColumns::Columns col) 
+void BenchmarkView::onShowColumn(BenchmarkModel::Columns col)
 {
-	qCDebug(gui) << "Col: " << m_bmColumns->columnNameToString(col);
-	showColumn(m_bmColumns->columnNameToIndex(col));
-	updateColumnViewStatus();
+	showColumn(static_cast<int>(col));
+	m_columnShowHideActions.at(static_cast<int>(col))->setChecked(true);
 }
 
-void BenchmarkView::onHideColumn(BmColumns::Columns col)
-{
-	qCDebug(gui) << "Col: " << m_bmColumns->columnNameToString(col);
-	hideColumn(m_bmColumns->columnNameToIndex(col));
-	updateColumnViewStatus();
-}
-
-void BenchmarkView::updateColumnViewStatus()
-{
-	for (auto i = 0; i < m_bmColumns->getColumnCount(); i++)
-	{
-		auto col = m_bmColumns->indexToColumns(i);
-		m_columnShowHideActions.at(i)->setChecked(!m_bmColumns->isColumnHidden(col));
-	}
+void BenchmarkView::onHideColumn(BenchmarkModel::Columns col)
+{	
+	hideColumn(static_cast<int>(col));
+	m_columnShowHideActions.at(static_cast<int>(col))->setChecked(false);
 }

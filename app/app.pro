@@ -44,7 +44,6 @@ SOURCES += \
     chartviewwidget.cpp \
     benchmarkproxymodel.cpp \
     appconfig.cpp \
-    bmcolumns.cpp \
     globals.cpp \
     jsonparser.cpp \
     csvparser.cpp \
@@ -64,7 +63,6 @@ HEADERS += \
     chartviewwidget.h \
     benchmarkproxymodel.h \
     appconfig.h \
-    bmcolumns.h \
     globals.h \
     abstractparser.h \
     jsonparser.h \

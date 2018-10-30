@@ -16,6 +16,7 @@ MainWindowPresenter::MainWindowPresenter(MainWindow* mainWindow, QObject* parent
 
 	connectSignalsToSlots();
 	updateRecentFilesActions();
+	updateViewColumnActions();
 }
 
 void MainWindowPresenter::connectSignalsToSlots()
@@ -130,7 +131,7 @@ void MainWindowPresenter::updateRecentFilesActions()
 		i++;
 		recentFileActions.append(recentFileAction);
 	}
-	m_view->updateRecentFileActions(recentFileActions);
+	m_view->setRecentFileActions(recentFileActions);
 }
 
 void MainWindowPresenter::updateCloseFileActions()
@@ -153,5 +154,32 @@ void MainWindowPresenter::updateCloseFileActions()
 		closeFileActions.append(closeFileAction);
 	}
 
-	m_view->updateCloseFileActions(closeFileActions);
+	m_view->setCloseFileActions(closeFileActions);
+}
+
+void MainWindowPresenter::updateViewColumnActions()
+{
+	auto bmModel = m_view->getBenchmarkModel();
+	int columnCount = bmModel->columnCount();
+	QList<QAction*> colActions;
+
+	using Columns = BenchmarkModel::Columns;
+	for (auto i = 0; i < columnCount; i++)
+	{
+		auto col = static_cast<Columns>(i);
+		QAction* showColumn = new QAction(toString(col), m_view);
+		showColumn->setCheckable(true);
+		showColumn->setChecked(bmModel->getColumnVisibility(col));
+		connect(showColumn, &QAction::triggered, this, [_bmModel=bmModel, _col=col]() {
+			_bmModel->setColumnVisibility(_col, !_bmModel->getColumnVisibility(_col));
+		});
+		colActions.append(showColumn);
+	}
+
+	m_view->setViewColumnActions(colActions);
+
+	connect(bmModel, &BenchmarkModel::columnVisibilityChanged, [&](Columns col, bool status)
+	{
+		m_view->getViewColumnActions()[static_cast<int>(col)]->setChecked(status);
+	});
 }

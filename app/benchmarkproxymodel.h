@@ -29,21 +29,19 @@
 #include <QSortFilterProxyModel>
 #include <QString>
 
-class BmColumns;
-
 Q_DECLARE_LOGGING_CATEGORY(proxyModel);
 
 class BenchmarkProxyModel : public QSortFilterProxyModel
 {
  public:
-	BenchmarkProxyModel(BmColumns* bmColumns, QObject* parent = nullptr);
+	BenchmarkProxyModel(/*BmColumns* bmColumns, */QObject* parent = nullptr);
 
  protected:
 	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
 	bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
- private:
-	BmColumns* m_bmColumns;
+ //private:
+	//BmColumns* m_bmColumns;
 };
 
 #endif  // BENCHMARKPROXYMODEL_H
