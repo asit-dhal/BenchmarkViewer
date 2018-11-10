@@ -18,6 +18,7 @@ platform:
 branches:
   only:
     - master
+    - appveyor
 
 matrix:
   fast_finish: false
@@ -30,8 +31,17 @@ environment:
     - CMAKE_BUILD_SYS: True
     - QMAKE_BUILD_SYS: True
 
+init:
+  # print all environment variables
+  - ps: |
+      Write-Host "Platform: $Env:Platform"
+      Write-Host "Image: $Env:APPVEYOR_BUILD_WORKER_IMAGE"
+      Write-Host "Configuration: $Env:Configuration"
+      Write-Host "Cmake Build: $Env:CMAKE_BUILD_SYS"
+      Write-Host "Qmake Build: $Env:QMAKE_BUILD_SYS"
+
 install:
-    - ps: | 
+    - ps: |
         if ($Env:Platform -Match "x64") {
           if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2015") {
             $qt_path="C:\Qt\5.10.1\msvc2015_64\bin"
