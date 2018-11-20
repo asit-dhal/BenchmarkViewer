@@ -98,11 +98,6 @@ QAction* MainWindow::getAboutBenchmarkAppAction()
 	return m_aboutApp;
 }
 
-QList<QAction*> MainWindow::getViewColumnActions()
-{
-	return m_showColumns;
-}
-
 BenchmarkModel* MainWindow::getBenchmarkModel()
 {
 	return m_benchmarkModel;
@@ -162,12 +157,6 @@ void MainWindow::setCloseFileActions(QList<QAction*> closeFileActions)
 	}
 }
 
-void MainWindow::setViewColumnActions(QList<QAction*> viewColumnActions)
-{
-	m_showColumns = viewColumnActions;
-	m_showColumnsSubMenu->addActions(m_showColumns);
-}
-
 ChartViewWidget* MainWindow::getChartViewWidget()
 {
 	return m_chartView;
@@ -187,7 +176,6 @@ void MainWindow::createMenus()
 
 	m_viewMenu = menuBar()->addMenu(tr("&View"));
 	m_viewMenu->addAction(m_toogleSelectedFileWidget);
-	m_showColumnsSubMenu = m_viewMenu->addMenu(tr("Columns"));
 
 	m_helpMenu = menuBar()->addMenu(tr("&Help"));
 	m_helpMenu->addAction(m_aboutApp);
@@ -195,7 +183,6 @@ void MainWindow::createMenus()
 
 void MainWindow::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) 
 {
-	// At this moment, we don't do anything
 	Q_UNUSED(selected);
 	Q_UNUSED(deselected);
 }
@@ -297,25 +284,6 @@ void MainWindow::onBenchmarkFilter(QString filterText)
 	qCDebug(gui) << "Benchmark filter: " << filterText;
 	QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
 	m_proxyModel->setFilterRegExp(regExp);
-}
-
-void MainWindow::onToggleColumnAction()
-{
-	//QAction* act = qobject_cast<QAction*>(sender());
-	//BmColumns::Columns col = act->data().value<BmColumns::Columns>();
-	//if (m_bmColumns->isColumnHidden(col))
-	//	emit m_bmColumns->showColumn(col);
-	//else
-	//	emit m_bmColumns->hideColumn(col);
-}
-
-void MainWindow::onUpdateColumnStatus() 
-{
-	//for (auto i = 0; i < m_bmColumns->getColumnCount(); i++)
-	//{
-	//	auto col = m_bmColumns->indexToColumns(i);
-	//	m_showColumns.at(i)->setChecked(!m_bmColumns->isColumnHidden(col));
-	//}
 }
 
 void MainWindow::onPlotSelection() 

@@ -77,11 +77,6 @@ class MainWindow : public QMainWindow {
 	void connectSignalsToSlots();
 	void init();
 
-
- public slots:
-	void onToggleColumnAction();
-	void onUpdateColumnStatus();
-
  private slots:
 	void onSelectedFilesWidgetContextMenu(const QPoint& pos);
 	void onToogleSelectedFileWidget();
@@ -100,8 +95,6 @@ public:
 	QAction* getExitAction();
 	QAction* getAboutBenchmarkAppAction();
 
-	QList<QAction*> getViewColumnActions();
-
 	BenchmarkModel* getBenchmarkModel();
 	BenchmarkProxyModel* getBenchmarkProxyModel();
 
@@ -110,7 +103,6 @@ public:
 	QMenu* m_recentFileMenu;
 	QMenu* m_closeFileMenu;
 	QMenu* m_viewMenu;
-	QMenu* m_showColumnsSubMenu;
 	QMenu* m_helpMenu;
 
 	QAction* m_openFileAction;
@@ -121,7 +113,6 @@ public:
 	QAction* m_exitAction;
 
 	QAction* m_toogleSelectedFileWidget;
-	QList<QAction*> m_showColumns;
 	QAction* m_aboutApp;
 
 	QStack<QString> m_files;
