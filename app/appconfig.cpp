@@ -74,3 +74,19 @@ void updateLastOpenedFilePath(QString path)
 	appSettings.setValue("path", path);
 	appSettings.endGroup();
 }
+
+QString readLastExportedFilePath()
+{
+    QSettings appSettings;
+    appSettings.beginGroup("last-exported-file-path");
+    QString temp = appSettings.value("path").toString();
+    appSettings.endGroup();
+    return temp.trimmed();
+}
+void updateLastExportedFilePath(const QString &path)
+{
+    QSettings appSettings;
+    appSettings.beginGroup("last-exported-file-path");
+    appSettings.setValue("path", path);
+    appSettings.endGroup();
+}

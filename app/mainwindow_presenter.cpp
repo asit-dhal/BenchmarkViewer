@@ -51,7 +51,9 @@ void MainWindowPresenter::onCloseAllFilesTriggered()
 
 void MainWindowPresenter::onExportChartTriggered()
 {
-	QString filename = QFileDialog::getSaveFileName(m_view, tr("Save Chart"), "", tr("png file (*.png)"));
+    QString lastPath = readLastExportedFilePath();
+    QString filename = QFileDialog::getSaveFileName(m_view, tr("Save Chart"), lastPath, tr("png file (*.png)"));
+    updateLastExportedFilePath(QFileInfo(filename).path());
 	if (!m_view->getChartViewWidget()->exportChart(filename))
 	{
 		qCCritical(gui) << "Export failed";
