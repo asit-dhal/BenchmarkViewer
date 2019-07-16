@@ -27,8 +27,18 @@
 
 Q_LOGGING_CATEGORY(proxyModel, "proxyModel")
 
-BenchmarkProxyModel::BenchmarkProxyModel(/*BmColumns* bmColumns, */QObject* parent)
-    : QSortFilterProxyModel(parent)/*, m_bmColumns(bmColumns)*/ {}
+BenchmarkProxyModel *BenchmarkProxyModel::m_pInstance = nullptr;
+
+BenchmarkProxyModel *BenchmarkProxyModel::getInstance()
+{
+    return m_pInstance;
+}
+
+BenchmarkProxyModel::BenchmarkProxyModel(QObject* parent)
+    : QSortFilterProxyModel(parent)
+{
+    m_pInstance = this;
+}
 
 bool BenchmarkProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {

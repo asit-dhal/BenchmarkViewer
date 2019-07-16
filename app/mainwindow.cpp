@@ -69,8 +69,7 @@ void MainWindow::init()
 	qRegisterMetaType<Benchmark>("Benchmark");
 
     new BenchmarkModel(this);
-	m_proxyModel = new BenchmarkProxyModel(this);
-
+    new BenchmarkProxyModel(this);
 }
 
 QAction* MainWindow::getOpenFileAction()
@@ -98,10 +97,6 @@ QAction* MainWindow::getAboutBenchmarkAppAction()
 	return m_aboutApp;
 }
 
-BenchmarkProxyModel* MainWindow::getBenchmarkProxyModel()
-{
-	return m_proxyModel;
-}
 
 void MainWindow::createActions() {
 	qCDebug(gui) << "Creating Actions";
@@ -194,9 +189,9 @@ void MainWindow::createWidgets() {
 	m_benchmarkView = new BenchmarkView(this);
 	m_benchmarkDelegate = new BenchmarkDelegate(this);
 
-    m_proxyModel->setSourceModel(BenchmarkModel::getInstance());
+    BenchmarkProxyModel::getInstance()->setSourceModel(BenchmarkModel::getInstance());
     m_benchmarkView->seBenchmarkColumnAttributes(BenchmarkModel::getInstance()); // strongly coupled
-	m_benchmarkView->setModel(m_proxyModel);
+    m_benchmarkView->setModel(BenchmarkProxyModel::getInstance());
 	m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
 	m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
 	m_benchmarkView->setSortingEnabled(true);
@@ -223,7 +218,7 @@ void MainWindow::createWidgets() {
 	m_selectedFilesWidget->hide();
 	m_toogleSelectedFileWidget->setChecked(m_selectedFilesWidget->isVisible());
 
-	m_selectionModel = new QItemSelectionModel(m_proxyModel);
+    m_selectionModel = new QItemSelectionModel(BenchmarkProxyModel::getInstance());
 	m_benchmarkView->setSelectionModel(m_selectionModel);
 }
 
@@ -278,7 +273,7 @@ void MainWindow::onBenchmarkFilter(QString filterText)
 {
 	qCDebug(gui) << "Benchmark filter: " << filterText;
 	QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
-	m_proxyModel->setFilterRegExp(regExp);
+    BenchmarkProxyModel::getInstance()->setFilterRegExp(regExp);
 }
 
 void MainWindow::onPlotSelection() 
@@ -288,7 +283,7 @@ void MainWindow::onPlotSelection()
 	{
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
-			auto srcIdx = m_proxyModel->mapToSource(idx);
+            auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
@@ -303,7 +298,7 @@ void MainWindow::onPlotAllRows()
 	{
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
-			auto srcIdx = m_proxyModel->mapToSource(idx);
+            auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
@@ -317,7 +312,7 @@ void MainWindow::onClearSelection()
 	{
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
-			auto srcIdx = m_proxyModel->mapToSource(idx);
+            auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}
@@ -332,7 +327,7 @@ void MainWindow::onClearAllRows()
 	{
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
-			auto srcIdx = m_proxyModel->mapToSource(idx);
+            auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}

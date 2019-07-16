@@ -34,14 +34,15 @@ Q_DECLARE_LOGGING_CATEGORY(proxyModel);
 class BenchmarkProxyModel : public QSortFilterProxyModel
 {
  public:
-	BenchmarkProxyModel(/*BmColumns* bmColumns, */QObject* parent = nullptr);
+    BenchmarkProxyModel(QObject* parent = nullptr);
+    static BenchmarkProxyModel *getInstance();
 
  protected:
 	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
 	bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
- //private:
-	//BmColumns* m_bmColumns;
+ private:
+    static BenchmarkProxyModel *m_pInstance;
 };
 
 #endif  // BENCHMARKPROXYMODEL_H
