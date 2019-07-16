@@ -41,9 +41,8 @@ class IAbstractParser
 
 enum class ParserType
 {
-	eUnknown,
-	eGoogleBenchmarkCsv,
-	eGoogleBenchmarkJson,
+    eGoogleBenchmarkCsv,
+    eGoogleBenchmarkJson
 };
 
 class ParserFactory

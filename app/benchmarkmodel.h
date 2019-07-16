@@ -46,6 +46,8 @@ class BenchmarkModel : public QAbstractTableModel
 {
 	Q_OBJECT
  public:
+
+    static BenchmarkModel* getInstance();
 	 enum class Columns : int
 	 {
 		 eInvalid = 100,
@@ -81,9 +83,11 @@ class BenchmarkModel : public QAbstractTableModel
 	void columnVisibilityChanged(Columns, bool);
 
  private:
-	 void initializeMetaData();
+    void initializeMetaData();
 	QList<BenchmarkViewUnit> m_benchmarks;
 	QMap<Columns, bool> m_columnsVisibility;
+
+    static BenchmarkModel *m_pInstance;
 };
 
 QString toString(BenchmarkModel::Columns col);

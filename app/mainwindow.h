@@ -95,8 +95,7 @@ public:
 	QAction* getExitAction();
 	QAction* getAboutBenchmarkAppAction();
 
-	BenchmarkModel* getBenchmarkModel();
-	BenchmarkProxyModel* getBenchmarkProxyModel();
+    BenchmarkProxyModel* getBenchmarkProxyModel();
 
  private:
 	QMenu* m_fileMenu;
@@ -118,8 +117,7 @@ public:
 	QStack<QString> m_files;
 	QListWidget* m_selectedFilesWidget;
 	BenchmarkProxyModel* m_proxyModel;
-	BenchmarkModel* m_benchmarkModel;
-	QItemSelectionModel* m_selectionModel;
+    QItemSelectionModel* m_selectionModel;
 	BenchmarkView* m_benchmarkView;
 	BenchmarkDelegate* m_benchmarkDelegate;
 	

@@ -29,9 +29,18 @@
 
 Q_LOGGING_CATEGORY(benchmarkModel, "benchmarkModel")
 
+BenchmarkModel *BenchmarkModel::m_pInstance = nullptr;
+
+BenchmarkModel *BenchmarkModel::getInstance()
+{
+    return m_pInstance;
+}
+
+
 BenchmarkModel::BenchmarkModel(QObject* parent)
     : QAbstractTableModel(parent)
 {
+    m_pInstance = this;
 	initializeMetaData();
 }
 

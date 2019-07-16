@@ -39,12 +39,8 @@ ParserType Helper::getParserTypeFromFilename(QString filename)
 	{
 		return ParserType::eGoogleBenchmarkJson;
 	}
-	else if (fi.suffix().compare("csv", Qt::CaseInsensitive) == 0)
+    else /*if (fi.suffix().compare("csv", Qt::CaseInsensitive) == 0)*/
 	{
 		return ParserType::eGoogleBenchmarkCsv;
-	}
-	else
-	{
-		return ParserType::eUnknown;
 	}
 }

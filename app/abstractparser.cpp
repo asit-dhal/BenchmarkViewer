@@ -41,8 +41,12 @@ QDebug operator<<(QDebug d, const ParserType& type)
 {
 	switch (type)
 	{
-	case ParserType::eGoogleBenchmarkCsv: d << "GoogleBenchmarkCsv";
-	case ParserType::eGoogleBenchmarkJson: d << "GoogleBenchmarkJson";
+    case ParserType::eGoogleBenchmarkCsv:
+        d << "GoogleBenchmarkCsv";
+        break;
+    case ParserType::eGoogleBenchmarkJson:
+        d << "GoogleBenchmarkJson";
+        break;
 	}
 	return d;
 }

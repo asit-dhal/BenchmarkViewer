@@ -76,13 +76,13 @@ void MainWindowPresenter::onAboutAppTriggered()
 
 void MainWindowPresenter::onNewBenchmark(QString filename, Benchmark benchmark)
 {
-	m_view->getBenchmarkModel()->addBenchmark(filename, benchmark);
+    BenchmarkModel::getInstance()->addBenchmark(filename, benchmark);
 	//m_benchmarkView->resizeColumnsToContents();
 }
 
 void MainWindowPresenter::onRemoveBenchmark(QString filename)
 {
-	m_view->getBenchmarkModel()->removeBenchmark(filename);
+    BenchmarkModel::getInstance()->removeBenchmark(filename);
 	//m_benchmarkView->resizeColumnsToContents();
 }
 

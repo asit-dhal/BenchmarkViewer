@@ -68,7 +68,7 @@ void MainWindow::init()
 	qRegisterMetaType<ParserType>("ParserType");
 	qRegisterMetaType<Benchmark>("Benchmark");
 
-	m_benchmarkModel = new BenchmarkModel(this);
+    new BenchmarkModel(this);
 	m_proxyModel = new BenchmarkProxyModel(this);
 
 }
@@ -96,11 +96,6 @@ QAction* MainWindow::getExitAction()
 QAction* MainWindow::getAboutBenchmarkAppAction()
 {
 	return m_aboutApp;
-}
-
-BenchmarkModel* MainWindow::getBenchmarkModel()
-{
-	return m_benchmarkModel;
 }
 
 BenchmarkProxyModel* MainWindow::getBenchmarkProxyModel()
@@ -199,8 +194,8 @@ void MainWindow::createWidgets() {
 	m_benchmarkView = new BenchmarkView(this);
 	m_benchmarkDelegate = new BenchmarkDelegate(this);
 
-	m_proxyModel->setSourceModel(m_benchmarkModel);
-	m_benchmarkView->seBenchmarkColumnAttributes(m_benchmarkModel); // strongly coupled
+    m_proxyModel->setSourceModel(BenchmarkModel::getInstance());
+    m_benchmarkView->seBenchmarkColumnAttributes(BenchmarkModel::getInstance()); // strongly coupled
 	m_benchmarkView->setModel(m_proxyModel);
 	m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
 	m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
@@ -238,8 +233,8 @@ void MainWindow::connectSignalsToSlots()
 	
 	connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this, SLOT(onBenchmarkFilter(QString)));
 
-	connect(m_benchmarkModel, &BenchmarkModel::measurementActive, m_chartView, &ChartViewWidget::onAddMeasurement);
-	connect(m_benchmarkModel, &BenchmarkModel::measurementInactive, m_chartView, &ChartViewWidget::onRemoveMeasurement);
+    connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementActive, m_chartView, &ChartViewWidget::onAddMeasurement);
+    connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementInactive, m_chartView, &ChartViewWidget::onRemoveMeasurement);
 
 	connect(m_selectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::onSelectionChanged);
 	connect(m_benchmarkView, &BenchmarkView::select, this, &MainWindow::onPlotSelection);
@@ -248,7 +243,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(m_benchmarkView, &BenchmarkView::clearAllRows, this, &MainWindow::onClearAllRows);
 
 	connect(m_chartView, &ChartViewWidget::measurementColorChanged, [&](int id, QString color) {
-		m_benchmarkModel->setMeasurementColor(id, color);
+        BenchmarkModel::getInstance()->setMeasurementColor(id, color);
 	});
 }
 
@@ -295,7 +290,7 @@ void MainWindow::onPlotSelection()
 		{
 			auto srcIdx = m_proxyModel->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
-			m_benchmarkModel->setData(srcIdx, true);
+            BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
 	}
 }
@@ -310,7 +305,7 @@ void MainWindow::onPlotAllRows()
 		{
 			auto srcIdx = m_proxyModel->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
-			m_benchmarkModel->setData(srcIdx, true);
+            BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
 	}
 }
@@ -324,7 +319,7 @@ void MainWindow::onClearSelection()
 		{
 			auto srcIdx = m_proxyModel->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
-			m_benchmarkModel->setData(srcIdx, false);
+            BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}
 	}
 }
@@ -339,7 +334,7 @@ void MainWindow::onClearAllRows()
 		{
 			auto srcIdx = m_proxyModel->mapToSource(idx);
 			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
-			m_benchmarkModel->setData(srcIdx, false);
+            BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}
 	}
 }
