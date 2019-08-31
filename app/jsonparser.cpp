@@ -55,22 +55,27 @@ Context JsonParser::parseContext(const QJsonObject& json)
 		if (ctxJObject.contains("date") && ctxJObject["date"].isString())
 		{
 			auto timestampStr = ctxJObject["date"].toString();
-			QDateTime timestamp = QDateTime::fromString(timestampStr, "yyyy-MM-dd HH:mm:ss");  // 2017-12-09 22:01:41
+            QDateTime timestamp = QDateTime::fromString(
+                timestampStr, "yyyy-MM-dd HH:mm:ss");  // 2017-12-09 22:01:41
 			ctx.setTimestamp(timestamp);
 		}
-		if (ctxJObject.contains("num_cpus") && ctxJObject["num_cpus"].isDouble()) 
+        if (ctxJObject.contains("num_cpus")
+            && ctxJObject["num_cpus"].isDouble())
 		{
 			ctx.setCpuCount(ctxJObject["num_cpus"].toInt());
 		}
-		if (ctxJObject.contains("mhz_per_cpu") && ctxJObject["mhz_per_cpu"].isDouble())
+        if (ctxJObject.contains("mhz_per_cpu")
+            && ctxJObject["mhz_per_cpu"].isDouble())
 		{
 			ctx.setCpuFrequency(ctxJObject["mhz_per_cpu"].toInt());
 		}
-		if (ctxJObject.contains("cpu_scaling_enabled") && ctxJObject["cpu_scaling_enabled"].isBool())
+        if (ctxJObject.contains("cpu_scaling_enabled")
+            && ctxJObject["cpu_scaling_enabled"].isBool())
 		{
 			ctx.setCpuScalingEnabled(ctxJObject["cpu_scaling_enabled"].toBool());
 		}
-		if (ctxJObject.contains("library_build_type") && ctxJObject["library_build_type"].isString())
+        if (ctxJObject.contains("library_build_type")
+            && ctxJObject["library_build_type"].isString())
 		{
 			ctx.setLibraryBuildType(ctxJObject["library_build_type"].toString());
 		}
@@ -99,12 +104,14 @@ QVector<Measurement> JsonParser::parseBenchmarks(const QJsonObject& json)
 				mmt.setName(jsonObj["name"].toString());
 			}
 
-			if (jsonObj.contains("iterations") && jsonObj["iterations"].isDouble())
+            if (jsonObj.contains("iterations")
+                && jsonObj["iterations"].isDouble())
 			{
 				mmt.setIterations(jsonObj["iterations"].toVariant().toLongLong());
 			}
 
-			if (jsonObj.contains("real_time") && jsonObj["real_time"].isDouble())
+            if (jsonObj.contains("real_time")
+                && jsonObj["real_time"].isDouble())
 			{
 				mmt.setRealTime(jsonObj["real_time"].toVariant().toLongLong());
 			}

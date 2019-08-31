@@ -22,8 +22,7 @@
 
 ========================================================================*/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QLoggingCategory>
 #include <QMainWindow>
@@ -36,7 +35,6 @@
 #include <QtCharts/QVXYModelMapper>
 #include <QThread>
 #include "benchmark.h"
-#include "chartviewwidget.h"
 #include "worker.h"
 #include "mainwindow_presenter.h"
 
@@ -64,7 +62,6 @@ class MainWindow : public QMainWindow {
 	void setRecentFileActions(QList<QAction*> recentFileActions);
 	void setCloseFileActions(QList<QAction*> closeFileActions);
 	void setViewColumnActions(QList<QAction*> viewColumnActions);
-	ChartViewWidget* getChartViewWidget();
 
  signals:
 	void newFileSelected(ParserType, QString);
@@ -78,11 +75,9 @@ class MainWindow : public QMainWindow {
 	void init();
 
  private slots:
-	void onSelectedFilesWidgetContextMenu(const QPoint& pos);
-	void onToogleSelectedFileWidget();
-	void onBenchmarkFilter(QString filter);
-	void onSelectionChanged(const QItemSelection& selected,
-                          const QItemSelection& deselected);
+    void onBenchmarkFilter(QString filter);
+    void onSelectionChanged(const QItemSelection& selected,
+                            const QItemSelection& deselected);
 	void onPlotSelection();
 	void onPlotAllRows();
 	void onClearSelection();
@@ -99,7 +94,6 @@ public:
 	QMenu* m_fileMenu;
 	QMenu* m_recentFileMenu;
 	QMenu* m_closeFileMenu;
-	QMenu* m_viewMenu;
 	QMenu* m_helpMenu;
 
 	QAction* m_openFileAction;
@@ -120,11 +114,7 @@ public:
 	
 	IAbstractParser* m_parser;
 	QChart* m_chart;
-	ChartViewWidget* m_chartView;
-	
 	QLineEdit* m_benchmarkNameFilter;
 
 	MainWindowPresenter *m_mainWindowPresenter;
 };
-
-#endif  // MAINWINDOW_H

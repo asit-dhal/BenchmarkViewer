@@ -37,7 +37,8 @@ void CsvParser::parse(QString filename)
 	QString fileContent = file.readAll();
 	file.close();
 
-	QStringList lines = fileContent.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+    QStringList lines = fileContent.split(QRegExp("[\r\n]"),
+                                          QString::SkipEmptyParts);
 
 	QStringList headerFields = parseHeaders(lines.at(0));
 	lines.pop_front();
@@ -57,7 +58,8 @@ QStringList CsvParser::parseHeaders(QString header)
 	return headerFields;
 }
 
-QList<Measurement> CsvParser::parseBenchmarks(QStringList& data, QStringList& header)
+QList<Measurement> CsvParser::parseBenchmarks(QStringList& data,
+                                              QStringList& header)
 {
 	QList<Measurement> mmts;
 	for (auto const& rec : data)
@@ -75,45 +77,55 @@ QList<Measurement> CsvParser::parseBenchmarks(QStringList& data, QStringList& he
 				name.replace("\"", "");
 				mmt.setName(name);
 			}
-			else if (header.at(i).compare("iterations", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("iterations",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setIterations(fields.at(i).toDouble());
 			}
-			else if (header.at(i).compare("real_time", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("real_time",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setRealTime(fields.at(i).toDouble());
 			}
-			else if (header.at(i).compare("cpu_time", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("cpu_time",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setCpuTime(fields.at(i).toDouble());
 			}
-			else if (header.at(i).compare("time_unit", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("time_unit",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setTimeUnit(fields.at(i));
 			} 
-			else if (header.at(i).compare("bytes_per_second", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("bytes_per_second",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setBytesPerSecond(fields.at(i).toDouble());
 			} 
-			else if (header.at(i).compare("items_per_second", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("items_per_second",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setItemsPerSecond(fields.at(i).toDouble());
 			}
-			else if (header.at(i).compare("label", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("label",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setLabel(fields.at(i).trimmed());
 			}
-			else if (header.at(i).compare("error_occured", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("error_occured",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setErrorOccured(fields.at(i).toInt());
 			}
-			else if (header.at(i).compare("error_message", Qt::CaseInsensitive) == 0)
+            else if (header.at(i).compare("error_message",
+                                          Qt::CaseInsensitive) == 0)
 			{
 				mmt.setErrorMessage(fields.at(i).trimmed());
 			}
 			else
 			{
-				qCDebug(parser) << "Error occured Unknown field: " << fields.at(i);
+                qCDebug(parser) << "Error occured Unknown field: "
+                                << fields.at(i);
 			}
 		}
 		mmts.append(mmt);

@@ -22,12 +22,9 @@
 
 ========================================================================*/
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#pragma once
 
 #include <QLoggingCategory>
 
 Q_DECLARE_LOGGING_CATEGORY(gui);
 Q_DECLARE_LOGGING_CATEGORY(parser);
-
-#endif  // GLOBALS_H

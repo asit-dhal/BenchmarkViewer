@@ -22,8 +22,7 @@
 
 ========================================================================*/
 
-#ifndef CHARTVIEWWIDGET_H
-#define CHARTVIEWWIDGET_H
+#pragma once
 
 #include <QBarCategoryAxis>
 #include <QBarSet>
@@ -43,6 +42,7 @@ QT_CHARTS_USE_NAMESPACE
 class ChartViewWidget : public QWidget {
 	Q_OBJECT
  public:
+    static ChartViewWidget* getInstance();
 	ChartViewWidget(QWidget* parent = nullptr);
 	bool exportChart(QString filename);
 
@@ -50,8 +50,8 @@ signals:
 	void measurementColorChanged(int, QString);
 
  public slots:
-  void onAddMeasurement(Measurement mmt);
-  void onRemoveMeasurement(Measurement mmt);
+  void onAddMeasurement(const Measurement &mmt);
+  void onRemoveMeasurement(const Measurement &mmt);
  
  
 private:
@@ -64,6 +64,6 @@ private:
   QChartView* m_chartView;
   QBarSeries* m_series;
   QMap<int, QBarSet*> m_barSet;
-};
 
-#endif  // CHARTVIEWWIDGET_H
+  static ChartViewWidget *m_pInstance;
+};

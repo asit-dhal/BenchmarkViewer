@@ -29,9 +29,21 @@
 
 Q_LOGGING_CATEGORY(chartView, "chartView");
 
+ChartViewWidget *ChartViewWidget::m_pInstance = nullptr;
+
+ChartViewWidget* ChartViewWidget::getInstance()
+{
+    Q_ASSERT(m_pInstance);
+    return m_pInstance;
+}
+
 ChartViewWidget::ChartViewWidget(QWidget* parent)
     : QWidget(parent), m_chartView(new QChartView)
 {
+    if (m_pInstance) {
+        m_pInstance->deleteLater();
+    }
+    m_pInstance = this;
 	init();
 	QHBoxLayout* mainLayout = new QHBoxLayout;
 	mainLayout->addWidget(m_chartView);
@@ -67,7 +79,7 @@ void ChartViewWidget::init()
 	m_chartView->setRenderHint(QPainter::Antialiasing);
 }
 
-void ChartViewWidget::onAddMeasurement(Measurement mmt) 
+void ChartViewWidget::onAddMeasurement(const Measurement &mmt)
 {
 	qCDebug(chartView) << "New Measurement: " << mmt;
 	QString name = mmt.getName();
@@ -78,7 +90,8 @@ void ChartViewWidget::onAddMeasurement(Measurement mmt)
 	m_barSet[mmt.getId()] = set;
 	m_series->append(set);
 	m_chart->axisY()->setMax(calculateMaxY() + 10);
-	QString hexColor = "#" + QString::number(set->brush().color().rgb(), 16).right(6).toUpper();
+    QString hexColor = "#" + QString::number(set->brush().color().rgb(), 16)
+                                 .right(6).toUpper();
 	emit measurementColorChanged(mmt.getId(), hexColor);
 }
 
@@ -99,7 +112,7 @@ double ChartViewWidget::calculateMaxY()
 	return maxY;
 }
 
-void ChartViewWidget::onRemoveMeasurement(Measurement mmt) 
+void ChartViewWidget::onRemoveMeasurement(const Measurement &mmt)
 {
 	qCDebug(chartView) << "Removed Measurement: " << mmt;
 	QBarSet* set = m_barSet[mmt.getId()];

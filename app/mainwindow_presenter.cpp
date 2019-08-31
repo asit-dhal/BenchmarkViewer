@@ -1,9 +1,16 @@
 #include "mainwindow_presenter.h"
+
+#include <QAction>
+#include <QApplication>
+#include <QCoreApplication>
+#include <QFileDialog>
+
 #include "mainwindow.h"
 #include "appconfig.h"
 #include "globals.h"
 #include "helper.h"
 #include "benchmarkmodel.h"
+#include "chartviewwidget.h"
 
 MainWindowPresenter::MainWindowPresenter(MainWindow* mainWindow, QObject* parent): QObject(parent), m_view(mainWindow)
 {
@@ -20,21 +27,30 @@ MainWindowPresenter::MainWindowPresenter(MainWindow* mainWindow, QObject* parent
 
 void MainWindowPresenter::connectSignalsToSlots()
 {
-	connect(this, &MainWindowPresenter::newFileSelected, &m_worker, &Worker::parse);
-	connect(&m_worker, &Worker::parsingFinished, this, &MainWindowPresenter::onNewBenchmark);
-	connect(this, &MainWindowPresenter::fileRemoved, this, &MainWindowPresenter::onRemoveBenchmark);
+    connect(this, &MainWindowPresenter::newFileSelected,
+            &m_worker, &Worker::parse);
+    connect(&m_worker, &Worker::parsingFinished,
+            this, &MainWindowPresenter::onNewBenchmark);
+    connect(this, &MainWindowPresenter::fileRemoved,
+            this, &MainWindowPresenter::onRemoveBenchmark);
 
-	connect(m_view->getOpenFileAction(), &QAction::triggered, this, &MainWindowPresenter::onOpenFileTriggered);
-	connect(m_view->getCloseAllFilesAction(), &QAction::triggered, this, &MainWindowPresenter::onCloseAllFilesTriggered);
-	connect(m_view->getExportChartAction(), &QAction::triggered, this, &MainWindowPresenter::onExportChartTriggered);
-	connect(m_view->getExitAction(), &QAction::triggered, this, &MainWindowPresenter::onExitTriggered);
-	connect(m_view->getAboutBenchmarkAppAction(), &QAction::triggered, this, &MainWindowPresenter::onAboutAppTriggered);
+    connect(m_view->getOpenFileAction(), &QAction::triggered,
+            this, &MainWindowPresenter::onOpenFileTriggered);
+    connect(m_view->getCloseAllFilesAction(), &QAction::triggered,
+            this, &MainWindowPresenter::onCloseAllFilesTriggered);
+    connect(m_view->getExportChartAction(), &QAction::triggered,
+            this, &MainWindowPresenter::onExportChartTriggered);
+    connect(m_view->getExitAction(), &QAction::triggered,
+            this, &MainWindowPresenter::onExitTriggered);
+    connect(m_view->getAboutBenchmarkAppAction(), &QAction::triggered,
+            this, &MainWindowPresenter::onAboutAppTriggered);
 }
 
 void MainWindowPresenter::onOpenFileTriggered()
 {
 	QString lastPath = readLastOpenedFilePath();
-	QStringList files = QFileDialog::getOpenFileNames(m_view, tr("Open Directory"), lastPath);
+    QStringList files = QFileDialog::getOpenFileNames(
+        m_view, tr("Open Directory"), lastPath);
 	for (auto file : files)
 	{
 		openFile(file);
@@ -52,9 +68,10 @@ void MainWindowPresenter::onCloseAllFilesTriggered()
 void MainWindowPresenter::onExportChartTriggered()
 {
     QString lastPath = readLastExportedFilePath();
-    QString filename = QFileDialog::getSaveFileName(m_view, tr("Save Chart"), lastPath, tr("png file (*.png)"));
+    QString filename = QFileDialog::getSaveFileName(
+        m_view, tr("Save Chart"), lastPath, tr("png file (*.png)"));
     updateLastExportedFilePath(QFileInfo(filename).path());
-	if (!m_view->getChartViewWidget()->exportChart(filename))
+    if (!ChartViewWidget::getInstance()->exportChart(filename))
 	{
 		qCCritical(gui) << "Export failed";
 	}
@@ -68,8 +85,10 @@ void MainWindowPresenter::onExitTriggered()
 
 void MainWindowPresenter::onAboutAppTriggered()
 {
-	QString text = QString(
-		"Benchmark Viewer to plot google microbenchmark data ") + QChar(0x00A9) + QString(" 2018 Asit Dhal");
+    QString text = QString("Benchmark Viewer to plot google"
+                           " microbenchmark data ")
+                   + QChar(0x00A9)
+                   + QString(" 2018 Asit Dhal");
 
 	QMessageBox::about(m_view, tr("About BenchmarkViewer"), text);
 }
@@ -94,7 +113,8 @@ void MainWindowPresenter::openFile(QString filename)
 		updateRecentFiles(filename);
 		updateRecentFilesActions();
 
-		emit newFileSelected(Helper::getParserTypeFromFilename(filename), filename);
+        emit newFileSelected(Helper::getParserTypeFromFilename(filename),
+                             filename);
 		
 		updateLastOpenedFilePath(QFileInfo(filename).path());
 		m_openedFiles.append(filename);
@@ -116,19 +136,22 @@ void MainWindowPresenter::updateRecentFilesActions()
 {
 	QList<QAction*> recentFileActions;
 	QStringList recentFiles = readRecentFiles();
-	qCDebug(gui) << "Recent Files: " << recentFiles.size() << "->" << recentFiles;
+    qCDebug(gui) << "Recent Files: " << recentFiles.size()
+                 << "->" << recentFiles;
 	int i = 1;
 	foreach(QString recentFile, recentFiles)
 	{
 		if (recentFile.isEmpty())
 			continue;
-		QString text = tr("&%1 %2").arg(i).arg(QFileInfo(recentFile).fileName());
+        QString text = tr("&%1 %2").arg(i)
+                           .arg(QFileInfo(recentFile).fileName());
 		QAction* recentFileAction = new QAction(text, m_view);
 		recentFileAction->setData(recentFile);
 		recentFileAction->setVisible(true);
-		connect(recentFileAction, &QAction::triggered, [this, _recentFile = recentFile]() {
-			openFile(_recentFile);
-		});
+        connect(recentFileAction, &QAction::triggered,
+                [this, _recentFile = recentFile]() {
+                    openFile(_recentFile);
+            });
 		i++;
 		recentFileActions.append(recentFileAction);
 	}
@@ -143,7 +166,8 @@ void MainWindowPresenter::updateCloseFileActions()
 	{
 		if (openedFile.isEmpty())
 			continue;
-		QString text = tr("&%1 %2").arg(i).arg(QFileInfo(openedFile).fileName());
+        QString text = tr("&%1 %2").arg(i)
+                           .arg(QFileInfo(openedFile).fileName());
 		QAction* closeFileAction = new QAction(text, m_view);
 		closeFileAction->setData(openedFile);
 		closeFileAction->setVisible(true);

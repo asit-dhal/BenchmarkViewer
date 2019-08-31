@@ -48,6 +48,7 @@
 #include "csvparser.h"
 #include "globals.h"
 #include "helper.h"
+#include "chartviewwidget.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
@@ -112,11 +113,6 @@ void MainWindow::createActions() {
 	m_exitAction->setStatusTip(tr("Exit"));
 	m_exitAction->setShortcuts(QKeySequence::Quit);
 
-	m_toogleSelectedFileWidget = new QAction(tr("Toggle selected file widget"), this);
-	m_toogleSelectedFileWidget->setStatusTip(tr("Toggle selected file widget"));
-	m_toogleSelectedFileWidget->setCheckable(true);
-	connect(m_toogleSelectedFileWidget, &QAction::triggered, this, &MainWindow::onToogleSelectedFileWidget);
-
 	m_aboutApp = new QAction(tr("About BenchmarkViewer"), this);
 	m_aboutApp->setStatusTip(tr("About BenchmarkViewer"));
 }
@@ -147,11 +143,6 @@ void MainWindow::setCloseFileActions(QList<QAction*> closeFileActions)
 	}
 }
 
-ChartViewWidget* MainWindow::getChartViewWidget()
-{
-	return m_chartView;
-}
-
 void MainWindow::createMenus() 
 {
 	qCDebug(gui) << "Creating Menus";
@@ -164,33 +155,29 @@ void MainWindow::createMenus()
 	m_fileMenu->addAction(m_exportChart);
 	m_fileMenu->addAction(m_exitAction);
 
-	m_viewMenu = menuBar()->addMenu(tr("&View"));
-	m_viewMenu->addAction(m_toogleSelectedFileWidget);
-
 	m_helpMenu = menuBar()->addMenu(tr("&Help"));
 	m_helpMenu->addAction(m_aboutApp);
 }
 
-void MainWindow::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) 
+void MainWindow::onSelectionChanged(const QItemSelection& selected,
+                                    const QItemSelection& deselected)
 {
 	Q_UNUSED(selected);
 	Q_UNUSED(deselected);
 }
 
-void MainWindow::createWidgets() {
-	qCDebug(gui) << "Creating Widgets";
-	m_selectedFilesWidget = new QListWidget();
-	m_selectedFilesWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(m_selectedFilesWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(onSelectedFilesWidgetContextMenu(QPoint)));
-
+void MainWindow::createWidgets()
+{
 	QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
 	m_benchmarkNameFilter = new QLineEdit(this);
 	m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
 	m_benchmarkView = new BenchmarkView(this);
 	m_benchmarkDelegate = new BenchmarkDelegate(this);
 
-    BenchmarkProxyModel::getInstance()->setSourceModel(BenchmarkModel::getInstance());
-    m_benchmarkView->seBenchmarkColumnAttributes(BenchmarkModel::getInstance()); // strongly coupled
+    BenchmarkProxyModel::getInstance()->setSourceModel(
+        BenchmarkModel::getInstance());
+    m_benchmarkView->seBenchmarkColumnAttributes(
+        BenchmarkModel::getInstance()); // strongly coupled
     m_benchmarkView->setModel(BenchmarkProxyModel::getInstance());
 	m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
 	m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
@@ -204,21 +191,17 @@ void MainWindow::createWidgets() {
 	benchmarkLayout->addWidget(m_benchmarkView);
 	benckmarkSelectorGB->setLayout(benchmarkLayout);
 
-	m_chartView = new ChartViewWidget(this);
+    new ChartViewWidget(this);
 
 	QSplitter* splitter = new QSplitter(this);
-	splitter->addWidget(m_selectedFilesWidget);
-	splitter->addWidget(benckmarkSelectorGB);
-	splitter->addWidget(m_chartView);
-	splitter->setStretchFactor(0, 1);
-	splitter->setStretchFactor(1, 2);
-	splitter->setStretchFactor(2, 4);
-	setCentralWidget(splitter);
+    splitter->addWidget(benckmarkSelectorGB);
+    splitter->addWidget(ChartViewWidget::getInstance());
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 2);
+    setCentralWidget(splitter);
 
-	m_selectedFilesWidget->hide();
-	m_toogleSelectedFileWidget->setChecked(m_selectedFilesWidget->isVisible());
-
-    m_selectionModel = new QItemSelectionModel(BenchmarkProxyModel::getInstance());
+    m_selectionModel = new QItemSelectionModel(
+        BenchmarkProxyModel::getInstance());
 	m_benchmarkView->setSelectionModel(m_selectionModel);
 }
 
@@ -226,48 +209,31 @@ void MainWindow::connectSignalsToSlots()
 {
 	qCDebug(gui) << "Connecting Signals to Slots";
 	
-	connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this, SLOT(onBenchmarkFilter(QString)));
+    connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)),
+            this, SLOT(onBenchmarkFilter(QString)));
 
-    connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementActive, m_chartView, &ChartViewWidget::onAddMeasurement);
-    connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementInactive, m_chartView, &ChartViewWidget::onRemoveMeasurement);
+    connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementActive,
+            ChartViewWidget::getInstance(), &ChartViewWidget::onAddMeasurement);
+    connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementInactive,
+            ChartViewWidget::getInstance(), &ChartViewWidget::onRemoveMeasurement);
 
-	connect(m_selectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::onSelectionChanged);
-	connect(m_benchmarkView, &BenchmarkView::select, this, &MainWindow::onPlotSelection);
-	connect(m_benchmarkView, &BenchmarkView::selectAllRows, this, &MainWindow::onPlotAllRows);
-	connect(m_benchmarkView, &BenchmarkView::clearSelection, this, &MainWindow::onClearSelection);
-	connect(m_benchmarkView, &BenchmarkView::clearAllRows, this, &MainWindow::onClearAllRows);
+    connect(m_selectionModel, &QItemSelectionModel::selectionChanged,
+            this, &MainWindow::onSelectionChanged);
+    connect(m_benchmarkView, &BenchmarkView::select,
+            this, &MainWindow::onPlotSelection);
+    connect(m_benchmarkView, &BenchmarkView::selectAllRows,
+            this, &MainWindow::onPlotAllRows);
+    connect(m_benchmarkView, &BenchmarkView::clearSelection,
+            this, &MainWindow::onClearSelection);
+    connect(m_benchmarkView, &BenchmarkView::clearAllRows,
+            this, &MainWindow::onClearAllRows);
 
-	connect(m_chartView, &ChartViewWidget::measurementColorChanged, [&](int id, QString color) {
-        BenchmarkModel::getInstance()->setMeasurementColor(id, color);
-	});
+    connect(ChartViewWidget::getInstance(), &ChartViewWidget::measurementColorChanged,
+            [&](int id, QString color) {
+                BenchmarkModel::getInstance()->setMeasurementColor(id, color);
+            });
 }
 
-void MainWindow::onSelectedFilesWidgetContextMenu(const QPoint& pos)
-{
-	QPoint globalPos = m_selectedFilesWidget->mapToGlobal(pos);
-	QMenu contextMenu;
-	contextMenu.addAction(tr("Delete"), this, [this]() {
-		for (int i = 0; i < m_selectedFilesWidget->selectedItems().size(); ++i)
-		{
-			QListWidgetItem* item = m_selectedFilesWidget->takeItem(m_selectedFilesWidget->currentRow());
-			emit selectedFileDeleted(item->data(Qt::EditRole).toString());
-			delete item;
-		}
-	});
-	contextMenu.exec(globalPos);
-}
-
-void MainWindow::onToogleSelectedFileWidget() 
-{
-	if (m_selectedFilesWidget->isVisible())
-	{
-		m_selectedFilesWidget->hide();
-	}
-	else
-	{
-		m_selectedFilesWidget->show();
-	}
-}
 
 void MainWindow::onBenchmarkFilter(QString filterText)
 {
@@ -284,7 +250,8 @@ void MainWindow::onPlotSelection()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
+            qCDebug(gui) << "proxy model index: " << idx <<
+                " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
 	}
@@ -299,7 +266,8 @@ void MainWindow::onPlotAllRows()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
+            qCDebug(gui) << "proxy model index: " << idx
+                         << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
 	}
@@ -313,7 +281,8 @@ void MainWindow::onClearSelection()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
+            qCDebug(gui) << "proxy model index: " << idx
+                         << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}
 	}
@@ -328,7 +297,8 @@ void MainWindow::onClearAllRows()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-			qCDebug(gui) << "proxy model index: " << idx << " source model index : " << srcIdx;
+            qCDebug(gui) << "proxy model index: " << idx
+                         << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}
 	}

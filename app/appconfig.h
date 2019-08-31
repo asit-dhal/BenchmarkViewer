@@ -37,4 +37,5 @@ void updateLastOpenedFilePath(QString path);
 
 QString readLastExportedFilePath();
 void updateLastExportedFilePath(const QString &path);
+
 #endif  // APPCONFIG_H

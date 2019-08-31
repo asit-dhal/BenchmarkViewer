@@ -22,23 +22,19 @@
 
 ========================================================================*/
 
-#ifndef BENCHMARKDELEGATE_H
-#define BENCHMARKDELEGATE_H
+#pragma once
 
 #include <QStyledItemDelegate>
 
 class BenchmarkDelegate : public QStyledItemDelegate {
-  Q_OBJECT
- public:
-  BenchmarkDelegate(QObject* parent = nullptr);
-  void paint(QPainter* painter,
-             const QStyleOptionViewItem& option,
-             const QModelIndex& index) const override;
+    Q_OBJECT
 
-  bool editorEvent(QEvent* event,
-                   QAbstractItemModel* model,
-                   const QStyleOptionViewItem& option,
-                   const QModelIndex& index) override;
+public:
+    BenchmarkDelegate(QObject* parent = nullptr);
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override;
+    bool editorEvent(QEvent* event, QAbstractItemModel* model,
+                     const QStyleOptionViewItem& option,
+                     const QModelIndex& index) override;
 };
 
-#endif  // BENCHMARKDELEGATE_H

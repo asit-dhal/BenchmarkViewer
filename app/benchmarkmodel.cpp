@@ -36,7 +36,6 @@ BenchmarkModel *BenchmarkModel::getInstance()
     return m_pInstance;
 }
 
-
 BenchmarkModel::BenchmarkModel(QObject* parent)
     : QAbstractTableModel(parent)
 {
@@ -49,10 +48,8 @@ const int BenchmarkModel::COLUMN_COUNT = 7;
 void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark)
 {
 	auto mmt = benchmark.getMeasurements();
-	qCDebug(benchmarkModel) << "Adding benchmark file: " << filename;
-	beginResetModel();
-	for (auto itr = mmt.begin(); itr != mmt.end(); itr++)
-	{
+    beginResetModel();
+    for (auto itr = mmt.begin(); itr != mmt.end(); itr++) {
 		BenchmarkViewUnit unit;
 		unit.filename = filename;
 		unit.measurement = *itr;
@@ -65,70 +62,50 @@ void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark)
 void BenchmarkModel::removeBenchmark(QString filename) 
 {
 	QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
-	qCDebug(benchmarkModel) << "Removing benchmark file: " << filename;
 
 	beginResetModel();
-	while (itr != m_benchmarks.end()) 
-	{
-		if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) 
-		{
-			if (itr->isSelected) 
-			{
+    while (itr != m_benchmarks.end())  {
+        if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) {
+            if (itr->isSelected) {
 				emit measurementInactive(itr->measurement);
 			}
 			itr = m_benchmarks.erase(itr);
-		}
-		else
-		{
+        } else {
 			++itr;
 		}
 	}
 	endResetModel();
-
-	qCDebug(benchmarkModel) << "All benchmarks removed from the file: "
-                          << filename;
 }
 
 void BenchmarkModel::setMeasurementColor(int id, QString color)
 {
-	qCDebug(benchmarkModel) << "Setting Measurement id=" << id << " color=" << color;
-	for (auto rowIndex = 0; rowIndex < rowCount(); rowIndex++)
-	{
-		if (m_benchmarks[rowIndex].measurement.getId() == id)
-		{
-			setData(createIndex(rowIndex, columnCount()), QVariant::fromValue(color), Qt::BackgroundColorRole);
+    qCDebug(benchmarkModel) << "Setting Measurement id=" << id
+                            << " color=" << color;
+    for (auto rowIndex = 0; rowIndex < rowCount(); rowIndex++) {
+        if (m_benchmarks[rowIndex].measurement.getId() == id) {
+            setData(createIndex(rowIndex, columnCount()),
+                    QVariant::fromValue(color), Qt::BackgroundColorRole);
 			break;
 		}
 	}
 }
 
-QVariant BenchmarkModel::headerData(int section,
-                                    Qt::Orientation orientation,
+QVariant BenchmarkModel::headerData(int section, Qt::Orientation orientation,
                                     int role) const
 {
-	if (role != Qt::DisplayRole) 
-	{
+    if (role != Qt::DisplayRole) {
 		return QVariant();
 	}
 
-	if (orientation == Qt::Horizontal) 
-	{
-
-		if (static_cast<Columns>(section) != Columns::eInvalid) 
-		{
+    if (orientation == Qt::Horizontal) {
+        if (static_cast<Columns>(section) != Columns::eInvalid) {
 			return toString(static_cast<Columns>(section));
-		} 
-		else 
-		{
+        } else  {
 			return QVariant();
 		}
-	}
-	else if (orientation == Qt::Vertical) 
-	{
+    } else if (orientation == Qt::Vertical) {
 		return QString("%1").arg(section + 1);
-	}
-	else
-	{
+    } else {
 		return QVariant();
 	}
 }
@@ -153,12 +130,10 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const
 	if (index.row() >= m_benchmarks.size() || index.row() < 0)
 		return QVariant();
 
-	if (role == Qt::DisplayRole)
-	{
+    if (role == Qt::DisplayRole) {
 		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
 		Columns col = static_cast<Columns>(index.column());
-		switch (col)
-		{
+        switch (col) {
 		case Columns::eStatus:
 			return viewunit.isSelected;
 		case Columns::eName:
@@ -178,12 +153,10 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const
 		}
 	}
 
-	if (role == Qt::ToolTipRole)
-	{
+    if (role == Qt::ToolTipRole) {
 		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
 		Columns col = static_cast<Columns>(index.column());
-		switch (col)
-		{
+        switch (col) {
 		case Columns::eFilename:
 			return viewunit.filename;
 		default:
@@ -191,23 +164,15 @@ QVariant BenchmarkModel::data(const QModelIndex& index, int role) const
 		}
 	}
 
-	if (role == Qt::BackgroundColorRole) 
-	{
+    if (role == Qt::BackgroundColorRole) {
 		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-		if (viewunit.isSelected)
-		{
-			if (viewunit.hexColor == "#000000")
-			{
+        if (viewunit.isSelected) {
+            if (viewunit.hexColor == "#000000") {
 				return QColor(Qt::lightGray);
-			}
-			else
-			{
+            } else {
 				return QColor(viewunit.hexColor);
 			}
-			
-		}
-		else 
-		{
+        } else {
 			return QColor(Qt::white);
 		}
 	}
@@ -223,33 +188,29 @@ Qt::ItemFlags BenchmarkModel::flags(const QModelIndex& index) const
 	return QAbstractItemModel::flags(index);
 }
 
-bool BenchmarkModel::setData(const QModelIndex& index, const QVariant& value, int role)
+bool BenchmarkModel::setData(const QModelIndex& index, const QVariant& value,
+                             int role)
 {
-	if (index.isValid())
-	{
+    if (index.isValid()) {
 		auto row = index.row();
-		if (role == Qt::EditRole)
-		{
-			Columns col = static_cast<Columns>(index.column());
-			if (col == Columns::eStatus && m_benchmarks[row].isSelected != value.toBool())
-			{
-				m_benchmarks[row].isSelected = value.toBool();
-				emit dataChanged(createIndex(index.row(), 0), createIndex(index.row(), COLUMN_COUNT - 1));
 
-				if (m_benchmarks[row].isSelected)
-				{
+        if (role == Qt::EditRole) {
+			Columns col = static_cast<Columns>(index.column());
+            if (col == Columns::eStatus
+                && m_benchmarks[row].isSelected != value.toBool()) {
+				m_benchmarks[row].isSelected = value.toBool();
+                emit dataChanged(createIndex(index.row(), 0),
+                                 createIndex(index.row(), COLUMN_COUNT - 1));
+
+                if (m_benchmarks[row].isSelected) {
 					emit measurementActive(m_benchmarks[row].measurement);
-				}
-				else
-				{
+                } else {
 					emit measurementInactive(m_benchmarks[row].measurement);
 				}
 
 				return true;
 			}
-		}
-		else if (role == Qt::BackgroundColorRole)
-		{
+        } else if (role == Qt::BackgroundColorRole) {
 			m_benchmarks[row].hexColor = value.toString();
 			return true;
 		}
@@ -260,7 +221,6 @@ bool BenchmarkModel::setData(const QModelIndex& index, const QVariant& value, in
 
 void BenchmarkModel::initializeMetaData()
 {
-
 	m_columnsVisibility[Columns::eStatus] = true;
 	m_columnsVisibility[Columns::eName] = true;
 	m_columnsVisibility[Columns::eIterations] = true;
@@ -297,4 +257,3 @@ QString toString(BenchmarkModel::Columns col)
 	default: return QObject::tr("Unknown");
 	}
 }
-

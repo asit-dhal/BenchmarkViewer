@@ -22,8 +22,7 @@
 
 ========================================================================*/
 
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 
 #include <QJsonObject>
 #include "abstractparser.h"
@@ -39,5 +38,3 @@ class JsonParser : public IAbstractParser
 	QVector<Measurement> parseBenchmarks(const QJsonObject& json);
 	Benchmark m_benchmark;
 };
-
-#endif  // PARSER_H

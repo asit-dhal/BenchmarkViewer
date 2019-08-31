@@ -148,13 +148,14 @@ void Measurement::setErrorMessage(const QString& errorMessage)
 QDebug operator<<(QDebug d, const Measurement& mmt) 
 {
 	d << "id: " << mmt.getId() << "name: " << mmt.getName()
-		<< " iterations: " << mmt.getIterations()
-		<< " real_time: " << mmt.getRealTime() << " cpu_time: " << mmt.getCpuTime()
-		<< " time_unit: " << mmt.getTimeUnit();
+      << " iterations: " << mmt.getIterations()
+      << " real_time: " << mmt.getRealTime()
+      << " cpu_time: " << mmt.getCpuTime()
+      << " time_unit: " << mmt.getTimeUnit();
 	d << " bytes_per_second: " << mmt.getBytesPerSecond()
-		<< " items_per_second: " << mmt.getItemsPerSecond()
-		<< " label: " << mmt.getLabel()
-		<< " error_occured: " << mmt.getErrorOccured()
-		<< " error_message: " << mmt.getErrorMessage();
+      << " items_per_second: " << mmt.getItemsPerSecond()
+      << " label: " << mmt.getLabel()
+      << " error_occured: " << mmt.getErrorOccured()
+      << " error_message: " << mmt.getErrorMessage();
 	return d;
 }

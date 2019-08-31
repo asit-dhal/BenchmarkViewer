@@ -22,8 +22,8 @@
 
 ========================================================================*/
 
-#ifndef HELPER_H
-#define HELPER_H
+#pragma once
+
 #include "abstractparser.h"
 #include <QString>
 
@@ -35,5 +35,3 @@ class Helper {
  private:
   static int m_measurementId;
 };
-
-#endif  // HELPER_H

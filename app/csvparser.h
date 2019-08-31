@@ -22,8 +22,7 @@
 
 ========================================================================*/
 
-#ifndef CSVPARSER_H
-#define CSVPARSER_H
+#pragma once
 
 #include "abstractparser.h"
 
@@ -38,5 +37,3 @@ class CsvParser : public IAbstractParser {
 	QList<Measurement> parseBenchmarks(QStringList& data, QStringList& header);
 	Benchmark m_benchmark;
 };
-
-#endif  // CSVPARSER_H

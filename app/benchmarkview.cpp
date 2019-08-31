@@ -33,24 +33,31 @@ BenchmarkView::BenchmarkView(QWidget* parent)
 	m_header = horizontalHeader();
 	m_header->setSectionsMovable(true);
 	m_header->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(m_header, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onContextMenuOnHeader(const QPoint&)));
+    connect(m_header, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(onContextMenuOnHeader(const QPoint&)));
 
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onContextMenuOnBody(const QPoint&)));
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(onContextMenuOnBody(const QPoint&)));
 	
 	m_moveLastAction = new QAction("MoveLast", this);
-	connect(m_moveLastAction, SIGNAL(triggered(bool)), this, SLOT(onSlotMoveLast()));
+    connect(m_moveLastAction, SIGNAL(triggered(bool)),
+            this, SLOT(onSlotMoveLast()));
 	m_moveFirstAction = new QAction("MoveFirst", this);
-	connect(m_moveFirstAction, SIGNAL(triggered(bool)), this, SLOT(onSlotMoveFirst()));
+    connect(m_moveFirstAction, SIGNAL(triggered(bool)),
+            this, SLOT(onSlotMoveFirst()));
 
 	m_select = new QAction(tr("Select"), this);
 	connect(m_select, &QAction::triggered, [&]() { emit this->select(); });
 	m_selectAll = new QAction(tr("Select All"), this);
-	connect(m_selectAll, &QAction::triggered, [&]() { emit this->selectAllRows(); });
+    connect(m_selectAll, &QAction::triggered,
+            [&]() { emit this->selectAllRows(); });
 	m_clearSelection = new QAction(tr("Clear Selection"), this);
-	connect(m_clearSelection, &QAction::triggered, [&]() { emit this->clearSelection(); });
+    connect(m_clearSelection, &QAction::triggered,
+            [&]() { emit this->clearSelection(); });
 	m_clearAllRows = new QAction(tr("Clear All rows"), this);
-	connect(m_clearAllRows, &QAction::triggered, [&]() { emit this->clearAllRows(); });
+    connect(m_clearAllRows, &QAction::triggered,
+            [&]() { emit this->clearAllRows(); });
 
 }
 
@@ -63,14 +70,16 @@ void BenchmarkView::seBenchmarkColumnAttributes(BenchmarkModel *bmModel)
 		showHideColumn->setCheckable(true);
 		showHideColumn->setChecked(bmModel->getColumnVisibility(col));
 		connect(showHideColumn, &QAction::triggered, this, [=, _col=col]() {
-				bmModel->setColumnVisibility(_col, !bmModel->getColumnVisibility(_col));
+                bmModel->setColumnVisibility(
+                  _col,!bmModel->getColumnVisibility(_col));
 		});
 		m_columnShowHideActions.append(showHideColumn);
 	}
 
 	connect(bmModel, &BenchmarkModel::columnVisibilityChanged,
 		[&](BenchmarkModel::Columns col, bool visibility) {
-				qCDebug(gui) << "col visibility changed: " << toString(col) << " visibility: " << visibility;
+                qCDebug(gui) << "col visibility changed: " << toString(col)
+                             << " visibility: " << visibility;
 				(visibility == true) ? onShowColumn(col) : onHideColumn(col);
 		});
 }

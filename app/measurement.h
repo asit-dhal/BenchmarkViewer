@@ -21,9 +21,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-
-#ifndef ITEM_H
-#define ITEM_H
+#pragma once
 
 #include <QDebug>
 #include <QString>
@@ -80,5 +78,3 @@ class Measurement {
 Q_DECLARE_METATYPE(Measurement);
 
 QDebug operator<<(QDebug d, const Measurement& mmt);
-
-#endif  // ITEM_H

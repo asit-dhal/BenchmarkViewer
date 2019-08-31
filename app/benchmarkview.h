@@ -22,8 +22,7 @@
 
 ========================================================================*/
 
-#ifndef BENCHMARKVIEW_H
-#define BENCHMARKVIEW_H
+#pragma once
 
 #include <QTableView>
 #include "benchmarkmodel.h"
@@ -67,5 +66,3 @@ class BenchmarkView : public QTableView
 	QAction* m_clearAllRows;
 	QList<int> m_currentHiddenColumns;
 };
-
-#endif  // BENCHMARKVIEW_H

@@ -21,9 +21,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-
-#ifndef BENCHMARKMODEL_H
-#define BENCHMARKMODEL_H
+#pragma once
 
 #include <QAbstractTableModel>
 #include <QList>
@@ -62,18 +60,21 @@ class BenchmarkModel : public QAbstractTableModel
 
 	 static const int COLUMN_COUNT;
 
-	explicit BenchmarkModel(/*BmColumns* bmColumns, */QObject* parent = nullptr);
+    explicit BenchmarkModel(QObject* parent = nullptr);
 	void addBenchmark(QString filename, Benchmark benchmarks);
 	void removeBenchmark(QString filename);
 	void setMeasurementColor(int id, QString color);
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role = Qt::DisplayRole) const override;
 
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant data(const QModelIndex& index,
+                  int role = Qt::DisplayRole) const override;
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
-	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+    bool setData(const QModelIndex& index,
+                 const QVariant& value, int role = Qt::EditRole) override;
 	bool getColumnVisibility(Columns col);
 	void setColumnVisibility(Columns col, bool visibility);
 
@@ -91,6 +92,3 @@ class BenchmarkModel : public QAbstractTableModel
 };
 
 QString toString(BenchmarkModel::Columns col);
-
-
-#endif  // BENCHMARKMODEL_H
