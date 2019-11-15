@@ -34,59 +34,56 @@ Q_DECLARE_LOGGING_CATEGORY(benchmarkModel);
 
 struct BenchmarkViewUnit 
 {
-	Measurement measurement;
-	QString filename;
-	QString hexColor{ "#000000" };
-	bool isSelected{false};
+    Measurement measurement;
+    QString filename;
+    QString hexColor{ "#000000" };
+    bool isSelected{false};
 };
 
 class BenchmarkModel : public QAbstractTableModel 
 {
-	Q_OBJECT
- public:
+    Q_OBJECT
+public:
 
     static BenchmarkModel* getInstance();
-	 enum class Columns : int
-	 {
-		 eInvalid = 100,
-		 eStatus = 0,
-		 eName,
-		 eIterations,
-		 eRealTime,
-		 eCpuTime,
-		 eTimeUnit,
-		 eFilename
-	 };
+    enum class Columns : int
+    {
+        eInvalid = 100,
+        eStatus = 0,
+        eName,
+        eIterations,
+        eRealTime,
+        eCpuTime,
+        eTimeUnit,
+        eFilename
+    };
 
-	 static const int COLUMN_COUNT;
+    static const int COLUMN_COUNT;
 
     explicit BenchmarkModel(QObject* parent = nullptr);
-	void addBenchmark(QString filename, Benchmark benchmarks);
-	void removeBenchmark(QString filename);
-	void setMeasurementColor(int id, QString color);
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const override;
+    void addBenchmark(QString filename, Benchmark benchmarks);
+    void removeBenchmark(QString filename);
+    void setMeasurementColor(int id, QString color);
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    QVariant data(const QModelIndex& index,
-                  int role = Qt::DisplayRole) const override;
-	Qt::ItemFlags flags(const QModelIndex& index) const override;
-    bool setData(const QModelIndex& index,
-                 const QVariant& value, int role = Qt::EditRole) override;
-	bool getColumnVisibility(Columns col);
-	void setColumnVisibility(Columns col, bool visibility);
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+    bool getColumnVisibility(Columns col);
+    void setColumnVisibility(Columns col, bool visibility);
 
- signals:
-	void measurementActive(Measurement);
-	void measurementInactive(Measurement);
-	void columnVisibilityChanged(Columns, bool);
+signals:
+    void measurementActive(Measurement);
+    void measurementInactive(Measurement);
+    void columnVisibilityChanged(Columns, bool);
 
- private:
+private:
     void initializeMetaData();
-	QList<BenchmarkViewUnit> m_benchmarks;
-	QMap<Columns, bool> m_columnsVisibility;
+    QList<BenchmarkViewUnit> m_benchmarks;
+    QMap<Columns, bool> m_columnsVisibility;
 
     static BenchmarkModel *m_pInstance;
 };

@@ -25,7 +25,7 @@ public slots:
 	void onRemoveBenchmark(QString filename);
 
 signals:
-	void newFileSelected(ParserType, QString);
+    void newFileSelected(ParserType, const QString &);
 	void fileRemoved(QString);
 
 private:

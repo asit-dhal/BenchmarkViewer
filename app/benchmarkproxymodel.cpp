@@ -40,8 +40,7 @@ BenchmarkProxyModel::BenchmarkProxyModel(QObject* parent)
     m_pInstance = this;
 }
 
-bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
-                                   const QModelIndex& right) const
+bool BenchmarkProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
 	QVariant leftData = sourceModel()->data(left);
 	QVariant rightData = sourceModel()->data(right);
@@ -57,13 +56,11 @@ bool BenchmarkProxyModel::lessThan(const QModelIndex& left,
     case Columns::eName:
     case Columns::eFilename:
     default:
-        return QString::localeAwareCompare(leftData.toString(),
-                                           rightData.toString()) < 0;
+        return QString::localeAwareCompare(leftData.toString(), rightData.toString()) < 0;
 	}
 }
 
-bool BenchmarkProxyModel::filterAcceptsRow(int sourceRow,
-                                           const QModelIndex& sourceParent) const
+bool BenchmarkProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
     QModelIndex nameIndex = sourceModel()->index(sourceRow,
         static_cast<int>(BenchmarkModel::Columns::eName), sourceParent);

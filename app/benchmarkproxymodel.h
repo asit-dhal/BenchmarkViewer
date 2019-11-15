@@ -37,10 +37,8 @@ class BenchmarkProxyModel : public QSortFilterProxyModel
     static BenchmarkProxyModel *getInstance();
 
  protected:
-    bool lessThan(const QModelIndex& left,
-                   const QModelIndex& right) const override;
-    bool filterAcceptsRow(int sourceRow,
-                          const QModelIndex& sourceParent) const override;
+    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+    bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
  private:
     static BenchmarkProxyModel *m_pInstance;

@@ -99,8 +99,8 @@ QAction* MainWindow::getAboutBenchmarkAppAction()
 }
 
 
-void MainWindow::createActions() {
-	qCDebug(gui) << "Creating Actions";
+void MainWindow::createActions()
+{
 	m_openFileAction = new QAction(tr("&Open File(s)"), this);
 	m_openFileAction->setShortcuts(QKeySequence::Open);
 
@@ -145,7 +145,6 @@ void MainWindow::setCloseFileActions(QList<QAction*> closeFileActions)
 
 void MainWindow::createMenus() 
 {
-	qCDebug(gui) << "Creating Menus";
 	m_fileMenu = menuBar()->addMenu(tr("&File"));
 	m_fileMenu->addAction(m_openFileAction);
 	m_recentFileMenu = m_fileMenu->addMenu(tr("Recent Files"));
@@ -168,65 +167,55 @@ void MainWindow::onSelectionChanged(const QItemSelection& selected,
 
 void MainWindow::createWidgets()
 {
-	QGroupBox* benckmarkSelectorGB = new QGroupBox(tr("Benchmarks"), this);
+    QWidget* benckmarkSelector = new QWidget(this);
 	m_benchmarkNameFilter = new QLineEdit(this);
 	m_benchmarkNameFilter->setPlaceholderText(tr("Filter"));
 	m_benchmarkView = new BenchmarkView(this);
 	m_benchmarkDelegate = new BenchmarkDelegate(this);
 
-    BenchmarkProxyModel::getInstance()->setSourceModel(
-        BenchmarkModel::getInstance());
-    m_benchmarkView->seBenchmarkColumnAttributes(
-        BenchmarkModel::getInstance()); // strongly coupled
+    BenchmarkProxyModel::getInstance()->setSourceModel(BenchmarkModel::getInstance());
+    m_benchmarkView->seBenchmarkColumnAttributes(BenchmarkModel::getInstance()); // strongly coupled
     m_benchmarkView->setModel(BenchmarkProxyModel::getInstance());
 	m_benchmarkView->setItemDelegate(m_benchmarkDelegate);
 	m_benchmarkView->setEditTriggers(QAbstractItemView::CurrentChanged);
 	m_benchmarkView->setSortingEnabled(true);
 	m_benchmarkView->setSelectionBehavior(QAbstractItemView::SelectRows);
-	m_benchmarkView->sortByColumn(1, Qt::DescendingOrder);
-	QHBoxLayout* benchmarkFilterLayout = new QHBoxLayout;
+    m_benchmarkView->sortByColumn(1, Qt::DescendingOrder);
+
+    QHBoxLayout* benchmarkFilterLayout = new QHBoxLayout;
 	benchmarkFilterLayout->addWidget(m_benchmarkNameFilter);
 	QVBoxLayout* benchmarkLayout = new QVBoxLayout;
 	benchmarkLayout->addLayout(benchmarkFilterLayout);
 	benchmarkLayout->addWidget(m_benchmarkView);
-	benckmarkSelectorGB->setLayout(benchmarkLayout);
+    benckmarkSelector->setLayout(benchmarkLayout);
 
     new ChartViewWidget(this);
 
 	QSplitter* splitter = new QSplitter(this);
-    splitter->addWidget(benckmarkSelectorGB);
+    splitter->addWidget(benckmarkSelector);
     splitter->addWidget(ChartViewWidget::getInstance());
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 2);
     setCentralWidget(splitter);
 
-    m_selectionModel = new QItemSelectionModel(
-        BenchmarkProxyModel::getInstance());
+    m_selectionModel = new QItemSelectionModel(BenchmarkProxyModel::getInstance());
 	m_benchmarkView->setSelectionModel(m_selectionModel);
 }
 
 void MainWindow::connectSignalsToSlots() 
 {
-	qCDebug(gui) << "Connecting Signals to Slots";
-	
-    connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)),
-            this, SLOT(onBenchmarkFilter(QString)));
+    connect(m_benchmarkNameFilter, SIGNAL(textChanged(QString)), this, SLOT(onBenchmarkFilter(QString)));
 
     connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementActive,
             ChartViewWidget::getInstance(), &ChartViewWidget::onAddMeasurement);
     connect(BenchmarkModel::getInstance(), &BenchmarkModel::measurementInactive,
             ChartViewWidget::getInstance(), &ChartViewWidget::onRemoveMeasurement);
 
-    connect(m_selectionModel, &QItemSelectionModel::selectionChanged,
-            this, &MainWindow::onSelectionChanged);
-    connect(m_benchmarkView, &BenchmarkView::select,
-            this, &MainWindow::onPlotSelection);
-    connect(m_benchmarkView, &BenchmarkView::selectAllRows,
-            this, &MainWindow::onPlotAllRows);
-    connect(m_benchmarkView, &BenchmarkView::clearSelection,
-            this, &MainWindow::onClearSelection);
-    connect(m_benchmarkView, &BenchmarkView::clearAllRows,
-            this, &MainWindow::onClearAllRows);
+    connect(m_selectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::onSelectionChanged);
+    connect(m_benchmarkView, &BenchmarkView::select, this, &MainWindow::onPlotSelection);
+    connect(m_benchmarkView, &BenchmarkView::selectAllRows, this, &MainWindow::onPlotAllRows);
+    connect(m_benchmarkView, &BenchmarkView::clearSelection, this, &MainWindow::onClearSelection);
+    connect(m_benchmarkView, &BenchmarkView::clearAllRows, this, &MainWindow::onClearAllRows);
 
     connect(ChartViewWidget::getInstance(), &ChartViewWidget::measurementColorChanged,
             [&](int id, QString color) {
@@ -237,8 +226,7 @@ void MainWindow::connectSignalsToSlots()
 
 void MainWindow::onBenchmarkFilter(QString filterText)
 {
-	qCDebug(gui) << "Benchmark filter: " << filterText;
-	QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
+    QRegExp regExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
     BenchmarkProxyModel::getInstance()->setFilterRegExp(regExp);
 }
 
@@ -250,8 +238,6 @@ void MainWindow::onPlotSelection()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-            qCDebug(gui) << "proxy model index: " << idx <<
-                " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
 	}
@@ -266,8 +252,6 @@ void MainWindow::onPlotAllRows()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-            qCDebug(gui) << "proxy model index: " << idx
-                         << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, true);
 		}
 	}
@@ -281,8 +265,6 @@ void MainWindow::onClearSelection()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-            qCDebug(gui) << "proxy model index: " << idx
-                         << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}
 	}
@@ -297,8 +279,6 @@ void MainWindow::onClearAllRows()
 		foreach (QModelIndex idx, select->selectedRows()) 
 		{
             auto srcIdx = BenchmarkProxyModel::getInstance()->mapToSource(idx);
-            qCDebug(gui) << "proxy model index: " << idx
-                         << " source model index : " << srcIdx;
             BenchmarkModel::getInstance()->setData(srcIdx, false);
 		}
 	}

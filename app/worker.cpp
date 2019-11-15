@@ -1,7 +1,7 @@
 #include "worker.h"
 #include "globals.h"
 
-void Worker::parse(ParserType parserType, QString filename)
+void Worker::parse(ParserType parserType, const QString &filename)
 {
     qCDebug(parser) << "Request Arrived to parse: " << filename
                     << " type: " << parserType;

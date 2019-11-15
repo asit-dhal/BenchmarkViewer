@@ -35,7 +35,7 @@ class Worker: public QObject
 public:
 	
 public slots:
-	void parse(ParserType parserType, QString filename);
+    void parse(ParserType parserType, const QString &filename);
 
 signals:
 	void parsingFinished(QString filename, Benchmark bm);

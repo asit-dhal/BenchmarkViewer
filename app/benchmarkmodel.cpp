@@ -33,6 +33,7 @@ BenchmarkModel *BenchmarkModel::m_pInstance = nullptr;
 
 BenchmarkModel *BenchmarkModel::getInstance()
 {
+    Q_ASSERT(m_pInstance != nullptr);
     return m_pInstance;
 }
 
@@ -40,220 +41,215 @@ BenchmarkModel::BenchmarkModel(QObject* parent)
     : QAbstractTableModel(parent)
 {
     m_pInstance = this;
-	initializeMetaData();
+    initializeMetaData();
 }
 
 const int BenchmarkModel::COLUMN_COUNT = 7;
 
 void BenchmarkModel::addBenchmark(QString filename, Benchmark benchmark)
 {
-	auto mmt = benchmark.getMeasurements();
+    auto mmt = benchmark.getMeasurements();
     beginResetModel();
     for (auto itr = mmt.begin(); itr != mmt.end(); itr++) {
-		BenchmarkViewUnit unit;
-		unit.filename = filename;
-		unit.measurement = *itr;
-		m_benchmarks.append(unit);
-	}
-	
-	endResetModel();
+        BenchmarkViewUnit unit;
+        unit.filename = filename;
+        unit.measurement = *itr;
+        m_benchmarks.append(unit);
+    }
+
+    endResetModel();
 }
 
 void BenchmarkModel::removeBenchmark(QString filename) 
 {
-	QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
+    QList<BenchmarkViewUnit>::iterator itr = m_benchmarks.begin();
 
-	beginResetModel();
+    beginResetModel();
     while (itr != m_benchmarks.end())  {
         if (filename.compare(itr->filename, Qt::CaseInsensitive) == 0) {
             if (itr->isSelected) {
-				emit measurementInactive(itr->measurement);
-			}
-			itr = m_benchmarks.erase(itr);
+                emit measurementInactive(itr->measurement);
+            }
+            itr = m_benchmarks.erase(itr);
         } else {
-			++itr;
-		}
-	}
-	endResetModel();
+            ++itr;
+        }
+    }
+    endResetModel();
 }
 
 void BenchmarkModel::setMeasurementColor(int id, QString color)
 {
-    qCDebug(benchmarkModel) << "Setting Measurement id=" << id
-                            << " color=" << color;
     for (auto rowIndex = 0; rowIndex < rowCount(); rowIndex++) {
         if (m_benchmarks[rowIndex].measurement.getId() == id) {
             setData(createIndex(rowIndex, columnCount()),
                     QVariant::fromValue(color), Qt::BackgroundColorRole);
-			break;
-		}
-	}
+            break;
+        }
+    }
 }
 
 QVariant BenchmarkModel::headerData(int section, Qt::Orientation orientation,
                                     int role) const
 {
     if (role != Qt::DisplayRole) {
-		return QVariant();
-	}
+        return QVariant();
+    }
 
     if (orientation == Qt::Horizontal) {
         if (static_cast<Columns>(section) != Columns::eInvalid) {
-			return toString(static_cast<Columns>(section));
+            return toString(static_cast<Columns>(section));
         } else  {
-			return QVariant();
-		}
-    } else if (orientation == Qt::Vertical) {
-		return QString("%1").arg(section + 1);
+            return QVariant();
+        }
     } else {
-		return QVariant();
-	}
+        return QVariant();
+    }
 }
 
 int BenchmarkModel::rowCount(const QModelIndex& parent) const
 {
-	Q_UNUSED(parent);
-	return m_benchmarks.size();
+    Q_UNUSED(parent)
+    return m_benchmarks.size();
 }
 
 int BenchmarkModel::columnCount(const QModelIndex& parent) const 
 {
-	Q_UNUSED(parent);
-	return COLUMN_COUNT;
+    Q_UNUSED(parent)
+    return COLUMN_COUNT;
 }
 
 QVariant BenchmarkModel::data(const QModelIndex& index, int role) const 
 {
-	if (!index.isValid())
-		return QVariant();
+    if (!index.isValid())
+        return QVariant();
 
-	if (index.row() >= m_benchmarks.size() || index.row() < 0)
-		return QVariant();
+    if (index.row() >= m_benchmarks.size() || index.row() < 0)
+        return QVariant();
 
     if (role == Qt::DisplayRole) {
-		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-		Columns col = static_cast<Columns>(index.column());
+        BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+        Columns col = static_cast<Columns>(index.column());
         switch (col) {
-		case Columns::eStatus:
-			return viewunit.isSelected;
-		case Columns::eName:
-			return viewunit.measurement.getName();
-		case Columns::eIterations:
-			return viewunit.measurement.getIterations();
-		case Columns::eRealTime:
-			return viewunit.measurement.getRealTime();
-		case Columns::eCpuTime:
-			return viewunit.measurement.getCpuTime();
-		case Columns::eTimeUnit:
-			return viewunit.measurement.getTimeUnit();
-		case Columns::eFilename:
-			return QFileInfo(viewunit.filename).fileName();
-		default:
-			return QVariant();
-		}
-	}
+        case Columns::eStatus:
+            return viewunit.isSelected;
+        case Columns::eName:
+            return viewunit.measurement.getName();
+        case Columns::eIterations:
+            return viewunit.measurement.getIterations();
+        case Columns::eRealTime:
+            return viewunit.measurement.getRealTime();
+        case Columns::eCpuTime:
+            return viewunit.measurement.getCpuTime();
+        case Columns::eTimeUnit:
+            return viewunit.measurement.getTimeUnit();
+        case Columns::eFilename:
+            return QFileInfo(viewunit.filename).fileName();
+        default:
+            return QVariant();
+        }
+    }
 
     if (role == Qt::ToolTipRole) {
-		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
-		Columns col = static_cast<Columns>(index.column());
+        BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+        Columns col = static_cast<Columns>(index.column());
         switch (col) {
-		case Columns::eFilename:
-			return viewunit.filename;
-		default:
-			return QVariant();
-		}
-	}
+        case Columns::eFilename:
+            return viewunit.filename;
+        default:
+            return QVariant();
+        }
+    }
 
     if (role == Qt::BackgroundColorRole) {
-		BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
+        BenchmarkViewUnit viewunit = m_benchmarks.at(index.row());
         if (viewunit.isSelected) {
             if (viewunit.hexColor == "#000000") {
-				return QColor(Qt::lightGray);
+                return QColor(Qt::lightGray);
             } else {
-				return QColor(viewunit.hexColor);
-			}
+                return QColor(viewunit.hexColor);
+            }
         } else {
-			return QColor(Qt::white);
-		}
-	}
+            return QColor(Qt::white);
+        }
+    }
 
-	return QVariant();
+    return QVariant();
 }
 
 Qt::ItemFlags BenchmarkModel::flags(const QModelIndex& index) const
 {
-	if (!index.isValid())
-		return Qt::ItemIsEnabled;
+    if (!index.isValid())
+        return Qt::ItemIsEnabled;
 
-	return QAbstractItemModel::flags(index);
+    return QAbstractItemModel::flags(index);
 }
 
-bool BenchmarkModel::setData(const QModelIndex& index, const QVariant& value,
-                             int role)
+bool BenchmarkModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     if (index.isValid()) {
-		auto row = index.row();
+        auto row = index.row();
 
         if (role == Qt::EditRole) {
-			Columns col = static_cast<Columns>(index.column());
+            Columns col = static_cast<Columns>(index.column());
             if (col == Columns::eStatus
                 && m_benchmarks[row].isSelected != value.toBool()) {
-				m_benchmarks[row].isSelected = value.toBool();
+                m_benchmarks[row].isSelected = value.toBool();
                 emit dataChanged(createIndex(index.row(), 0),
                                  createIndex(index.row(), COLUMN_COUNT - 1));
 
                 if (m_benchmarks[row].isSelected) {
-					emit measurementActive(m_benchmarks[row].measurement);
+                    emit measurementActive(m_benchmarks[row].measurement);
                 } else {
-					emit measurementInactive(m_benchmarks[row].measurement);
-				}
+                    emit measurementInactive(m_benchmarks[row].measurement);
+                }
 
-				return true;
-			}
+                return true;
+            }
         } else if (role == Qt::BackgroundColorRole) {
-			m_benchmarks[row].hexColor = value.toString();
-			return true;
-		}
-	}
+            m_benchmarks[row].hexColor = value.toString();
+            return true;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 void BenchmarkModel::initializeMetaData()
 {
-	m_columnsVisibility[Columns::eStatus] = true;
-	m_columnsVisibility[Columns::eName] = true;
-	m_columnsVisibility[Columns::eIterations] = true;
-	m_columnsVisibility[Columns::eRealTime] = true;
-	m_columnsVisibility[Columns::eCpuTime] = true;
-	m_columnsVisibility[Columns::eTimeUnit] = true;
-	m_columnsVisibility[Columns::eFilename] = true;
+    m_columnsVisibility[Columns::eStatus] = true;
+    m_columnsVisibility[Columns::eName] = true;
+    m_columnsVisibility[Columns::eIterations] = true;
+    m_columnsVisibility[Columns::eRealTime] = true;
+    m_columnsVisibility[Columns::eCpuTime] = true;
+    m_columnsVisibility[Columns::eTimeUnit] = true;
+    m_columnsVisibility[Columns::eFilename] = true;
 }
 
 bool BenchmarkModel::getColumnVisibility(Columns col)
 {
-	return m_columnsVisibility[col];
+    return m_columnsVisibility[col];
 }
 
 
 void BenchmarkModel::setColumnVisibility(Columns col, bool visibility)
 {
-	m_columnsVisibility[col] = visibility;
-	emit columnVisibilityChanged(col, visibility);
+    m_columnsVisibility[col] = visibility;
+    emit columnVisibilityChanged(col, visibility);
 }
 
 QString toString(BenchmarkModel::Columns col)
 {
-	using Columns = BenchmarkModel::Columns;
-	switch (col)
-	{
-	case Columns::eStatus: return QObject::tr("Status");
-	case Columns::eName: return QObject::tr("Name");
-	case Columns::eIterations: return QObject::tr("Iterations");
-	case Columns::eRealTime: return QObject::tr("Realtime");
-	case Columns::eCpuTime: return QObject::tr("Cpu Time");
-	case Columns::eTimeUnit: return QObject::tr("Timeunit");
-	case Columns::eFilename: return QObject::tr("Filename");
-	default: return QObject::tr("Unknown");
-	}
+    using Columns = BenchmarkModel::Columns;
+    switch (col)
+    {
+    case Columns::eStatus: return QObject::tr("Status");
+    case Columns::eName: return QObject::tr("Name");
+    case Columns::eIterations: return QObject::tr("Iterations");
+    case Columns::eRealTime: return QObject::tr("Realtime");
+    case Columns::eCpuTime: return QObject::tr("Cpu Time");
+    case Columns::eTimeUnit: return QObject::tr("Timeunit");
+    case Columns::eFilename: return QObject::tr("Filename");
+    default: return QObject::tr("Unknown");
+    }
 }

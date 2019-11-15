@@ -26,8 +26,7 @@
 #include "csvparser.h"
 #include "jsonparser.h"
 
-std::unique_ptr<IAbstractParser> ParserFactory::getParser(
-    ParserType parserType)
+std::unique_ptr<IAbstractParser> ParserFactory::getParser(ParserType parserType)
 {
 	switch (parserType)
 	{
